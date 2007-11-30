@@ -21,4 +21,5 @@ public abstract class IncomingInterface {
 	 * @throws IOException
 	 */
 	public abstract Message receive(long timeout) throws IOException;
+	// Ilya - trial update
 }
