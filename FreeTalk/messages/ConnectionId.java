@@ -24,10 +24,9 @@ public class ConnectionId implements Serializable {
 		this.text = text;
 	}
 
-	public ConnectionId(String side1, String side2, Date date) {
+	public ConnectionId(String side1, String side2) {
 		super();
-		
-		text = side1 + ":" + side2 + ":" + date.toString() + ":" + connectionIdSN;
+		text = side1 + ":" + side2 + ":" + new Date() + ":" + connectionIdSN;
 		connectionIdSN++;
 	}
 
@@ -41,5 +40,7 @@ public class ConnectionId implements Serializable {
 		return toString().equals(arg0.toString());
 	}
 	
-	
+	public ConnectionId getAck() {
+		return new ConnectionId(text + ":" + "ack");
+	}
 }
