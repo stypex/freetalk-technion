@@ -1,0 +1,294 @@
+package client.gui;
+
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.DefaultListModel;
+import javax.swing.GroupLayout;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
+import javax.swing.JTextPane;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Document;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyleContext;
+import javax.swing.text.StyleContext.NamedStyle;
+
+public class Chat extends JFrame {
+	//Field added automatically to avoid warning
+	private static final long serialVersionUID = 1L;
+
+	private String userName;
+	private JTextPane utp;
+	private JTextPane ltp;
+	private JSplitPane sp1;
+	private JSplitPane sp2;
+	private JScrollPane usp;
+	private JScrollPane lsp;
+	private JPanel p;
+	private JList lst;
+	private DefaultListModel lstModel; 
+	private JButton send;
+	private JComboBox addToChat;
+	private DefaultComboBoxModel cbModel;
+	private JScrollPane rsp;
+	
+	/**
+	 * Builds the chat GUI window.
+	 * @param userName - Nickname of the user on this computer.
+	 * @param destUserName - Nickname of the user with whom the chat was initiated.
+	 * @param allUsers - List of all online users
+	 */
+	public Chat(String userName, String destUserName, Object[] allUsers){
+		this.userName = userName;
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		setTitle(destUserName);
+		
+		//Text areas initializations
+		utp = new JTextPane();
+		utp.setEditable(false);
+		ltp = new JTextPane();
+		usp = new JScrollPane(utp);
+		lsp = new JScrollPane(ltp);
+		
+		//Create list of users in chat
+		lstModel = new DefaultListModel();
+		lstModel.addElement(destUserName);
+		lst = new JList(lstModel);
+		lst.setSelectionBackground(Color.white);
+		lst.setFocusable(false); //to avoid selecting items in the list
+		rsp = new JScrollPane(lst);
+		
+		//Create ComboBox of users that can be added to chat
+		cbModel = new DefaultComboBoxModel();
+		cbModel.addElement("Add user to chat");
+		for (Object u : allUsers)
+			if ((String)u != destUserName)
+				cbModel.addElement((String)u);
+		addToChat = new JComboBox (cbModel);
+		
+		//Attach the ComboBox selection to adding the user to the chat
+		addToChat.addActionListener(new ActionListener() {
+
+			public void actionPerformed(ActionEvent arg0) {
+				//TODO actually here should come a function that deals with adding
+				//a new user to a chat as well.
+				moveFromComboToList();
+			}
+			
+		});
+		
+		
+		send = new JButton("           Send          ");
+		send.setEnabled(false);
+		
+		//This part doesn't allow sending text that is only whitespaces
+		//by disabling the "Send" button.
+		ltp.getDocument().addDocumentListener(new DocumentListener() {
+
+			public void changedUpdate(DocumentEvent arg0) {
+				checkTextEntered();
+			}
+
+			public void insertUpdate(DocumentEvent arg0) {
+				checkTextEntered();
+			}
+
+			public void removeUpdate(DocumentEvent arg0) {
+				checkTextEntered();
+			}
+        });
+		
+		//Attaches between pressing the "Send" button and the message being sent
+		//as well as shown in the chat text area
+		send.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+            	putTextInChatWindow();
+            }
+        });
+		
+		p = new JPanel();
+		//Set the layout of the right side of the window
+		GroupLayout pLayout = new GroupLayout(p);
+	    p.setLayout(pLayout);
+	    pLayout.setHorizontalGroup(
+	    		pLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
+	    	.addGroup(pLayout.createSequentialGroup()
+	    	    .addComponent(addToChat, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE))
+	    	.addGroup(pLayout.createSequentialGroup()
+	        	.addComponent(rsp, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE))
+	        .addGroup(pLayout.createSequentialGroup()
+	    	    .addComponent(send, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE))
+	        	
+	    );
+	    pLayout.setVerticalGroup(
+	    		pLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
+	        .addGroup(pLayout.createSequentialGroup()
+	        	.addComponent(addToChat, 25, 25, 25)
+	        	.addComponent(rsp, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE)
+		        .addComponent(send, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE))       
+	    );
+		
+		
+	    usp.setMinimumSize(new Dimension(100,25));
+		lsp.setMinimumSize(new Dimension(100,25));
+		
+		//Group components for easier setup of the layout
+		sp1 = new JSplitPane(JSplitPane.VERTICAL_SPLIT,usp,lsp);
+		sp1.setResizeWeight(0.8);
+
+		sp2 = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,sp1,p);
+		sp2.setResizeWeight(1);
+		
+		//Set the layout of the window
+		GroupLayout chatLayout = new GroupLayout(getContentPane());
+	    getContentPane().setLayout(chatLayout);
+	    chatLayout.setHorizontalGroup(
+	    		chatLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
+	        .addGroup(chatLayout.createSequentialGroup()
+	        	.addGap(10)
+	        	.addComponent(sp2, GroupLayout.DEFAULT_SIZE, 450, GroupLayout.DEFAULT_SIZE)
+	        	.addGap(10))  
+	    );
+	    chatLayout.setVerticalGroup(
+	    		chatLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
+	        .addGroup(chatLayout.createSequentialGroup()
+	        	.addGap(10)
+		        .addComponent(sp2, GroupLayout.DEFAULT_SIZE, 300, GroupLayout.DEFAULT_SIZE)
+	        	.addGap(10))       
+	    );
+		
+		pack();
+		
+		setMinimumSize(new Dimension(0,120));
+		
+		//Set window position
+	    Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
+		setLocation( ( d.width - getSize().width ) / 3, ( d.height - getSize().height ) / 3);
+		
+		ltp.requestFocusInWindow();
+	}
+	
+	/**
+	 * Checks if the text entered is only white spaces.
+	 * If so disables the send button.
+	 * @author Arthur Kiyanovsky
+	 * Nov 30, 2007
+	 */
+	private void checkTextEntered() {
+		if (!ltp.getText().matches("\\s*"))
+			send.setEnabled(true);
+		else
+			send.setEnabled(false);
+	}
+	
+	/**
+	 * Copies the text from where the user entered it to the chat 
+	 * text area in the correct format. 
+	 * @author Arthur Kiyanovsky
+	 * Nov 30, 2007
+	 */
+	private void putTextInChatWindow() { 		
+		Document d = utp.getDocument();
+		StyleContext sc = new StyleContext();
+		NamedStyle s = sc.new NamedStyle();
+		StyleConstants.setBold(s, true);
+		
+		try {
+			d.insertString(d.getLength(), userName + " <" + getDateTime() + ">\n", s);
+			StyleConstants.setBold(s, false);
+			d.insertString(d.getLength(), ltp.getText() + "\n\n", s);
+		} catch (BadLocationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		ltp.setText(null);
+		ltp.requestFocusInWindow();
+	 }
+	
+	/**
+	 * Removes the selected client from the "Add client to conference 
+	 * call" ComboBox and adds it to the conference list of clients. 
+	 * @author Arthur Kiyanovsky
+	 * Nov 30, 2007
+	 */
+	private void moveFromComboToList(){
+		synchronized (cbModel){
+			synchronized (lstModel) {
+				String client = (String)addToChat.getSelectedItem();
+				addToChat.removeItem(client);
+				
+				//Saving alphabetical order at insertion
+				int i = 0;
+				while ( i < lstModel.getSize() && 
+						client.compareTo((String)lstModel.getElementAt(i)) >= 0 )
+					++i;
+				lstModel.insertElementAt(client, i);
+				
+				addToChat.setSelectedIndex(0);
+				if (lstModel.getSize() == 2)
+					setTitle("Conference");
+			}
+		}
+	}
+	
+	/**
+	 * Removes a given client from the conference list of clients
+	 * and adds it back to the "Add client to conference call" ComboBox. 
+	 * @param client - Name of client that needs to be removed 
+	 * @author Arthur Kiyanovsky
+	 * Nov 30, 2007
+	 */
+	private void moveFromListToCombo(String client){
+		synchronized (cbModel){
+			synchronized (lstModel) {
+				lstModel.removeElement(client);
+				
+				//Saving alphabetical order at insertion
+				int i = 1;
+				while ( i < cbModel.getSize() && 
+						client.compareTo((String)lstModel.getElementAt(i)) >= 0 )
+					++i;
+				cbModel.insertElementAt(client, i);
+		
+				if (lstModel.getSize() == 1)
+					setTitle((String)lstModel.get(0));
+			}
+		}
+	}
+	
+	/**
+	 * @return - Current date and time in dd/MM/yyyy HH:mm:ss format
+	 * @author Arthur Kiyanovsky
+	 * Nov 30, 2007
+	 */
+	private String getDateTime() {
+        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+        Date date = new Date();
+        return dateFormat.format(date);
+    }
+	
+	public void clientExit(String client){
+		synchronized (cbModel){
+			synchronized (lstModel) {
+				cbModel.removeElement(client);
+				lstModel.removeElement(client);
+			}
+		}
+	}
+}
