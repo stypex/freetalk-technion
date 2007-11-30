@@ -36,8 +36,9 @@ public class UDPOutgoingInterface extends OutgoingInterface {
 	 */
 	@Override
 	public void close() {
-		// TODO Auto-generated method stub
+		ackInt.close();
 
+		// Do more
 	}
 
 	/* (non-Javadoc)
