@@ -3,18 +3,16 @@
  */
 package server.data;
 
-import java.net.InetAddress;
-import java.net.Socket;
-import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 import server.handler.HandlerThread;
+
 
 /**
  * @author lenka
  *
  */
-public class ClientsHash extends ConcurrentHashMap<String, ClientsHash.ClientData> {
+public class ClientsHash extends ConcurrentHashMap<String, ClientData> {
 
 	private static final long serialVersionUID = 3222918723101144580L;
 
@@ -36,29 +34,21 @@ public class ClientsHash extends ConcurrentHashMap<String, ClientsHash.ClientDat
 		super();
 	}
 	
-	public static class ClientData {
+	public void registerThread(String client, HandlerThread thread) {
+		if (client == null)
+			return;
 		
-		public InetAddress ip;
-		public int port1;
-		public int port2;
-		public boolean port1open; 
-		public boolean port2open; 
+		ClientData cd = get(client);
+		if (cd != null)
+			cd.addThread(thread);
+	}
+	
+	public void unRegisterThread(String client, HandlerThread thread) {
+		if (client == null)
+			return;
 		
-		public Socket tcp80;	
-		public List<HandlerThread> threads;
-
-		
-		public ClientData(InetAddress ip, int port1, int port2, boolean port1open, boolean port2open, Socket tcp80, List<HandlerThread> threads) {
-			super();
-			this.ip = ip;
-			this.port1 = port1;
-			this.port2 = port2;
-			this.port1open = port1open;
-			this.port2open = port2open;
-			this.tcp80 = tcp80;
-			this.threads = threads;
-		}
-		
-		
+		ClientData cd = get(client);
+		if (cd != null)
+			cd.removeThread(thread);
 	}
 }
