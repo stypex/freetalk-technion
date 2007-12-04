@@ -4,6 +4,7 @@
 package interfaces;
 
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
 
@@ -17,12 +18,13 @@ public class TCPOutgoingInterface extends OutgoingInterface {
 
 	Socket socket;
 	
-	public TCPOutgoingInterface(InetAddress ip, int port) {
-		// TODO Auto-generated constructor stub
+	public TCPOutgoingInterface(InetAddress ip, int port) throws IOException {
+		
+		socket = new Socket(ip, port);
 	}
-
+	
 	public TCPOutgoingInterface(Socket socket) {
-		// TODO Auto-generated constructor stub
+		this.socket = socket;
 	}
 	
 	/* (non-Javadoc)
@@ -30,7 +32,14 @@ public class TCPOutgoingInterface extends OutgoingInterface {
 	 */
 	@Override
 	public void close() {
-		// TODO Auto-generated method stub
+		if (!socket.isClosed()) {
+			try {
+				socket.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 
 	}
 
@@ -39,14 +48,14 @@ public class TCPOutgoingInterface extends OutgoingInterface {
 	 */
 	@Override
 	public void send(Message message) throws IOException {
-		// TODO Auto-generated method stub
-
+		
+		ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+		out.writeObject(message);
 	}
 
 	@Override
 	public Socket getSocket() {
-		// TODO Auto-generated method stub
-		return null;
+		return socket;
 	}
 
 }

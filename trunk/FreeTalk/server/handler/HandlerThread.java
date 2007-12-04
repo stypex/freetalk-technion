@@ -19,14 +19,14 @@ public class HandlerThread extends Thread {
 	OutgoingInterface out;
 	String client;
 	
-	public static HandlerThread createHandler(Message m, IncomingInterface inInter, OutgoingInterface outInter) {
+	public static HandlerThread createHandler(Message m, IncomingInterface inInter) {
 		
 		HandlerThread ht = null;
 		
 		if (m instanceof RegisterMessage) {
 			RegisterMessage rm = (RegisterMessage) m;
 			
-			ht = new RegisterHandler(rm, inInter, outInter);
+			ht = new RegisterHandler(rm, inInter);
 		}
 		
 		return ht; 

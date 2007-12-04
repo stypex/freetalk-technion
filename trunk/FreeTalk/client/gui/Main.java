@@ -22,6 +22,8 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import client.Globals;
+
 /** 
  * @author Arthur
  * The main GUI window.
@@ -60,14 +62,13 @@ public class Main extends JFrame {
 	
 	/**
 	 * Builds the main window GUI
-	 * @param userName - User's nickname
 	 */
-	public Main(String userName, String[] users){
+	public Main(String[] users){
 		//Initialize all window components
 		chatRunners = new ArrayList<ChatRunner>();
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setTitle("P2P - " + userName);
-		this.userName = userName;
+		this.userName = Globals.getClientName();
 		
 		mb = new JMenuBar();
 		m = new JMenu("File");

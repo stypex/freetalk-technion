@@ -3,6 +3,7 @@
  */
 package messages;
 
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -14,12 +15,16 @@ public class ClientsAddedMessage extends Message {
 	
 	private static final long serialVersionUID = 7178517212623327148L;
 	ConnectionId cId;
-	Set<String> clients;
+	HashSet<String> clients;
 	
-	public ClientsAddedMessage(String from, String to, ConnectionId id, Set<String> clients) {
+	public ClientsAddedMessage(String from, String to, ConnectionId id, HashSet<String> clients) {
 		super(from, to);
 		cId = id;
 		this.clients = clients;
+	}
+
+	public Set<String> getClients() {
+		return clients;
 	}
 	
 	
