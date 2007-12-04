@@ -60,11 +60,19 @@ public class Prober {
 	}
 
 	private ResponseCode checkTCP() {
-		OutgoingInterface out = new TCPOutgoingInterface(cd.getIp(), cd.getPort2());
+		OutgoingInterface out;
+		ResponseCode check = ResponseCode.BAD;
+		try {
+			out = new TCPOutgoingInterface(cd.getIp(), cd.getPort2());
+		} catch (IOException e) {
+			cd.setPort2open(ResponseCode.BAD);
+			return check;
+		}
+		
 		IncomingInterface in = new TCPIncomingInterface(out.getSocket());
 		
 		try {
-			ResponseCode check = checkPort(out, in);
+			check = checkPort(out, in);
 			cd.setPort2open(check);
 			return check;
 		} finally {

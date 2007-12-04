@@ -50,7 +50,7 @@ public class UDPIncomingInterface extends IncomingInterface {
 	 * @see interfaces.IncomingInterface#receive(long)
 	 */
 	@Override
-	public Message receive(long timeout) throws IOException {
+	public Message receive(int timeout) throws IOException {
 		// TODO Auto-generated method stub
 		return null;
 	}

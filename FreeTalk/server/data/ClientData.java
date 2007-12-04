@@ -7,6 +7,7 @@ import interfaces.OutgoingInterface;
 import interfaces.TCPOutgoingInterface;
 import interfaces.UDPOutgoingInterface;
 
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.util.LinkedList;
@@ -136,7 +137,7 @@ public class ClientData {
 		return ConnectionMethod.Indirect;
 	}
 
-	public OutgoingInterface createOutInterface(ConnectionId cId) {
+	public OutgoingInterface createOutInterface(ConnectionId cId) throws IOException {
 		
 		if (getConnectionMethod() == ConnectionMethod.UDPDirect)
 			return new UDPOutgoingInterface(ip, port1, cId);

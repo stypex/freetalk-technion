@@ -5,10 +5,10 @@ package server.handler;
 
 import interfaces.IncomingInterface;
 import interfaces.OutgoingInterface;
+import interfaces.TCPOutgoingInterface;
 
 import java.io.IOException;
 import java.util.HashSet;
-import java.util.Set;
 
 import messages.ClientsAddedMessage;
 import messages.ConnectionId;
@@ -30,10 +30,10 @@ public class RegisterHandler extends HandlerThread {
 
 	ConnectionId cId;
 	
-	public RegisterHandler(RegisterMessage m, IncomingInterface in, OutgoingInterface out) {
+	public RegisterHandler(RegisterMessage m, IncomingInterface in) {
 		super(m.getFrom());
 		setIn(in);
-		setOut(out);
+		setOut(new TCPOutgoingInterface(in.getSocket()));
 		
 		this.m = m;
 		this.cId = m.getCId();
@@ -69,27 +69,38 @@ public class RegisterHandler extends HandlerThread {
 			Prober pr = new Prober(cd, getCId());
 			pr.execute();
 			
-			if (cd.isPort1open() || cd.isPort2open())
-				cd.setTcp80(null);
-			
 			// REG_ACK
 			RegAckMessage ram = new RegAckMessage("Server", cd.getName(), getCId(),
 					cd.getPort1open(), cd.getPort2open(), cd.getConnectionMethod());
 			
-			out.send(ram);
+			out.send(ram);		
+			
 			
 			// Clients list for client
+			HashSet<String> allClients = new HashSet<String>();
+			allClients.addAll(ClientsHash.getInstance().keySet());
+			allClients.remove(cd.getName());
+			
 			ClientsAddedMessage cam = new ClientsAddedMessage("Server",
 					cd.getName(), getCId(),
-					ClientsHash.getInstance().keySet());
+					allClients);
 			out.send(cam);
-			ClientsHash.getInstance().put(cd.getName(), cd);
 			
+			if (cd.isPort1open() || cd.isPort2open()) {
+				cd.setTcp80(null);
+				in.close();
+				out.close();				
+			}
+						
 			// Clients list for others
-			Set<String> set = new HashSet<String>();
+			HashSet<String> set = new HashSet<String>();
 			set.add(cd.getName());
 			
 			for (String c : ClientsHash.getInstance().keySet()) {
+				
+				if (c.equals(cd.getName()))
+					continue;
+				
 				ClientData cData = ClientsHash.getInstance().get(c);
 				
 				ConnectionId newId = new ConnectionId("Server", cData.getName());
@@ -103,12 +114,10 @@ public class RegisterHandler extends HandlerThread {
 					e.printStackTrace();
 				}
 			}
-			
+
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
-			in.close();
-			out.close();
 			ClientsHash.getInstance().unRegisterThread(client, this);
 		}
 	}

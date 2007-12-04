@@ -4,7 +4,7 @@
 package interfaces;
 
 import java.io.IOException;
-import java.net.InetAddress;
+import java.io.ObjectInputStream;
 import java.net.Socket;
 
 import messages.Message;
@@ -17,12 +17,8 @@ public class TCPIncomingInterface extends IncomingInterface {
 
 	Socket socket;
 	
-	public TCPIncomingInterface(InetAddress ip, int port) {
-		// TODO Auto-generated constructor stub
-	}
-	
 	public TCPIncomingInterface(Socket socket) {
-		// TODO Auto-generated constructor stub
+		this.socket = socket;
 	}
 
 	/* (non-Javadoc)
@@ -30,8 +26,13 @@ public class TCPIncomingInterface extends IncomingInterface {
 	 */
 	@Override
 	public void close() {
-		// TODO Auto-generated method stub
-
+		if (!socket.isClosed()) {
+			try {
+				socket.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 	/* (non-Javadoc)
@@ -39,16 +40,29 @@ public class TCPIncomingInterface extends IncomingInterface {
 	 */
 	@Override
 	public Socket getSocket() {
-		// TODO Auto-generated method stub
-		return null;
+		return socket;
 	}
 
 	/* (non-Javadoc)
 	 * @see interfaces.IncomingInterface#receive(long)
 	 */
 	@Override
-	public Message receive(long timeout) throws IOException {
-		// TODO Auto-generated method stub
+	public Message receive(int timeout) throws IOException {
+
+		socket.setSoTimeout(timeout);
+		ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
+		
+		try {
+			Object o = in.readObject();
+			
+			if (o instanceof Message) {
+				Message m = (Message) o;
+				return m;
+			}
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+		
 		return null;
 	}
 

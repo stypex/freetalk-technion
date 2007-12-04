@@ -22,11 +22,11 @@ public abstract class IncomingInterface {
 	/**
 	 * Receive a message. Blocking.
 	 * @param timeout how long to wait for a message before
-	 * returning
+	 * returning. 0 - indefinitely.
 	 * @return a message if got any, null if got nothing.
 	 * @throws IOException
 	 */
-	public abstract Message receive(long timeout) throws IOException;
+	public abstract Message receive(int timeout) throws IOException;
 
 	
 	/**

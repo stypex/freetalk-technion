@@ -14,6 +14,16 @@ public class ErrorMessage extends Message {
 
 	public enum ErrorType {
 		CLIENT_NAME_EXISTS;
+
+		@Override
+		public String toString() {
+			if (equals(CLIENT_NAME_EXISTS))
+				return "A client with this username already exists";
+			
+			return super.toString();
+		}
+		
+		
 	}
 	
 	ConnectionId cId;
@@ -24,6 +34,11 @@ public class ErrorMessage extends Message {
 		super(from, to);
 		cId = id;
 		eType = type;
+	}
+
+
+	public ErrorType getEType() {
+		return eType;
 	}
 	
 	
