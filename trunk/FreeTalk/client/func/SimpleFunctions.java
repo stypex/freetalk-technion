@@ -1,9 +1,11 @@
 /**
  * 
  */
-package client;
+package client.func;
 
 import java.io.IOException;
+
+import client.Globals;
 
 import util.Consts.ResponseCode;
 import messages.ProbeAckMessage;

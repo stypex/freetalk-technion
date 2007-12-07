@@ -6,6 +6,9 @@ package client;
 import javax.swing.SwingUtilities;
 
 import client.gui.Login;
+import client.listeners.TCPListener5000;
+import client.listeners.TCPListener80;
+import client.listeners.UDPListener;
 
 /**
  * @author lenka
@@ -13,6 +16,11 @@ import client.gui.Login;
  */
 public class ClientMain {
 
+
+	public static TCPListener5000 tcp;
+	public static TCPListener80 tcp80;
+	public static UDPListener udp;
+	
 	/**
 	 * @param args
 	 */
@@ -20,7 +28,14 @@ public class ClientMain {
 		
 		Globals.load();
 		
-		//		Start the GUI
+		// Start the listeners
+		tcp = new TCPListener5000();
+		udp = new UDPListener();
+
+		tcp.start();
+		udp.start();
+		
+		//	Start the GUI
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				new Login().setVisible(true);

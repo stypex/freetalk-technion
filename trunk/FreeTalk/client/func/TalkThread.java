@@ -1,7 +1,7 @@
 /**
  * 
  */
-package client.talk;
+package client.func;
 
 /**
  * @author lenka
