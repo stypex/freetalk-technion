@@ -6,7 +6,7 @@ package client.data;
 import java.util.concurrent.ConcurrentHashMap;
 
 import messages.ConnectionId;
-import client.talk.TalkThread;
+import client.func.TalkThread;
 
 /**
  * @author lenka

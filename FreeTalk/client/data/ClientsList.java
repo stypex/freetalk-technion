@@ -6,9 +6,12 @@ package client.data;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
-import client.talk.TalkThread;
+import client.func.TalkThread;
 
 /**
+ * Contains the list of all existing clients in the net.
+ * For each client contains a list of all chats talking to this
+ * client right now.
  * @author lenka
  *
  */
