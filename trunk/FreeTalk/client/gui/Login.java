@@ -1,45 +1,21 @@
 package client.gui;
 
-import interfaces.TCPIncomingInterface;
-import interfaces.TCPOutgoingInterface;
-
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.util.LinkedList;
 
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-import messages.ClientsAddedMessage;
-import messages.ConnectionId;
-import messages.ErrorMessage;
-import messages.Message;
-import messages.ProbeMessage;
-import messages.RegAckMessage;
-import messages.RegisterMessage;
-import util.Consts.ConnectionMethod;
-import util.Consts.Protocol;
-import util.Consts.ResponseCode;
 import client.Globals;
-import client.data.ClientsList;
 import client.func.Loginner;
-import client.func.SimpleFunctions;
-import client.func.TalkThread;
-import client.listeners.TCPListener5000;
-import client.listeners.TCPListener80;
-import client.listeners.UDPListener;
 
 /**
  * @author Arthur
@@ -49,16 +25,20 @@ public class Login extends JFrame{
 	// Field added automatically to avoid warning
 	private static final long serialVersionUID = 1L;
 
+	private Main m;
+	
 	private JTextField t;
 	private JLabel l;
 	private JButton b;
-
+	
 
 	/**
 	 * Builds the Login GUI menu
 	 */
-	public Login(){
+	public Login(Main m){
 
+		this.m = m;
+		
 		//Initialize all window components
 		setTitle("Login");
 		setResizable(false);
@@ -156,13 +136,12 @@ public class Login extends JFrame{
 
 			SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
-					
-					new Main(ClientsList.getInstance().keySet().toArray(new String[0])).setVisible(true);
+					m.setUserName(Globals.getClientName());
+					m.setVisible(true);
 				}
 			}); 
 			dispose(); 
 		}
 	}
 
-	
 }
