@@ -22,7 +22,8 @@ public class Consts {
 	public enum ConnectionMethod {
 		TCPDirect,
 		UDPDirect,
-		Indirect;
+		Indirect,
+		TCPReverse;
 	}
 }
 

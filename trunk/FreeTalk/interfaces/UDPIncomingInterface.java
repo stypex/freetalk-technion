@@ -4,6 +4,7 @@
 package interfaces;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.Socket;
 
 import messages.ConnectionId;
@@ -19,8 +20,8 @@ public class UDPIncomingInterface extends IncomingInterface {
 
 	ConnectionId cId;
 	
-	public UDPIncomingInterface(ConnectionId cId) {
-		super();
+	public UDPIncomingInterface(ConnectionId cId, InetAddress ip, int remotePort, int localPort) {
+		super(localPort, remotePort, ip);
 		
 		this.cId = cId;
 		// TODO the rest of the constructor
@@ -63,5 +64,10 @@ public class UDPIncomingInterface extends IncomingInterface {
 	 */
 	public void accept(Message m) {
 		//		 TODO Auto-generated method stub
+	}
+
+	@Override
+	public OutgoingInterface createMatching() {
+		return new UDPOutgoingInterface(remoteIp, localPort, remotePort, cId);
 	}
 }

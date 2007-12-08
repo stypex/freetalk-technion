@@ -27,9 +27,7 @@ import util.Consts.ResponseCode;
 import client.ClientMain;
 import client.Globals;
 import client.data.ClientsList;
-import client.listeners.TCPListener5000;
 import client.listeners.TCPListener80;
-import client.listeners.UDPListener;
 
 /**
  * @author lenka

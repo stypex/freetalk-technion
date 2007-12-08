@@ -13,12 +13,16 @@ public class ErrorMessage extends Message {
 
 
 	public enum ErrorType {
-		CLIENT_NAME_EXISTS;
+		CLIENT_NAME_EXISTS,
+		CLIENT_DOES_NOT_EXIST;
 
 		@Override
 		public String toString() {
 			if (equals(CLIENT_NAME_EXISTS))
 				return "A client with this username already exists";
+			if (equals(CLIENT_DOES_NOT_EXIST))
+				return "The target client does not exist";
+			
 			
 			return super.toString();
 		}
@@ -26,13 +30,11 @@ public class ErrorMessage extends Message {
 		
 	}
 	
-	ConnectionId cId;
 	ErrorType eType;
 	
 	
 	public ErrorMessage(String from, String to, ConnectionId id, ErrorType type) {
-		super(from, to);
-		cId = id;
+		super(from, to, id);
 		eType = type;
 	}
 

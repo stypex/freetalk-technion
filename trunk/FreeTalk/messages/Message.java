@@ -13,12 +13,14 @@ public abstract class Message implements Serializable {
 
 	String from;
 	String to;
+	ConnectionId cId;
 	
 	
-	public Message(String from, String to) {
+	public Message(String from, String to, ConnectionId cId) {
 		super();
 		this.from = from;
 		this.to = to;
+		this.cId = cId;
 	}
 	
 	public String getFrom() {
@@ -27,5 +29,9 @@ public abstract class Message implements Serializable {
 	
 	public String getTo() {
 		return to;
+	}
+
+	public ConnectionId getCId() {
+		return cId;
 	}
 }

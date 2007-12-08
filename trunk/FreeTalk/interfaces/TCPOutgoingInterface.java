@@ -18,12 +18,15 @@ public class TCPOutgoingInterface extends OutgoingInterface {
 
 	Socket socket;
 	
-	public TCPOutgoingInterface(InetAddress ip, int port) throws IOException {
+	public TCPOutgoingInterface(InetAddress ip, int remotePort) throws IOException {
+		super(0, remotePort, ip);
 		
-		socket = new Socket(ip, port);
+		socket = new Socket(ip, remotePort);
+		setLocalPort(socket.getLocalPort());
 	}
 	
 	public TCPOutgoingInterface(Socket socket) {
+		super(socket.getLocalPort(), socket.getPort(), socket.getInetAddress());
 		this.socket = socket;
 	}
 	
@@ -56,6 +59,11 @@ public class TCPOutgoingInterface extends OutgoingInterface {
 	@Override
 	public Socket getSocket() {
 		return socket;
+	}
+
+	@Override
+	public IncomingInterface createMatching() {
+		return new TCPIncomingInterface(socket);
 	}
 
 }
