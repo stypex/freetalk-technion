@@ -28,10 +28,14 @@ import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
 import javax.swing.text.StyleContext.NamedStyle;
 
+import client.func.TalkThread;
+
 public class Chat extends JFrame {
 	//Field added automatically to avoid warning
 	private static final long serialVersionUID = 1L;
 
+	private TalkThread tt;
+	
 	private String userName;
 	private JTextPane utp;
 	private JTextPane ltp;
@@ -52,8 +56,13 @@ public class Chat extends JFrame {
 	 * @param userName - Nickname of the user on this computer.
 	 * @param destUserName - Nickname of the user with whom the chat was initiated.
 	 * @param allUsers - List of all online users
+	 * @param tt - TalkThread to which all the messages will be directed from the
+	 * chat window.
 	 */
-	public Chat(String userName, String destUserName, Object[] allUsers){
+	public Chat(String userName, String destUserName, Object[] allUsers, TalkThread tt){
+		
+		this.tt = tt;
+		
 		this.userName = userName;
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setTitle(destUserName);
@@ -87,7 +96,7 @@ public class Chat extends JFrame {
 			public void actionPerformed(ActionEvent arg0) {
 				//TODO actually here should come a function that deals with adding
 				//a new user to a chat as well.
-				moveFromComboToList();
+				moveFromComboToList((String)addToChat.getSelectedItem());
 			}
 			
 		});
@@ -117,6 +126,7 @@ public class Chat extends JFrame {
 		//as well as shown in the chat text area
 		send.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
+            	send();
             	putTextInChatWindow();
             }
         });
@@ -197,6 +207,15 @@ public class Chat extends JFrame {
 	}
 	
 	/**
+	 * delegates to TalkThread.send()
+	 * @author Arthur Kiyanovsky
+	 * Dec 8, 2007
+	 */
+	private void send(){
+		tt.send(ltp.getText());
+	}
+	
+	/**
 	 * Copies the text from where the user entered it to the chat 
 	 * text area in the correct format. 
 	 * @author Arthur Kiyanovsky
@@ -227,10 +246,9 @@ public class Chat extends JFrame {
 	 * @author Arthur Kiyanovsky
 	 * Nov 30, 2007
 	 */
-	private void moveFromComboToList(){
+	private void moveFromComboToList(String client){
 		synchronized (cbModel){
 			synchronized (lstModel) {
-				String client = (String)addToChat.getSelectedItem();
 				addToChat.removeItem(client);
 				
 				//Saving alphabetical order at insertion
@@ -262,7 +280,7 @@ public class Chat extends JFrame {
 				//Saving alphabetical order at insertion
 				int i = 1;
 				while ( i < cbModel.getSize() && 
-						client.compareTo((String)lstModel.getElementAt(i)) >= 0 )
+						client.compareTo((String)cbModel.getElementAt(i)) >= 0 )
 					++i;
 				cbModel.insertElementAt(client, i);
 		
@@ -270,6 +288,60 @@ public class Chat extends JFrame {
 					setTitle((String)lstModel.get(0));
 			}
 		}
+	}
+	
+	/**
+	 * Adds a client to the "clients that can be added" ComboBox.
+	 * @param client - Client to be added.
+	 * @author Arthur Kiyanovsky
+	 * Dec 8, 2007
+	 */
+	public void addClient(String client){
+		//Saving alphabetical order at insertion
+		int i = 1;
+		while ( i < cbModel.getSize() && 
+				client.compareTo((String)cbModel.getElementAt(i)) >= 0 )
+			++i;
+		cbModel.insertElementAt(client, i);
+	}
+	
+	/**
+	 * Adds a client to the conference call list of clients
+	 * and removes it from the "clients that can be added" ComboBox.
+	 * @param client - Client to be added.
+	 * @author Arthur Kiyanovsky
+	 * Dec 8, 2007
+	 */
+	public void addClientToSession(String client){
+		moveFromComboToList(client);
+	}
+	
+	/**
+	 * Removes a client from both "chat list" and "clients 
+	 * that can be added" ComboBox. Use this method when client
+	 * disconnected from the system (sent CLIENT_EXIT).
+	 * @param client - Client to be removed.
+	 * @author Arthur Kiyanovsky
+	 * Dec 8, 2007
+	 */
+	public void removeClient(String client){
+		synchronized (cbModel){
+			synchronized (lstModel) {
+				cbModel.removeElement(client);
+				lstModel.removeElement(client);
+			}
+		}
+	}
+	
+	/**
+	 * Removes a client from both "chat list" when the client
+	 * sent a TERMINATE message.
+	 * @param client - Client to be removed.
+	 * @author Arthur Kiyanovsky
+	 * Dec 8, 2007
+	 */
+	public void removeClientFromSession(String client){
+		moveFromListToCombo(client);
 	}
 	
 	/**
@@ -282,13 +354,4 @@ public class Chat extends JFrame {
         Date date = new Date();
         return dateFormat.format(date);
     }
-	
-	public void clientExit(String client){
-		synchronized (cbModel){
-			synchronized (lstModel) {
-				cbModel.removeElement(client);
-				lstModel.removeElement(client);
-			}
-		}
-	}
 }

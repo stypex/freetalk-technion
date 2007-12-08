@@ -22,34 +22,18 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import client.Globals;
+import client.func.TalkThread;
 
 /** 
  * @author Arthur
  * The main GUI window.
  */
 public class Main extends JFrame {
-
-	/**
-	 * @author Arthur
-	 * Represents a Runnable that runs a Chat window
-	 */
-	private class ChatRunner implements Runnable{
-		public Chat c;
-		
-		public ChatRunner(){
-			c = new Chat(userName, (String)lst.getSelectedValue(), lstModel.toArray());
-		}
-		
-		public void run() {
-            c.setVisible(true);
-          }
-	}
 	
 	//Field added automatically to avoid warning
 	private static final long serialVersionUID = 1L;
 	
-	private ArrayList<ChatRunner> chatRunners;
+	private ArrayList<TalkThread> talkThreads;
 	private String userName;
 	private JMenuBar mb;
 	private JMenu m;
@@ -65,10 +49,9 @@ public class Main extends JFrame {
 	 */
 	public Main(String[] users){
 		//Initialize all window components
-		chatRunners = new ArrayList<ChatRunner>();
+		talkThreads = new ArrayList<TalkThread>();
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		this.userName = Globals.getClientName();
-		setTitle("P2P - " + userName);
+		this.userName = null; // will be set after login
 		
 		mb = new JMenuBar();
 		m = new JMenu("File");
@@ -80,7 +63,7 @@ public class Main extends JFrame {
 		lbl = new JLabel("Online");
 		
 		b = new JButton("Chat");
-		b.setEnabled(false);
+		//b.setEnabled(false);
 		
 		//Attach exit() function to "Exit" button
 		exitmi.addActionListener(new ActionListener() {
@@ -108,7 +91,7 @@ public class Main extends JFrame {
 		//Attach chat() function to "Chat" button
 		b.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
-                chat();
+                chat((String)lst.getSelectedValue());
             }
         });
 		
@@ -151,20 +134,44 @@ public class Main extends JFrame {
 		setLocation( ( d.width - getSize().width ), 0 );
 	}
 
+	/**
+	 * Sets the userName of the user on this computer.
+	 * Shoud be called before showing the window.
+	 * @param userName - user name of teh user on this computer.
+	 * @author Arthur Kiyanovsky
+	 * Dec 8, 2007
+	 */
+	public void setUserName(String userName){
+		this.userName = userName;
+		setTitle("P2P - " + userName);
+	}
+	
+	/**
+	 * exits the main GUI window and initiates the exit procedure of the 
+	 * application.
+	 * @author Arthur Kiyanovsky
+	 * Dec 8, 2007
+	 */
 	private void exit() { 
 		 dispose();
 		 //TODO other things to be done to exit the program
 	 }
 	
-	private void chat() { 
-		ChatRunner cr = new ChatRunner();
+	/**
+	 * Initializes and shows a chat window to the given client.
+	 * @param dest - Client to which the chat window is opened.
+	 * @author Arthur Kiyanovsky
+	 * Dec 8, 2007
+	 */
+	public void chat(String dest) { 
+		TalkThread tt = new TalkThread(userName, dest, lstModel.toArray());
 		
 		/*Attach the event of closing a chat window with removing
-		the window from the list of ChatRunners*/
-		cr.c.addWindowListener(new WindowListener(){
+		the window from the list of TalkThreads*/
+		tt.c.addWindowListener(new WindowListener(){
 			
 			public void windowClosed(WindowEvent arg0) {
-				removeClosedChatRunner();
+				removeClosedTalkThread();
 			}
 			
 			//unnecessary functions that have to be implemented
@@ -176,39 +183,54 @@ public class Main extends JFrame {
 			public void windowOpened(WindowEvent arg0) {}
 		});
 		
-		chatRunners.add(cr);
-		SwingUtilities.invokeLater(cr); 
+		talkThreads.add(tt);
+		SwingUtilities.invokeLater(tt); 
 	 }
 	
 	/**
 	 * Removes the client that exited from the list of online clients 
-	 * as well as from all of the chat windows in which he was
-	 * a member of the chat.
 	 * @param client - The client that exited
 	 * @author Arthur Kiyanovsky
 	 * Nov 30, 2007
 	 */
-	public void clientExit(String client){
-		for ( ChatRunner cr1 : chatRunners){
+	public void removeClient(String client){
+		/*for ( TalkThread cr1 : talkThreads){
 			cr1.c.clientExit(client);
-		}
+		}*/
 		lstModel.removeElement(client);
 	}
 
 	/**
-	 * Removes the ChatRunner of a chat of which the window was closed
-	 * from the ChatRunners list.
+	 * Adds a new client to the list of online clients.
+	 * @param client - the client to add.
+	 * @author Arthur Kiyanovsky
+	 * Dec 8, 2007
+	 */
+	public void addClient(String client){
+		//Saving alphabetical order at insertion
+		int i = 1;
+		while ( i < lstModel.getSize() && 
+				client.compareTo((String)lstModel.getElementAt(i)) >= 0 )
+			++i;
+		lstModel.insertElementAt(client, i);
+		
+	}
+	
+	
+	/**
+	 * Removes the TalkThread of a chat of which the window was closed
+	 * from the TalkThreads list.
 	 * @author Arthur Kiyanovsky
 	 * Nov 30, 2007
 	 */
-	private void removeClosedChatRunner() {
-		ChatRunner tempCr = null;;
+	private void removeClosedTalkThread() {
+		TalkThread tempTt = null;
 		
-		for (ChatRunner cr1 : chatRunners)
-			if ( cr1.c.isDisplayable() == false ) {
-				tempCr = cr1;
+		for (TalkThread tt1 : talkThreads)
+			if ( tt1.c.isDisplayable() == false ) {
+				tempTt = tt1;
 				break;
 			}
-		chatRunners.remove(tempCr);
+		talkThreads.remove(tempTt);
 	}
 }

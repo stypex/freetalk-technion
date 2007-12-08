@@ -1,11 +1,10 @@
-/**
- * 
- */
 package client;
 
 import javax.swing.SwingUtilities;
 
+import client.data.ClientsList;
 import client.gui.Login;
+import client.gui.Main;
 import client.listeners.TCPListener5000;
 import client.listeners.TCPListener80;
 import client.listeners.UDPListener;
@@ -20,6 +19,8 @@ public class ClientMain {
 	public static TCPListener5000 tcp;
 	public static TCPListener80 tcp80;
 	public static UDPListener udp;
+	
+	private static Main mainWindow;
 	
 	/**
 	 * @param args
@@ -36,9 +37,11 @@ public class ClientMain {
 		udp.start();
 		
 		//	Start the GUI
+		mainWindow = new Main(ClientsList.getInstance().keySet().toArray(new String[0]));
+		
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
-				new Login().setVisible(true);
+				new Login(mainWindow).setVisible(true);
 			}
 		});  
 		
