@@ -3,14 +3,14 @@
  */
 package client.func;
 
+import interfaces.OutgoingInterface;
+
 import java.io.IOException;
 
-import client.Globals;
-
-import util.Consts.ResponseCode;
 import messages.ProbeAckMessage;
 import messages.ProbeMessage;
-import interfaces.OutgoingInterface;
+import util.Consts.ResponseCode;
+import client.Globals;
 
 /**
  * @author lenka

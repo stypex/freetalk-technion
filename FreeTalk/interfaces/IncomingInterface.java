@@ -4,6 +4,7 @@
 package interfaces;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.Socket;
 
 import messages.Message;
@@ -14,8 +15,18 @@ import messages.Message;
  */
 public abstract class IncomingInterface {
 
-	public IncomingInterface() {
+	int localPort;
+	int remotePort;
+	InetAddress remoteIp;
+	
+	
+
+
+	public IncomingInterface(int localPort, int remotePort, InetAddress remoteIp) {
 		super();
+		this.localPort = localPort;
+		this.remotePort = remotePort;
+		this.remoteIp = remoteIp;
 	}
 
 
@@ -40,5 +51,27 @@ public abstract class IncomingInterface {
 	 * Otherwise, will return null
 	 */
 	public abstract Socket getSocket();
-	// Ilya - trial update
+	
+	/**
+	 * Creates an outgoing interface of the same kind (UDP for
+	 * UDP, TCP for TCP) which connects with the same target. In
+	 * case of TCP they will share the same socket
+	 * @return
+	 */
+	public abstract OutgoingInterface createMatching();
+	
+
+	public int getLocalPort() {
+		return localPort;
+	}
+
+
+	public InetAddress getRemoteIp() {
+		return remoteIp;
+	}
+
+
+	public int getRemotePort() {
+		return remotePort;
+	}
 }

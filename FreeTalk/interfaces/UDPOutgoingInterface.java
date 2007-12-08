@@ -23,12 +23,13 @@ public class UDPOutgoingInterface extends OutgoingInterface {
 	
 	ConnectionId cId;
 	
-	public UDPOutgoingInterface(InetAddress ip, int port1, ConnectionId cId) {
-		// TODO Auto-generated constructor stub
+	public UDPOutgoingInterface(InetAddress ip, int localPort, int remotePort, ConnectionId cId) {
+		super(localPort, remotePort, ip);
 		this.cId = cId;
 		
+		
 		// With a special connection id
-		ackInt = new UDPIncomingInterface(cId.getAck());
+		ackInt = new UDPIncomingInterface(cId.getAck(), ip, remotePort, localPort);
 	}
 
 	/* (non-Javadoc)
@@ -66,4 +67,8 @@ public class UDPOutgoingInterface extends OutgoingInterface {
 		ackInt.accept(ack);
 	}
 
+	@Override
+	public IncomingInterface createMatching() {
+		return new UDPIncomingInterface(cId, remoteIp, remotePort, localPort);
+	}
 }

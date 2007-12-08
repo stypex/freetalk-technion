@@ -18,6 +18,7 @@ public class TCPIncomingInterface extends IncomingInterface {
 	Socket socket;
 	
 	public TCPIncomingInterface(Socket socket) {
+		super(socket.getLocalPort(), socket.getPort(), socket.getInetAddress());
 		this.socket = socket;
 	}
 
@@ -66,4 +67,8 @@ public class TCPIncomingInterface extends IncomingInterface {
 		return null;
 	}
 
+	@Override
+	public OutgoingInterface createMatching() {
+		return new TCPOutgoingInterface(socket);
+	}
 }

@@ -67,8 +67,8 @@ public class Main extends JFrame {
 		//Initialize all window components
 		chatRunners = new ArrayList<ChatRunner>();
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setTitle("P2P - " + userName);
 		this.userName = Globals.getClientName();
+		setTitle("P2P - " + userName);
 		
 		mb = new JMenuBar();
 		m = new JMenu("File");

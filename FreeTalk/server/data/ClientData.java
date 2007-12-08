@@ -13,25 +13,26 @@ import java.net.Socket;
 import java.util.LinkedList;
 import java.util.List;
 
+import messages.CallMeMessage;
 import messages.ConnectionId;
-
 import server.handler.HandlerThread;
 import util.Consts.ConnectionMethod;
 import util.Consts.ResponseCode;
 
 public class ClientData {
-	
+
 	private String name;
 	private InetAddress ip;
 	private int port1;
 	private int port2;
 	private ResponseCode port1open; 
 	private ResponseCode port2open; 
-	
+
 	private Socket tcp80;	
 	private List<HandlerThread> threads;
 
-	
+	public Socket callMeSocket;
+
 	public ClientData(String name, InetAddress ip, int port1, int port2, ResponseCode port1open, ResponseCode port2open, Socket tcp80) {
 		super();
 		this.name = name;
@@ -51,7 +52,9 @@ public class ClientData {
 
 
 	public void setIp(InetAddress ip) {
-		this.ip = ip;
+		synchronized (this) {
+			this.ip = ip;
+		}
 	}
 
 
@@ -61,7 +64,9 @@ public class ClientData {
 
 
 	public void setPort1(int port1) {
-		this.port1 = port1;
+		synchronized (this) {
+			this.port1 = port1;
+		}
 	}
 
 
@@ -71,7 +76,9 @@ public class ClientData {
 
 
 	public void setPort1open(ResponseCode port1open) {
-		this.port1open = port1open;
+		synchronized (this) {
+			this.port1open = port1open;
+		}
 	}
 
 
@@ -81,7 +88,9 @@ public class ClientData {
 
 
 	public void setPort2(int port2) {
-		this.port2 = port2;
+		synchronized (this) {
+			this.port2 = port2;
+		}
 	}
 
 
@@ -91,7 +100,9 @@ public class ClientData {
 
 
 	public void setPort2open(ResponseCode port2open) {
-		this.port2open = port2open;
+		synchronized (this) {
+			this.port2open = port2open;
+		}
 	}
 
 
@@ -101,7 +112,9 @@ public class ClientData {
 
 
 	public void setTcp80(Socket tcp80) {
-		this.tcp80 = tcp80;
+		synchronized (this) {
+			this.tcp80 = tcp80;
+		}
 	}
 
 
@@ -111,7 +124,9 @@ public class ClientData {
 
 
 	public void setThreads(List<HandlerThread> threads) {
-		this.threads = threads;
+		synchronized (this) {
+			this.threads = threads;
+		}
 	}
 
 
@@ -121,7 +136,9 @@ public class ClientData {
 
 
 	public void setName(String name) {
-		this.name = name;
+		synchronized (this) {
+			this.name = name;
+		}
 	}
 
 
@@ -133,20 +150,61 @@ public class ClientData {
 			return ConnectionMethod.UDPDirect;
 		if (isPort2open())
 			return ConnectionMethod.TCPDirect;
-		
+
 		return ConnectionMethod.Indirect;
 	}
 
-	public OutgoingInterface createOutInterface(ConnectionId cId) throws IOException {
-		
+	/**
+	 * Create an outgoing interface to this client
+	 * @param cId
+	 * @return
+	 * @throws IOException
+	 */
+	public OutgoingInterface createOutInterface(ConnectionId cId, boolean oneWay) throws IOException {
+
 		if (getConnectionMethod() == ConnectionMethod.UDPDirect)
-			return new UDPOutgoingInterface(ip, port1, cId);
+			return new UDPOutgoingInterface(ip, 80, port1, cId);
 		if (getConnectionMethod() == ConnectionMethod.TCPDirect)
 			return new TCPOutgoingInterface(ip, port2);
-		
-		return new TCPOutgoingInterface(tcp80);
+		if (oneWay)
+			return new TCPOutgoingInterface(tcp80);
+
+		return getTCP80interface(cId);
 	}
-	
+
+
+	private TCPOutgoingInterface getTCP80interface(ConnectionId cId) {
+
+		try {
+
+			Socket tcp80 = getTcp80();
+			if (tcp80 == null)
+				return null;
+
+			CallMeMessage cmm = new CallMeMessage("Server", getName(), cId);
+			callMeSocket = null;
+			new TCPOutgoingInterface(tcp80).send(cmm);
+
+
+			while (true) {
+				synchronized (this) {
+					if (callMeSocket != null)
+						break;
+				}
+				Thread.sleep(100);
+			}
+
+			return new TCPOutgoingInterface(callMeSocket);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}	
+		return null;
+	}
+
 	public ResponseCode getPort1open() {
 		return port1open;
 	}
@@ -155,12 +213,16 @@ public class ClientData {
 	public ResponseCode getPort2open() {
 		return port2open;
 	}
-	
+
 	public void addThread(HandlerThread t) {
-		threads.add(t);
+		synchronized (this) {
+			threads.add(t);
+		}
 	}
-	
+
 	public void removeThread(HandlerThread t) {
-		threads.remove(t);
+		synchronized (this) {
+			threads.remove(t);
+		}
 	}
 }

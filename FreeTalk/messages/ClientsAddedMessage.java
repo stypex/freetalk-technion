@@ -14,12 +14,10 @@ public class ClientsAddedMessage extends Message {
 
 	
 	private static final long serialVersionUID = 7178517212623327148L;
-	ConnectionId cId;
 	HashSet<String> clients;
 	
 	public ClientsAddedMessage(String from, String to, ConnectionId id, HashSet<String> clients) {
-		super(from, to);
-		cId = id;
+		super(from, to, id);
 		this.clients = clients;
 	}
 

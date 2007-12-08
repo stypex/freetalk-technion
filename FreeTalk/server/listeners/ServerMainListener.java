@@ -9,9 +9,13 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+import messages.CallMeMessage;
 import messages.Message;
 
+import server.data.ClientData;
+import server.data.ClientsHash;
 import server.handler.HandlerThread;
+import server.handler.ProbeThread;
 
 
 
@@ -39,17 +43,11 @@ public class ServerMainListener {
 		
 		ServerMainListener tcp = new ServerMainListener();
 		UDPListener80 udp = new UDPListener80();
+		ProbeThread pt = new ProbeThread();
 		
 		udp.start();
 		tcp.run();
-		
-		while (true) {
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
+		pt.start();
 	}
 
 	private void run()  {
@@ -58,6 +56,15 @@ public class ServerMainListener {
 				Socket s = ss.accept();
 				TCPIncomingInterface in = new TCPIncomingInterface(s);
 				Message m = in.receive(0);
+				
+				if (m instanceof CallMeMessage) {
+					CallMeMessage cmm = (CallMeMessage) m;
+					ClientData cd = ClientsHash.getInstance().get(cmm.getFrom());
+					synchronized (cd) {
+						cd.callMeSocket = s; 
+					}
+					continue;				
+				}
 				HandlerThread ht = HandlerThread.createHandler(m, in);
 				ht.start();
 				
