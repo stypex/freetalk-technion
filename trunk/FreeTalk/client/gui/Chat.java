@@ -2,6 +2,7 @@ package client.gui;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -60,6 +61,8 @@ public class Chat extends JFrame {
 	 * chat window.
 	 */
 	public Chat(String userName, String destUserName, Object[] allUsers, TalkThread tt){
+		
+		setIconImage(Toolkit.getDefaultToolkit().getImage("Images\\chat-48x48.png"));
 		
 		this.tt = tt;
 		

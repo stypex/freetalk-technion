@@ -1,11 +1,13 @@
 package client.gui;
 
 import java.awt.Dimension;
+import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.GroupLayout;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -37,6 +39,8 @@ public class Login extends JFrame{
 	 */
 	public Login(Main m){
 
+		setIconImage(Toolkit.getDefaultToolkit().getImage("Images\\edit-48x48.png"));
+		
 		this.m = m;
 		
 		//Initialize all window components
