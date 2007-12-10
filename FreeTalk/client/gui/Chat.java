@@ -251,12 +251,7 @@ public class Chat extends JFrame {
 			synchronized (lstModel) {
 				addToChat.removeItem(client);
 				
-				//Saving alphabetical order at insertion
-				int i = 0;
-				while ( i < lstModel.getSize() && 
-						client.compareTo((String)lstModel.getElementAt(i)) >= 0 )
-					++i;
-				lstModel.insertElementAt(client, i);
+				Func.addAlphabeticallyToLM(client,lstModel);
 				
 				addToChat.setSelectedIndex(0);
 				if (lstModel.getSize() == 2)
@@ -264,6 +259,8 @@ public class Chat extends JFrame {
 			}
 		}
 	}
+
+	
 	
 	/**
 	 * Removes a given client from the conference list of clients
@@ -277,12 +274,7 @@ public class Chat extends JFrame {
 			synchronized (lstModel) {
 				lstModel.removeElement(client);
 				
-				//Saving alphabetical order at insertion
-				int i = 1;
-				while ( i < cbModel.getSize() && 
-						client.compareTo((String)cbModel.getElementAt(i)) >= 0 )
-					++i;
-				cbModel.insertElementAt(client, i);
+				Func.addAlphabeticallyToCBM(client,cbModel);
 		
 				if (lstModel.getSize() == 1)
 					setTitle((String)lstModel.get(0));

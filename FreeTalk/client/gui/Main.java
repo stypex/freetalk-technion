@@ -33,6 +33,8 @@ public class Main extends JFrame {
 	//Field added automatically to avoid warning
 	private static final long serialVersionUID = 1L;
 	
+	//private static Main singleton; 
+	
 	private ArrayList<TalkThread> talkThreads;
 	private String userName;
 	private JMenuBar mb;
@@ -207,13 +209,7 @@ public class Main extends JFrame {
 	 * Dec 8, 2007
 	 */
 	public void addClient(String client){
-		//Saving alphabetical order at insertion
-		int i = 1;
-		while ( i < lstModel.getSize() && 
-				client.compareTo((String)lstModel.getElementAt(i)) >= 0 )
-			++i;
-		lstModel.insertElementAt(client, i);
-		
+		Func.addAlphabeticallyToLM(client, lstModel);
 	}
 	
 	
