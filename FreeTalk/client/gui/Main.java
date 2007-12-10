@@ -35,11 +35,14 @@ public class Main extends JFrame {
 	
 	//private static Main singleton; 
 	
+	public Log log;
+	
 	private ArrayList<TalkThread> talkThreads;
 	private String userName;
 	private JMenuBar mb;
 	private JMenu m;
 	private JMenuItem exitmi;
+	private JMenuItem logmi;
 	private JLabel lbl;
 	private JScrollPane s;
 	private DefaultListModel lstModel;
@@ -50,6 +53,11 @@ public class Main extends JFrame {
 	 * Builds the main window GUI
 	 */
 	public Main(String[] users){
+		
+		log = new Log();
+		
+		//log.addText("hello", true);
+		
 		//Initialize all window components
 		talkThreads = new ArrayList<TalkThread>();
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -57,7 +65,9 @@ public class Main extends JFrame {
 		
 		mb = new JMenuBar();
 		m = new JMenu("File");
+		logmi = new JMenuItem("Log");
 		exitmi = new JMenuItem("Exit");
+		m.add(logmi);
 		m.add(exitmi);
 		mb.add(m);
 		setJMenuBar(mb);
@@ -66,6 +76,18 @@ public class Main extends JFrame {
 		
 		b = new JButton("Chat");
 		//b.setEnabled(false);
+		
+		
+		//Attach exit() function to "Exit" button
+		logmi.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+            	SwingUtilities.invokeLater(new Runnable() {
+        			public void run() {
+        				log.setVisible(true);
+        			}
+        		});  
+            }
+        });
 		
 		//Attach exit() function to "Exit" button
 		exitmi.addActionListener(new ActionListener() {
