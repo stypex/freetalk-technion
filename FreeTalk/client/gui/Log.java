@@ -1,5 +1,8 @@
 package client.gui;
 
+import java.awt.Image;
+import java.awt.Toolkit;
+
 import javax.swing.GroupLayout;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
@@ -21,6 +24,8 @@ public class Log extends JFrame{
 	private JScrollPane s;
 	
 	public Log() {
+		
+		setIconImage(Toolkit.getDefaultToolkit().getImage("Images\\text-file-48x48.png"));
 		
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		
