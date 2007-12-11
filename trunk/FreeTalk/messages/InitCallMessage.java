@@ -43,6 +43,7 @@ public class InitCallMessage extends Message {
 	
 	public String toString(){
 		return super.toString() + 
+			   Func.toStringRow("Destination", dest) +
 			   Func.toStringRow("Dest. IP", destIp.getHostAddress()) +
 			   Func.toStringRow("Dest. port", destPort);
 	}

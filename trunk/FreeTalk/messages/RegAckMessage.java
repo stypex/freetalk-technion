@@ -37,6 +37,11 @@ public class RegAckMessage extends Message {
 		return port2open;
 	}
 	
-	
+	public String toString(){
+		return super.toString() + 
+		 	   Func.toStringRow("Port 1 open", port1open) +
+		 	   Func.toStringRow("Port 2 open", port2open) +
+			   Func.toStringRow("Conn. method", connectionMethod);
+	}
 
 }

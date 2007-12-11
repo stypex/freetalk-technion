@@ -49,8 +49,8 @@ public class Loginner {
 			TCPIncomingInterface in = new TCPIncomingInterface(out.getSocket());
 
 			ConnectionId cId = new ConnectionId(username, "Server");
-			RegisterMessage rm = new RegisterMessage(username, "Server", InetAddress.getLocalHost(),
-					cId, Globals.getUDPPort(), Globals.getTCPPort(), Protocol.UDP, Protocol.TCP);
+			RegisterMessage rm = new RegisterMessage(username, "Server", cId, InetAddress.getLocalHost(),
+					 Globals.getUDPPort(), Globals.getTCPPort(), Protocol.UDP, Protocol.TCP);
 
 			boolean isConnected = false;
 

@@ -9,11 +9,19 @@ import javax.swing.SwingUtilities;
 import util.Consts;
 
 import messages.CallMeMessage;
+import messages.ClientCheckMessage;
+import messages.ClientExitMessage;
 import messages.ClientsAddedMessage;
 import messages.ConAckMessage;
 import messages.ConnectMessage;
 import messages.ConnectionId;
 import messages.ErrorMessage;
+import messages.InitCallMessage;
+import messages.ProbeAckMessage;
+import messages.ProbeMessage;
+import messages.RegAckMessage;
+import messages.RegisterMessage;
+import messages.TerminationMessage;
 
 import client.data.ClientsList;
 import client.gui.Login;
@@ -39,7 +47,7 @@ public class ClientMain {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-	
+		
 		Globals.load();
 		
 		// Start the listeners
