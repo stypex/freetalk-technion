@@ -34,4 +34,14 @@ public abstract class Message implements Serializable {
 	public ConnectionId getCId() {
 		return cId;
 	}
+
+	@Override
+	public String toString() {
+		String sep = System.getProperty("line.separator");
+		String s = "Message " + getClass() + sep +
+			"From: " + from + " To: " + to + " Connection id: " + cId + sep;
+		return s;
+	}
+	
+	
 }

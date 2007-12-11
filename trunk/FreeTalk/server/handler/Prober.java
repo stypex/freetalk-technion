@@ -102,7 +102,7 @@ public class Prober {
 		try {
 			ProbeMessage pm = new ProbeMessage("Server", cd.getName(), cId);
 			out.send(pm);
-			Message m = in.receive(0);
+			Message m = in.receive(2000);
 
 			if (m instanceof ProbeAckMessage) {
 				ProbeAckMessage pam = (ProbeAckMessage) m;
