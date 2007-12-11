@@ -12,6 +12,7 @@ import java.net.Socket;
 import messages.CallMeMessage;
 import messages.Message;
 
+import server.Log;
 import server.data.ClientData;
 import server.data.ClientsHash;
 import server.handler.HandlerThread;
@@ -45,9 +46,13 @@ public class ServerMainListener {
 		UDPListener80 udp = new UDPListener80();
 		ProbeThread pt = new ProbeThread();
 		
+
+		Log log = new Log();
+		Log.init(log);
+		
 		udp.start();
-		tcp.run();
 		pt.start();
+		tcp.run();	
 	}
 
 	private void run()  {

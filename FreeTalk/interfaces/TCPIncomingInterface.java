@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.net.Socket;
 
+import util.Log;
+
 import messages.Message;
 
 /**
@@ -50,17 +52,22 @@ public class TCPIncomingInterface extends IncomingInterface {
 	@Override
 	public Message receive(int timeout) throws IOException {
 
+		
 		socket.setSoTimeout(timeout);
 		ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
 		
 		try {
+			Log.getInstance().addText("Receiving Message on TCP port: " + socket.getLocalPort(), true);
 			Object o = in.readObject();
 			
 			if (o instanceof Message) {
 				Message m = (Message) o;
+				Log.getInstance().addMessage(m);
 				return m;
 			}
 		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (NullPointerException e) {
 			e.printStackTrace();
 		}
 		

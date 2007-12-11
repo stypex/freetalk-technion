@@ -44,18 +44,6 @@ public class ClientMain {
 				new Login(mainWindow).setVisible(true);
 			}
 		});  
-		
-//		new Login().setVisible(true);
-//		
-//		while (true) {
-//			System.out.println("Hello World");
-//			try {
-//				Thread.sleep(1000);
-//			} catch (InterruptedException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//		}
 	}
 
 }

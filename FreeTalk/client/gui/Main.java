@@ -1,7 +1,6 @@
 package client.gui;
 
 import java.awt.Dimension;
-import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -36,7 +35,7 @@ public class Main extends JFrame {
 	
 	//private static Main singleton; 
 	
-	public Log log;
+	public static Log log;
 	
 	private ArrayList<TalkThread> talkThreads;
 	private String userName;
@@ -56,6 +55,7 @@ public class Main extends JFrame {
 	public Main(String[] users){
 		
 		log = new Log();
+		Log.init(log);
 		
 		setIconImage(Toolkit.getDefaultToolkit().getImage("Images\\group-of-users-48x48.png"));
 		

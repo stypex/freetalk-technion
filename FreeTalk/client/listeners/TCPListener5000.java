@@ -4,17 +4,16 @@
 package client.listeners;
 
 import interfaces.TCPIncomingInterface;
+import interfaces.TCPOutgoingInterface;
 
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
 import messages.Message;
-import java.util.List;
-import client.data.ClientsList;
-import client.data.ConferenceCallsHash;
-import client.func.TalkThread;
-import client.listeners.StoppableThread;
+import messages.ProbeMessage;
+import client.Globals;
+import client.func.SimpleFunctions;
 
 
 /**
@@ -28,7 +27,7 @@ public class TCPListener5000 extends StoppableThread {
 	public TCPListener5000() {
 		super();
 		try {
-			ss = new ServerSocket(5000);
+			ss = new ServerSocket(Globals.getTCPPort());
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -42,6 +41,8 @@ public class TCPListener5000 extends StoppableThread {
 				TCPIncomingInterface in = new TCPIncomingInterface(s);
 				Message m = in.receive(0);
 				
+				TCPOutgoingInterface out = new TCPOutgoingInterface(in.getSocket());
+				
 				String from = m.getFrom();
 				String to = m.getTo();
 				
@@ -49,6 +50,10 @@ public class TCPListener5000 extends StoppableThread {
 				System.out.println(from);
 				System.out.println("to=");
 				System.out.println(to);
+				
+				if (m instanceof ProbeMessage) {
+					SimpleFunctions.replyProbe(out, (ProbeMessage) m);
+				}
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

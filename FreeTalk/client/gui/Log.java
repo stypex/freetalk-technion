@@ -1,6 +1,5 @@
 package client.gui;
 
-import java.awt.Image;
 import java.awt.Toolkit;
 
 import javax.swing.GroupLayout;
@@ -15,21 +14,23 @@ import javax.swing.text.StyleContext.NamedStyle;
 
 import messages.Message;
 
-public class Log extends JFrame{
+public class Log extends util.Log {
 
 	//Field added automatically to avoid warning
 	private static final long serialVersionUID = 1L;
 	
+	private JFrame f;
 	private JTextPane t;
 	private JScrollPane s;
 	
 	public Log() {
 		
-		setIconImage(Toolkit.getDefaultToolkit().getImage("Images\\text-file-48x48.png"));
+		f = new JFrame();
+		f.setIconImage(Toolkit.getDefaultToolkit().getImage("Images\\text-file-48x48.png"));
 		
-		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		f.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		
-		setTitle("Log");
+		f.setTitle("Log");
 		
 		//Text areas initializations
 		t = new JTextPane();
@@ -37,8 +38,8 @@ public class Log extends JFrame{
 		t.setEditable(false);
 		
 		//Set the layout of the window
-		GroupLayout chatLayout = new GroupLayout(getContentPane());
-	    getContentPane().setLayout(chatLayout);
+		GroupLayout chatLayout = new GroupLayout(f.getContentPane());
+	    f.getContentPane().setLayout(chatLayout);
 	    chatLayout.setHorizontalGroup(
 	    		chatLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
 	        .addGroup(chatLayout.createSequentialGroup()
@@ -54,7 +55,7 @@ public class Log extends JFrame{
 	        	.addGap(10))       
 	    );
 	    
-	    pack();
+	    f.pack();
 	}
 	
 	/**
@@ -87,6 +88,11 @@ public class Log extends JFrame{
 	 * Dec 10, 2007
 	 */
 	public void addMessage(Message m){
+		
+	}
+
+	public void setVisible(boolean b) {
+		f.setVisible(b);
 		
 	}
 	

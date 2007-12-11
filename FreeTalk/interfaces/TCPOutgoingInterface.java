@@ -8,6 +8,8 @@ import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
 
+import util.Log;
+
 import messages.Message;
 
 /**
@@ -52,8 +54,10 @@ public class TCPOutgoingInterface extends OutgoingInterface {
 	@Override
 	public void send(Message message) throws IOException {
 		
+		Log.getInstance().addText("Sending Message to TCP port: " + socket.getPort(), true);
 		ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
 		out.writeObject(message);
+		Log.getInstance().addMessage(message);
 	}
 
 	@Override
