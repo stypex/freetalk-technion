@@ -20,5 +20,9 @@ public class CallMeMessage extends Message {
 		super(from, to, cId);
 		// TODO Auto-generated constructor stub
 	}
-
+	
+	public String toString(){
+		return super.toString();
+	}
+	
 }

@@ -20,5 +20,9 @@ public class ClientExitMessage extends Message {
 
 	public String getClient() {
 		return client;
-	}	
+	}
+	
+	public String toString(){
+		return super.toString() + Func.toStringRow("Client", client);
+	}
 }

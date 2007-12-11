@@ -16,7 +16,7 @@ public class ErrorMessage extends Message {
 		CLIENT_NAME_EXISTS,
 		CLIENT_DOES_NOT_EXIST;
 
-		@Override
+		/*@Override
 		public String toString() {
 			if (equals(CLIENT_NAME_EXISTS))
 				return "A client with this username already exists";
@@ -25,7 +25,7 @@ public class ErrorMessage extends Message {
 			
 			
 			return super.toString();
-		}
+		}*/
 		
 		
 	}
@@ -43,5 +43,8 @@ public class ErrorMessage extends Message {
 		return eType;
 	}
 	
-	
+	public String toString(){
+		return super.toString() + 
+			   Func.toStringRow("Error type", eType);
+	}
 }
