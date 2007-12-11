@@ -4,6 +4,7 @@
 package messages;
 
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 /**
@@ -25,5 +26,15 @@ public class ClientsAddedMessage extends Message {
 		return clients;
 	}
 	
-	
+	public String toString(){
+		String s = super.toString();
+		
+		Iterator<String> i = clients.iterator();
+		int j = 0;
+		
+		while (i.hasNext())
+			s += Func.toStringRow("Client[" + (j++) + "]",i.next());
+		
+		return s;
+	}
 }

@@ -41,5 +41,13 @@ public class ConAckMessage extends Message {
 		public int getPort() {
 			return port;
 		}
+		
+	}
+	
+	public String toString(){
+		return super.toString() + 
+			   Func.toStringRow("Dest. IP", destAddr.getHostAddress()) +
+			   Func.toStringRow("Port", connMethod.port) +
+			   Func.toStringRow("Conn. method", connMethod.cm);
 	}
 }

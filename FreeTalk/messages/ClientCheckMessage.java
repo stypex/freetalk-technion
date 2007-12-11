@@ -26,5 +26,8 @@ public class ClientCheckMessage extends Message {
 	public String getTarget() {
 		return target;
 	}
-
+	
+	public String toString(){
+		return super.toString() + Func.toStringRow("Target",target);
+	}
 }

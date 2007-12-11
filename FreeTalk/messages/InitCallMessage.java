@@ -41,5 +41,9 @@ public class InitCallMessage extends Message {
 		return destPort;
 	}
 	
-	
+	public String toString(){
+		return super.toString() + 
+			   Func.toStringRow("Dest. IP", destIp.getHostAddress()) +
+			   Func.toStringRow("Dest. port", destPort);
+	}
 }

@@ -1,6 +1,19 @@
 package client;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.HashSet;
+
 import javax.swing.SwingUtilities;
+
+import util.Consts;
+
+import messages.CallMeMessage;
+import messages.ClientsAddedMessage;
+import messages.ConAckMessage;
+import messages.ConnectMessage;
+import messages.ConnectionId;
+import messages.ErrorMessage;
 
 import client.data.ClientsList;
 import client.gui.Login;
@@ -26,7 +39,7 @@ public class ClientMain {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		
+	
 		Globals.load();
 		
 		// Start the listeners

@@ -21,4 +21,9 @@ public class ConnectMessage extends Message {
 	public String getConnTo() {
 		return connTo;
 	}
+	
+	public String toString(){
+		return super.toString() + 
+			   Func.toStringRow("Conn. to", connTo);
+	}
 }
