@@ -21,7 +21,7 @@ public class RegisterMessage extends Message {
 	Protocol connType1;
 	Protocol connType2;
 	
-	public RegisterMessage(String from, String to, InetAddress clientIp, ConnectionId id, int port1, int port2, Protocol connType1, Protocol connType2) {
+	public RegisterMessage(String from, String to, ConnectionId id, InetAddress clientIp,  int port1, int port2, Protocol connType1, Protocol connType2) {
 		super(from, to, id);
 		this.clientIp = clientIp;
 		this.port1 = port1;
@@ -48,5 +48,14 @@ public class RegisterMessage extends Message {
 
 	public int getPort2() {
 		return port2;
+	}
+	
+	public String toString(){
+		return super.toString() + 
+			   Func.toStringRow("Client IP", clientIp.getHostAddress()) +
+			   Func.toStringRow("Port1 num", port1) +
+			   Func.toStringRow("Conn. type1", connType1) +
+			   Func.toStringRow("Port2 num", port2) +
+			   Func.toStringRow("Conn. type2", connType2);
 	}
 }

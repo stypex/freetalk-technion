@@ -26,5 +26,8 @@ public class ProbeAckMessage extends Message {
 		return rCode;
 	}
 	
-	
+	public String toString(){
+		return super.toString() + 
+			   Func.toStringRow("Response code", rCode);
+	}
 }

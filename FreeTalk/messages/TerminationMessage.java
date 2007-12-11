@@ -16,4 +16,7 @@ public class TerminationMessage extends Message {
 		super(from, to, cId);
 	}
 	
+	public String toString(){
+		return super.toString();
+	}
 }

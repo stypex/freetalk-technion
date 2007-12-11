@@ -36,11 +36,14 @@ public abstract class Message implements Serializable {
 	}
 
 	@Override
-	public String toString() {
+	public String toString(){
 		String sep = System.getProperty("line.separator");
-		String s = "Message " + getClass() + sep +
-			"From: " + from + " To: " + to + " Connection id: " + cId + sep;
-		return s;
+		//next 2 rows get the Class name without the package name before it
+		String p = this.getClass().getPackage().getName();
+		return this.getClass().getName().substring(p.length()+1) + sep +
+			   Func.toStringRow("From",from) +
+		       Func.toStringRow("To",to) +
+		       Func.toStringRow("Connection ID",cId);
 	}
 	
 	

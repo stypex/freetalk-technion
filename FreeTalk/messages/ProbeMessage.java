@@ -14,4 +14,8 @@ public class ProbeMessage extends Message {
 	public ProbeMessage(String from, String to, ConnectionId cId) {
 		super(from, to, cId);
 	}
+	
+	public String toString(){
+		return super.toString();
+	}
 }
