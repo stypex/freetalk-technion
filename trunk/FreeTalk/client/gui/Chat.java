@@ -29,6 +29,7 @@ import javax.swing.text.StyleContext;
 import javax.swing.text.StyleContext.NamedStyle;
 
 import client.Globals;
+import client.data.ClientsList;
 import client.func.TalkThread;
 
 public class Chat extends JFrame {
@@ -59,7 +60,7 @@ public class Chat extends JFrame {
 	 * @param tt - TalkThread to which all the messages will be directed from the
 	 * chat window.
 	 */
-	public Chat(String destUserName, Object[] allUsers, TalkThread tt){
+	public Chat(String destUserName, TalkThread tt){
 		
 		setIconImage(Toolkit.getDefaultToolkit().getImage("Images\\chat-48x48.png"));
 		
@@ -87,7 +88,7 @@ public class Chat extends JFrame {
 		//Create ComboBox of users that can be added to chat
 		cbModel = new DefaultComboBoxModel();
 		cbModel.addElement("Add user to chat");
-		for (Object u : allUsers)
+		for (Object u : ClientsList.getInstance().keySet())
 			if ((String)u != destUserName)
 				cbModel.addElement((String)u);
 		addToChat = new JComboBox (cbModel);
@@ -129,7 +130,7 @@ public class Chat extends JFrame {
 		send.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
             	send();
-            	putTextInChatWindow();
+            	moveTextToChatWindow();
             }
         });
 		
@@ -223,24 +224,32 @@ public class Chat extends JFrame {
 	 * @author Arthur Kiyanovsky
 	 * Nov 30, 2007
 	 */
-	private void putTextInChatWindow() { 		
+	private void moveTextToChatWindow() { 		
+		putTextInChatWindow(ltp.getText(), userName);
+		
+		ltp.setText(null);
+		ltp.requestFocusInWindow();
+	 }
+	
+	/**
+	 * Adds text to the chat window
+	 * @param text
+	 */
+	public void putTextInChatWindow(String text, String from) {
 		Document d = utp.getDocument();
 		StyleContext sc = new StyleContext();
 		NamedStyle s = sc.new NamedStyle();
 		StyleConstants.setBold(s, true);
 		
 		try {
-			d.insertString(d.getLength(), userName + " <" + getDateTime() + ">\n", s);
+			d.insertString(d.getLength(), from + " <" + getDateTime() + ">\n", s);
 			StyleConstants.setBold(s, false);
-			d.insertString(d.getLength(), ltp.getText() + "\n\n", s);
+			d.insertString(d.getLength(), text + "\n\n", s);
 		} catch (BadLocationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		ltp.setText(null);
-		ltp.requestFocusInWindow();
-	 }
+	}
 	
 	/**
 	 * Removes the selected client from the "Add client to conference 

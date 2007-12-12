@@ -11,18 +11,15 @@ import java.net.BindException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-import messages.ClientsAddedMessage;
 import messages.Message;
-import messages.ProbeMessage;
 import client.Globals;
-import client.func.SimpleFunctions;
 
 
 /**
  * @author Ilya
  *
  */
-public class TCPListener5000 extends StoppableThread {
+public class TCPListener5000 extends ClientListener {
 
 	ServerSocket ss;
 
@@ -58,14 +55,8 @@ public class TCPListener5000 extends StoppableThread {
 
 				TCPOutgoingInterface out = new TCPOutgoingInterface(in.getSocket());
 
-				if (m instanceof ProbeMessage) {
-					SimpleFunctions.replyProbe(out, (ProbeMessage) m);
-				}
-				if (m instanceof ClientsAddedMessage) {
-					ClientsAddedMessage cam = (ClientsAddedMessage) m;
-					SimpleFunctions.addClients(cam.getClients());
-
-				}
+				receiveMessage(m, in, out);
+				
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

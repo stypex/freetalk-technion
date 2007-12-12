@@ -84,7 +84,7 @@ public class Log extends util.Log {
 
 	/**
 	 * Adds a message to the log with the date and time of adding it.
-	 * @param m - message to be added to the log.
+	 * @param origM - message to be added to the log.
 	 * @author Arthur Kiyanovsky
 	 * Dec 10, 2007
 	 */

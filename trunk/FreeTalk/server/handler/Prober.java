@@ -11,6 +11,7 @@ import interfaces.UDPIncomingInterface;
 import interfaces.UDPOutgoingInterface;
 
 import java.io.IOException;
+import java.net.SocketTimeoutException;
 
 import messages.ConnectionId;
 import messages.Message;
@@ -102,7 +103,14 @@ public class Prober {
 		try {
 			ProbeMessage pm = new ProbeMessage("Server", cd.getName(), cId);
 			out.send(pm);
-			Message m = in.receive(2000);
+			Message m = null;
+			try {
+				m = in.receive(2000);
+			} catch (SocketTimeoutException e) {
+				return ResponseCode.BAD;
+			} catch (IOException e) {
+				return ResponseCode.BAD;
+			}
 
 			if (m instanceof ProbeAckMessage) {
 				ProbeAckMessage pam = (ProbeAckMessage) m;

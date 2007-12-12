@@ -9,7 +9,7 @@ import java.net.Socket;
 
 import messages.ConnectionId;
 import messages.Message;
-import server.data.ThreadsHash;
+import util.ThreadsHash;
 
 /**
  * @author lenka
@@ -60,7 +60,7 @@ public class UDPIncomingInterface extends IncomingInterface {
 	/**
 	 * Will be called by other classes and threads to insert a
 	 * new message into the queue.
-	 * @param m
+	 * @param origM
 	 */
 	public void accept(Message m) {
 		//		 TODO Auto-generated method stub

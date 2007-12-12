@@ -1,7 +1,7 @@
 /**
  * 
  */
-package server.data;
+package util;
 
 import interfaces.IncomingInterface;
 import interfaces.UDPIncomingInterface;

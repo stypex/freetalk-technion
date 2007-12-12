@@ -14,7 +14,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-import client.Globals;
 import client.func.Loginner;
 
 /**
@@ -138,7 +137,7 @@ public class Login extends JFrame{
 
 			SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
-					m.setUserName(Globals.getClientName());
+					m.setUserName(t.getText());
 					m.setVisible(true);
 				}
 			}); 
