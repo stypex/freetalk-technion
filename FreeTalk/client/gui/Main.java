@@ -170,7 +170,7 @@ public class Main extends JFrame {
 	 */
 	public void setUserName(String userName){
 		this.userName = userName;
-		setTitle("P2P - " + userName);
+		setTitle("P2P - " + this.userName);
 	}
 	
 	/**
@@ -191,7 +191,7 @@ public class Main extends JFrame {
 	 * Dec 8, 2007
 	 */
 	public void chat(String dest) { 
-		TalkThread tt = new TalkThread(dest, lstModel.toArray());
+		TalkThread tt = new TalkThread(dest, null);
 		
 		/*Attach the event of closing a chat window with removing
 		the window from the list of TalkThreads*/
@@ -211,7 +211,8 @@ public class Main extends JFrame {
 		});
 		
 		talkThreads.add(tt);
-		SwingUtilities.invokeLater(tt); 
+//		SwingUtilities.invokeLater(tt);
+		tt.start();
 	 }
 	
 	/**

@@ -1,5 +1,7 @@
 package interfaces;
 
+import java.io.IOException;
+
 import messages.ConnectionId;
 import client.Globals;
 
@@ -18,4 +20,18 @@ public class TCP80IncomingInterface extends UDPIncomingInterface {
 		// TODO Auto-generated constructor stub
 	}
 
+	@Override
+	public OutgoingInterface createMatching() {
+		TCPOutgoingInterface out = null;		
+		try {
+			out = new TCPOutgoingInterface(Globals.getServerIP(), 80);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return out;
+	}
+
+	
 }

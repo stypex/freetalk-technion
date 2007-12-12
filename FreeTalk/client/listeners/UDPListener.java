@@ -7,6 +7,6 @@ package client.listeners;
  * @author lenka
  *
  */
-public class UDPListener extends StoppableThread {
+public class UDPListener extends ClientListener {
 
 }

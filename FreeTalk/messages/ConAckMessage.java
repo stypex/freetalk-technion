@@ -3,6 +3,7 @@
  */
 package messages;
 
+import java.io.Serializable;
 import java.net.InetAddress;
 
 import util.Consts.ConnectionMethod;
@@ -24,7 +25,9 @@ public class ConAckMessage extends Message {
 		this.connMethod = connMethod;
 	}
 	
-	public static class ConnMethod {
+	public static class ConnMethod implements Serializable {
+		
+		private static final long serialVersionUID = -7767133257107765949L;
 		ConnectionMethod cm;
 		int port;
 		
@@ -49,5 +52,13 @@ public class ConAckMessage extends Message {
 			   Func.toStringRow("Dest. IP", destAddr.getHostAddress()) +
 			   Func.toStringRow("Port", connMethod.port) +
 			   Func.toStringRow("Conn. method", connMethod.cm);
+	}
+
+	public ConnMethod getConnMethod() {
+		return connMethod;
+	}
+
+	public InetAddress getDestAddr() {
+		return destAddr;
 	}
 }

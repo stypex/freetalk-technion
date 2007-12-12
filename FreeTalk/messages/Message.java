@@ -45,6 +45,14 @@ public abstract class Message implements Serializable {
 		       Func.toStringRow("To",to) +
 		       Func.toStringRow("Connection ID",cId);
 	}
+
+	public void setTo(String to) {
+		this.to = to;
+	}
+
+	public void setCId(ConnectionId id) {
+		cId = id;
+	}
 	
 	
 }
