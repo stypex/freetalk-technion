@@ -16,6 +16,9 @@ public class TalkThread extends Thread {
 	
 	public Chat c;
 	
+	String dest;
+	
+	
 	/**
 	 * @param userName - Name of the client on this computer.
 	 * @param dest - Name of the client in the destination computer with
@@ -23,8 +26,8 @@ public class TalkThread extends Thread {
 	 * @param allUsers - a list of all the users that are online except
 	 * userName but including dest. 
 	 */
-	public TalkThread(String userName, String dest, Object[] allUsers){
-		c = new Chat(userName, dest, allUsers, this);
+	public TalkThread(String dest, Object[] allUsers){
+		c = new Chat(dest, allUsers, this);
 		
 		/*Attach the event of closing a chat window with the actions
 		 * taken when it happens*/
@@ -45,8 +48,14 @@ public class TalkThread extends Thread {
 	}
 	
 	public void run() {
+		doConnect(dest);
         c.setVisible(true);
       }
+
+	private void doConnect(String dest2) {
+		// TODO Auto-generated method stub
+		
+	}
 
 	/**
 	 * Sends a message to all the participants of the chat.
@@ -57,6 +66,14 @@ public class TalkThread extends Thread {
 	public void send(String msg){	
 		//TODO I'm empty :(
 		System.out.println(msg);
+	}
+
+	public void addClientToGUI(String client) {
+		c.addClient(client);
+	}
+
+	public void removeClientFromGUI(String client) {
+		c.removeClient(client);
 	}
 	
 }

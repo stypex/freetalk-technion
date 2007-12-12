@@ -107,9 +107,9 @@ public class Prober {
 			if (m instanceof ProbeAckMessage) {
 				ProbeAckMessage pam = (ProbeAckMessage) m;
 
-				if (pam.getCId() == cId &&
-						pam.getFrom() == cd.getName() &&
-						pam.getRCode() == ResponseCode.OK) {
+				if (pam.getCId().equals(cId) &&
+						pam.getFrom().equals(cd.getName()) &&
+						pam.getRCode().equals(ResponseCode.OK)) {
 
 					return pam.getRCode();
 				}

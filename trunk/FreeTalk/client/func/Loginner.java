@@ -9,7 +9,6 @@ import interfaces.TCPOutgoingInterface;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.LinkedList;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -26,7 +25,6 @@ import util.Consts.Protocol;
 import util.Consts.ResponseCode;
 import client.ClientMain;
 import client.Globals;
-import client.data.ClientsList;
 import client.listeners.TCPListener80;
 
 /**
@@ -45,6 +43,8 @@ public class Loginner {
 	public boolean doLogin(String username) {
 
 		try {
+			Globals.setClientName(username);
+			
 			TCPOutgoingInterface out = new TCPOutgoingInterface(Globals.getServerIP(), 80);
 			TCPIncomingInterface in = new TCPIncomingInterface(out.getSocket());
 
@@ -77,9 +77,10 @@ public class Loginner {
 			} else if (reply instanceof ProbeMessage) {
 				ProbeMessage pm = (ProbeMessage)reply;
 				SimpleFunctions.replyProbe(out, pm);
+				
+				reply = in.receive(0);
 			}
-
-			reply = in.receive(0);
+			
 			
 			// RegAck handle
 			if (!(reply instanceof RegAckMessage)) {
@@ -107,9 +108,8 @@ public class Loginner {
 			
 			ClientsAddedMessage cam = (ClientsAddedMessage) reply;
 			
-			for (String client : cam.getClients())
-				ClientsList.getInstance().put(client, new LinkedList<TalkThread>());
-
+			SimpleFunctions.addClients(cam.getClients());
+			
 			// TCP80 Thread handle
 			if (ram.getConnectionMethod() == ConnectionMethod.Indirect) {
 				ClientMain.tcp80 = new TCPListener80(out.getSocket());
@@ -118,8 +118,6 @@ public class Loginner {
 				out.close();
 				in.close();
 			}
-
-			Globals.setClientName(username);
 			
 			return true;
 			

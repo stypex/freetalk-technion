@@ -74,6 +74,7 @@ public class Log extends util.Log {
 		
 		try {
 			d.insertString(d.getLength(), s, ns);
+			d.insertString(d.getLength(), System.getProperty("line.separator"), ns);
 		} catch (BadLocationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -89,6 +90,14 @@ public class Log extends util.Log {
 	 */
 	public void addMessage(Message m){
 		
+		Document d = t.getDocument();
+		
+		try {
+			d.insertString(d.getLength(), m.toString(), null);
+		} catch (BadLocationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	public void setVisible(boolean b) {

@@ -191,7 +191,7 @@ public class Main extends JFrame {
 	 * Dec 8, 2007
 	 */
 	public void chat(String dest) { 
-		TalkThread tt = new TalkThread(userName, dest, lstModel.toArray());
+		TalkThread tt = new TalkThread(dest, lstModel.toArray());
 		
 		/*Attach the event of closing a chat window with removing
 		the window from the list of TalkThreads*/
@@ -221,10 +221,12 @@ public class Main extends JFrame {
 	 * Nov 30, 2007
 	 */
 	public void removeClient(String client){
-		/*for ( TalkThread cr1 : talkThreads){
-			cr1.c.clientExit(client);
-		}*/
+		for ( TalkThread tt : talkThreads){
+			tt.removeClientFromGUI(client);
+		}
 		lstModel.removeElement(client);
+		
+		
 	}
 
 	/**
@@ -235,6 +237,9 @@ public class Main extends JFrame {
 	 */
 	public void addClient(String client){
 		Func.addAlphabeticallyToLM(client, lstModel);
+		
+		for (TalkThread tt : talkThreads)
+			tt.addClientToGUI(client);
 	}
 	
 	
