@@ -76,4 +76,8 @@ public class Globals {
 	public static void setClientName(String clientName) {
 		ClientName = clientName;
 	}
+
+	public static void setTCPPort(int port) {
+		prop.setProperty("TCPPort", String.valueOf(port));		
+	}
 }

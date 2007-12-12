@@ -50,6 +50,8 @@ public class ServerMainListener {
 		Log log = new Log();
 		Log.init(log);
 		
+		Log.getInstance().addText("Starting server.", true);
+		
 		udp.start();
 		pt.start();
 		tcp.run();	

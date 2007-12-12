@@ -3,7 +3,7 @@
  */
 package client.data;
 
-import java.util.List;
+import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 
 import client.func.TalkThread;
@@ -15,7 +15,7 @@ import client.func.TalkThread;
  * @author lenka
  *
  */
-public class ClientsList extends ConcurrentHashMap<String, List<TalkThread>> {
+public class ClientsList extends ConcurrentHashMap<String, ArrayList<TalkThread>> {
 
 	private static final long serialVersionUID = 3222918723101144580L;
 

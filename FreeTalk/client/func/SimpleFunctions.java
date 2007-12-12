@@ -6,11 +6,16 @@ package client.func;
 import interfaces.OutgoingInterface;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Set;
 
 import messages.ProbeAckMessage;
 import messages.ProbeMessage;
 import util.Consts.ResponseCode;
+import client.ClientMain;
 import client.Globals;
+import client.data.ClientsList;
+import client.gui.Main;
 
 /**
  * @author lenka
@@ -26,6 +31,16 @@ public class SimpleFunctions {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
+	}
+
+	public static void addClients(Set<String> clients) {
+		
+		Main m = ClientMain.getMainWindow();
+		
+		for (String c : clients) {
+			ClientsList.getInstance().put(c, new ArrayList<TalkThread>());
+			m.addClient(c);
 		}
 	}
 }

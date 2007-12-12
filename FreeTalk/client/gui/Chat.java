@@ -28,6 +28,7 @@ import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
 import javax.swing.text.StyleContext.NamedStyle;
 
+import client.Globals;
 import client.func.TalkThread;
 
 public class Chat extends JFrame {
@@ -54,18 +55,17 @@ public class Chat extends JFrame {
 	/**
 	 * Builds the chat GUI window.
 	 * @param userName - Nickname of the user on this computer.
-	 * @param destUserName - Nickname of the user with whom the chat was initiated.
 	 * @param allUsers - List of all online users
 	 * @param tt - TalkThread to which all the messages will be directed from the
 	 * chat window.
 	 */
-	public Chat(String userName, String destUserName, Object[] allUsers, TalkThread tt){
+	public Chat(String destUserName, Object[] allUsers, TalkThread tt){
 		
 		setIconImage(Toolkit.getDefaultToolkit().getImage("Images\\chat-48x48.png"));
 		
 		this.tt = tt;
 		
-		this.userName = userName;
+		this.userName = Globals.getClientName();
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setTitle(destUserName);
 		
