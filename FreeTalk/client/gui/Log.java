@@ -1,9 +1,17 @@
 package client.gui;
 
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.FileWriter;
+import java.io.IOException;
 
 import javax.swing.GroupLayout;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 import javax.swing.text.BadLocationException;
@@ -22,8 +30,15 @@ public class Log extends util.Log {
 	private JFrame f;
 	private JTextPane t;
 	private JScrollPane s;
+	private JMenuBar mb;
+	private JMenu m;
+	private JMenuItem exitmi;
+	private JMenuItem savemi;
+	private JFileChooser fc;
 	
 	public Log() {
+		
+		fc = new JFileChooser();
 		
 		f = new JFrame();
 		f.setIconImage(Toolkit.getDefaultToolkit().getImage("Images\\text-file-48x48.png"));
@@ -31,6 +46,38 @@ public class Log extends util.Log {
 		f.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		
 		f.setTitle("Log");
+		
+		mb = new JMenuBar();
+		m = new JMenu("File");
+		savemi = new JMenuItem("Save as");
+		exitmi = new JMenuItem("Exit");
+		m.add(savemi);
+		m.add(exitmi);
+		mb.add(m);
+		f.setJMenuBar(mb);
+		
+		
+		//Attach exit() function to "Exit" button
+		exitmi.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                exit();
+            }
+        });
+		
+		//Attach exit() function to "Save" button of the file chooser
+		fc.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                save();
+            }
+        });
+		
+		//Attach exit() function to "Save as" button
+		savemi.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+            	fc.showSaveDialog(f);
+            }
+        });
+		
 		
 		//Text areas initializations
 		t = new JTextPane();
@@ -105,6 +152,32 @@ public class Log extends util.Log {
 
 	public void setVisible(boolean b) {
 		f.setVisible(b);
+	}
+	
+	private void exit() { 
+		 f.dispose();
+		 //TODO other things to be done to exit the program
+	 }
+
+
+	/**
+	 * writes the Log in the log window to a selected in the GUI file.
+	 * @author Arthur Kiyanovsky
+	 * Dec 14, 2007
+	 */
+	private void save() {
+		Document d = t.getDocument();
+		try {
+			FileWriter fw = new FileWriter(fc.getSelectedFile());
+			fw.write(d.getText(0, d.getLength()));
+			fw.flush();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (BadLocationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 }

@@ -5,9 +5,6 @@ import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
@@ -280,16 +277,12 @@ public class Chat extends JFrame {
 	 * Nov 30, 2007
 	 */
 	private void moveFromListToCombo(String client){
-		synchronized (cbModel){
-			synchronized (lstModel) {
-				lstModel.removeElement(client);
-				
-				Func.addAlphabeticallyToCBM(client,cbModel);
+		lstModel.removeElement(client);
 		
-				if (lstModel.getSize() == 1)
-					setTitle((String)lstModel.get(0));
-			}
-		}
+		Func.addAlphabeticallyToCBM(client,cbModel);
+
+		if (lstModel.getSize() == 1)
+			setTitle((String)lstModel.get(0));
 	}
 	
 	/**
@@ -299,12 +292,7 @@ public class Chat extends JFrame {
 	 * Dec 8, 2007
 	 */
 	public void addClient(String client){
-		//Saving alphabetical order at insertion
-		int i = 1;
-		while ( i < cbModel.getSize() && 
-				client.compareTo((String)cbModel.getElementAt(i)) >= 0 )
-			++i;
-		cbModel.insertElementAt(client, i);
+		Func.addAlphabeticallyToCBM(client,cbModel);
 	}
 	
 	/**
@@ -328,12 +316,8 @@ public class Chat extends JFrame {
 	 * Dec 8, 2007
 	 */
 	public void removeClient(String client){
-		synchronized (cbModel){
-			synchronized (lstModel) {
-				cbModel.removeElement(client);
-				lstModel.removeElement(client);
-			}
-		}
+		cbModel.removeElement(client);
+		lstModel.removeElement(client);
 	}
 	
 	/**

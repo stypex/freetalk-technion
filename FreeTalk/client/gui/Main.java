@@ -59,8 +59,6 @@ public class Main extends JFrame {
 		
 		setIconImage(Toolkit.getDefaultToolkit().getImage("Images\\group-of-users-48x48.png"));
 		
-		//log.addText("hello", true);
-		
 		//Initialize all window components
 		talkThreads = new ArrayList<TalkThread>();
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -78,10 +76,10 @@ public class Main extends JFrame {
 		lbl = new JLabel("Online");
 		
 		b = new JButton("Chat");
-		//b.setEnabled(false);
+		b.setEnabled(false);
 		
 		
-		//Attach exit() function to "Exit" button
+		//Attach showing the log function to "Log" button
 		logmi.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
             	SwingUtilities.invokeLater(new Runnable() {
@@ -221,7 +219,9 @@ public class Main extends JFrame {
 		});
 		
 		talkThreads.add(tt);
+
 	}
+
 	
 	/**
 	 * Removes the client that exited from the list of online clients 
