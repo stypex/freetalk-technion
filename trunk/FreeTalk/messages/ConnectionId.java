@@ -26,7 +26,7 @@ public class ConnectionId implements Serializable {
 
 	public ConnectionId(String side1, String side2) {
 		super();
-		text = side1 + ":" + side2 + ":" + new Date() + ":" + connectionIdSN;
+		text = side1 + ":" + side2 + ":" + util.Func.getDateTime() + ":" + connectionIdSN;
 		connectionIdSN++;
 	}
 

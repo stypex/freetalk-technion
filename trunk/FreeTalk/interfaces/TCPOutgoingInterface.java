@@ -54,7 +54,7 @@ public class TCPOutgoingInterface extends OutgoingInterface {
 	@Override
 	public void send(Message message) throws IOException {
 		
-		Log.getInstance().addText("Sending Message to TCP port: " + socket.getPort(), true);
+		Log.getInstance().addDatedText("Sending Message to TCP port: " + socket.getPort(), true);
 		ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
 		out.writeObject(message);
 		Log.getInstance().addMessage(message);

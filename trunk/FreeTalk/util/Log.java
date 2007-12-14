@@ -22,7 +22,7 @@ public abstract class Log {
 		return log;
 	}
 	
-	public abstract void addText(String s, boolean bold);
+	public abstract void addDatedText(String s, boolean bold);
 	
 	public abstract void setVisible(boolean b);
 	

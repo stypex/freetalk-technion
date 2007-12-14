@@ -44,7 +44,7 @@ public class Log extends util.Log {
 	    		chatLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
 	        .addGroup(chatLayout.createSequentialGroup()
 	        	.addGap(10)
-	        	.addComponent(s, GroupLayout.DEFAULT_SIZE, 300, GroupLayout.DEFAULT_SIZE)
+	        	.addComponent(s, GroupLayout.DEFAULT_SIZE, 400, GroupLayout.DEFAULT_SIZE)
 	        	.addGap(10))  
 	    );
 	    chatLayout.setVerticalGroup(
@@ -58,6 +58,7 @@ public class Log extends util.Log {
 	    f.pack();
 	}
 	
+	
 	/**
 	 * Adds text to the log window.
 	 * @param s - text to be added.
@@ -65,7 +66,7 @@ public class Log extends util.Log {
 	 * @author Arthur Kiyanovsky
 	 * Dec 10, 2007
 	 */
-	public void addText(String s, boolean bold){
+	private void addText(String s, boolean bold){
 		Document d = t.getDocument();
 		StyleContext sc = new StyleContext();
 		NamedStyle ns = sc.new NamedStyle();
@@ -79,30 +80,31 @@ public class Log extends util.Log {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+	}
+	
+	/**
+	 * Adds text to the log window with the date it was added in.
+	 * @param s - text to be added.
+	 * @param bold - true if the text is to be shown bold false otherwise.
+	 * @author Arthur Kiyanovsky
+	 * Dec 10, 2007
+	 */
+	public void addDatedText(String s, boolean bold){
+		addText(s + " <" + util.Func.getDateTime() + ">",bold);
 	}
 
 	/**
-	 * Adds a message to the log with the date and time of adding it.
+	 * Adds a message to the log.
 	 * @param origM - message to be added to the log.
 	 * @author Arthur Kiyanovsky
 	 * Dec 10, 2007
 	 */
 	public void addMessage(Message m){
-		
-		Document d = t.getDocument();
-		
-		try {
-			d.insertString(d.getLength(), m.toString(), null);
-		} catch (BadLocationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		addText(m.toString(),false);
 	}
 
 	public void setVisible(boolean b) {
 		f.setVisible(b);
-		
 	}
 	
 }
