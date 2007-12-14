@@ -242,7 +242,7 @@ public class Chat extends JFrame {
 		StyleConstants.setBold(s, true);
 		
 		try {
-			d.insertString(d.getLength(), from + " <" + getDateTime() + ">\n", s);
+			d.insertString(d.getLength(), from + " <" + util.Func.getDateTime() + ">\n", s);
 			StyleConstants.setBold(s, false);
 			d.insertString(d.getLength(), text + "\n\n", s);
 		} catch (BadLocationException e) {
@@ -347,14 +347,4 @@ public class Chat extends JFrame {
 		moveFromListToCombo(client);
 	}
 	
-	/**
-	 * @return - Current date and time in dd/MM/yyyy HH:mm:ss format
-	 * @author Arthur Kiyanovsky
-	 * Nov 30, 2007
-	 */
-	private String getDateTime() {
-        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-        Date date = new Date();
-        return dateFormat.format(date);
-    }
 }

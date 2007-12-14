@@ -36,28 +36,14 @@ public class Log extends util.Log {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see util.Log#addMessage(messages.Message)
+	/**
+	 * Adds the string s to the Log.
+	 * @param s
+	 * @param bold
+	 * @author Arthur Kiyanovsky
+	 * Dec 14, 2007
 	 */
-	@Override
-	public void addMessage(Message m) {
-		try {
-			w.write(m.toString());
-			w.newLine();
-			w.flush();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} 
-
-	}
-
-	/* (non-Javadoc)
-	 * @see util.Log#addText(java.lang.String, boolean)
-	 */
-	@Override
-	public void addText(String s, boolean bold) {
-		
+	private void addText(String s, boolean bold){
 		try {
 			w.write(s);
 			w.newLine();
@@ -66,6 +52,22 @@ public class Log extends util.Log {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see util.Log#addMessage(messages.Message)
+	 */
+	@Override
+	public void addMessage(Message m) {
+		addText(m.toString(),false);
+	}
+
+	/* (non-Javadoc)
+	 * @see util.Log#addText(java.lang.String, boolean)
+	 */
+	@Override
+	public void addDatedText(String s, boolean bold) {
+		addText(s + " <" + util.Func.getDateTime() + ">" ,bold);
 	}
 
 	/* (non-Javadoc)

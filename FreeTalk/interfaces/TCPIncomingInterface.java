@@ -57,7 +57,7 @@ public class TCPIncomingInterface extends IncomingInterface {
 		ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
 		
 		try {
-			Log.getInstance().addText("Receiving Message on TCP port: " + socket.getLocalPort(), true);
+			Log.getInstance().addDatedText("Receiving Message on TCP port: " + socket.getLocalPort(), true);
 			Object o = in.readObject();
 			
 			if (o instanceof Message) {
