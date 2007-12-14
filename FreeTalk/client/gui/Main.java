@@ -193,6 +193,16 @@ public class Main extends JFrame {
 	public void chat(String dest) { 
 		TalkThread tt = new TalkThread(dest, null);
 		
+//		SwingUtilities.invokeLater(tt);
+		tt.start();
+	 }
+
+	/**
+	 * Needs to be called when a new TalkTeread is created.
+	 * Called from the TalkThread constructor
+	 * @param tt
+	 */
+	public void registerTalkThread(TalkThread tt) {
 		/*Attach the event of closing a chat window with removing
 		the window from the list of TalkThreads*/
 		tt.c.addWindowListener(new WindowListener(){
@@ -211,9 +221,7 @@ public class Main extends JFrame {
 		});
 		
 		talkThreads.add(tt);
-//		SwingUtilities.invokeLater(tt);
-		tt.start();
-	 }
+	}
 	
 	/**
 	 * Removes the client that exited from the list of online clients 

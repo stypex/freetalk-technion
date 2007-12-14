@@ -17,6 +17,9 @@ public class Func {
 	 * Dec 10, 2007
 	 */
 	public static void addAlphabeticallyToLM(String client, DefaultListModel lstModel) {
+		if (lstModel.contains(client))
+			return;
+		
 		int i = 0;
 		while ( i < lstModel.getSize() && 
 				client.compareTo((String)lstModel.getElementAt(i)) >= 0 )
@@ -32,6 +35,9 @@ public class Func {
 	 * Dec 10, 2007
 	 */
 	public static void addAlphabeticallyToCBM(String client, DefaultComboBoxModel cbModel) {
+		if (cbModel.getIndexOf(client) >= 0)
+			return;
+		
 		int i = 1; //not including the first "add client to chat" dummy row.
 		while ( i < cbModel.getSize() && 
 				client.compareTo((String)cbModel.getElementAt(i)) >= 0 )

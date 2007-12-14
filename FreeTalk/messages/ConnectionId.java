@@ -41,6 +41,13 @@ public class ConnectionId implements Serializable {
 	}
 	
 	public ConnectionId getAck() {
-		return new ConnectionId(text + ":" + "ack");
+		return new ConnectionId(toString() + ":" + "ack");
 	}
+
+	@Override
+	public int hashCode() {
+		return toString().hashCode();
+	}
+	
+	
 }

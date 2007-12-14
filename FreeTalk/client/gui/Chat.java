@@ -97,9 +97,8 @@ public class Chat extends JFrame {
 		addToChat.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent arg0) {
-				//TODO actually here should come a function that deals with adding
-				//a new user to a chat as well.
-				moveFromComboToList((String)addToChat.getSelectedItem());
+				String client = (String)addToChat.getSelectedItem();
+				addClientToSession(client);
 			}
 			
 		});
@@ -257,14 +256,14 @@ public class Chat extends JFrame {
 	 * @author Arthur Kiyanovsky
 	 * Nov 30, 2007
 	 */
-	private void moveFromComboToList(String client){
+	public void moveFromComboToList(String client){
 		synchronized (cbModel){
 			synchronized (lstModel) {
-				addToChat.removeItem(client);
+				cbModel.removeElement(client);
 				
 				Func.addAlphabeticallyToLM(client,lstModel);
 				
-				addToChat.setSelectedIndex(0);
+//				addToChat.setSelectedIndex(0);
 				if (lstModel.getSize() == 2)
 					setTitle("Conference");
 			}
@@ -315,7 +314,8 @@ public class Chat extends JFrame {
 	 * @author Arthur Kiyanovsky
 	 * Dec 8, 2007
 	 */
-	public void addClientToSession(String client){
+	private void addClientToSession(String client){
+		tt.addclientToSession(client);
 		moveFromComboToList(client);
 	}
 	

@@ -15,19 +15,23 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.SocketTimeoutException;
 import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
+import messages.AddClientMessage;
 import messages.ConAckMessage;
 import messages.ConnectMessage;
 import messages.ConnectionId;
+import messages.ErrorMessage;
 import messages.InitCallMessage;
 import messages.JoinTalkMessage;
 import messages.Message;
 import messages.TerminationMessage;
 import messages.TextMessage;
 import util.Consts.ConnectionMethod;
+import client.ClientMain;
 import client.Globals;
 import client.data.ConferenceCallsHash;
 import client.gui.Chat;
@@ -46,9 +50,9 @@ public class TalkThread extends StoppableThread {
 	
 	ConnectionId ccid;
 	
-	HashMap<String, IncomingInterface> ins;
-	HashMap<String, OutgoingInterface> outs;
-	HashMap<String, ConnectionId> cons;
+	ConcurrentHashMap<String, IncomingInterface> ins;
+	ConcurrentHashMap<String, OutgoingInterface> outs;
+	ConcurrentHashMap<String, ConnectionId> cons;
 	
 	
 	// For sending messages directly to this thread
@@ -69,9 +73,9 @@ public class TalkThread extends StoppableThread {
 		
 		dirLock = new Integer(0);
 		
-		ins = new HashMap<String, IncomingInterface>();
-		outs = new HashMap<String, OutgoingInterface>();
-		cons = new HashMap<String, ConnectionId>();
+		ins = new ConcurrentHashMap<String, IncomingInterface>();
+		outs = new ConcurrentHashMap<String, OutgoingInterface>();
+		cons = new ConcurrentHashMap<String, ConnectionId>();
 		
 		if (m instanceof InitCallMessage) {
 			InitCallMessage icm = (InitCallMessage) m;
@@ -115,6 +119,8 @@ public class TalkThread extends StoppableThread {
 			public void windowIconified(WindowEvent arg0) {}
 			public void windowOpened(WindowEvent arg0) {}
 		});
+		
+		ClientMain.getMainWindow().registerTalkThread(this);
 	}
 	
 	public void run() {
@@ -129,6 +135,8 @@ public class TalkThread extends StoppableThread {
 		});
         
         receiveMessages();
+        
+		cleanUp();
       }
 
 	/**
@@ -155,7 +163,20 @@ public class TalkThread extends StoppableThread {
 				}
 			}
 		}
+	}
+
+	/**
+	 * Called when the thread is exitting
+	 */
+	private void cleanUp() {
 		
+		ConferenceCallsHash.getInstance().remove(ccid);
+		
+		for (IncomingInterface in : ins.values())
+			in.close();
+		
+		for (OutgoingInterface out : outs.values())
+			out.close();
 	}
 
 	/**
@@ -166,34 +187,54 @@ public class TalkThread extends StoppableThread {
 	 */
 	public void handleMessage(Message m, IncomingInterface in) {
 		
-		if (m instanceof JoinTalkMessage) {			
-			ins.put(m.getFrom(), in);
-			outs.put(m.getFrom(), in.createMatching());
-			
-			synchronized (dirLock) {
-				dirM = m;
-				dirLock.notify();
-			}
-			return;
-		}
-		
-		if (m instanceof TextMessage) {
-			TextMessage tm = (TextMessage) m;
-			c.putTextInChatWindow(tm.getText(), tm.getFrom());
-			return;
-		}
-		if (m instanceof TerminationMessage) {
-			
-			for (String client : cons.keySet()) {
+		try {
+			if (m instanceof JoinTalkMessage) {			
+				ins.put(m.getFrom(), in);
+				outs.put(m.getFrom(), in.createMatching());
+				cons.put(m.getFrom(), m.getCId());
 				
-				if (cons.get(client).equals(m.getCId())) {
-					ins.get(client).close();
-					ins.remove(client);
-					outs.get(client).close();
-					outs.remove(client);
-					c.removeClientFromSession(client);
+				synchronized (dirLock) {
+					dirM = m;
+					dirLock.notify();
 				}
+				c.moveFromComboToList(m.getFrom());
+				return;
 			}
+			
+			if (m instanceof TextMessage) {
+				TextMessage tm = (TextMessage) m;
+				c.putTextInChatWindow(tm.getText(), tm.getFrom());
+				return;
+			}
+			if (m instanceof TerminationMessage) {
+				
+				for (String client : cons.keySet()) {
+					
+					if (cons.get(client).equals(m.getCId())) {
+						ins.get(client).close();
+						ins.remove(client);
+						outs.get(client).close();
+						outs.remove(client);
+						cons.remove(client);
+						c.removeClientFromSession(client);
+					}
+				}
+				return;
+			}
+			
+			if (m instanceof AddClientMessage) {
+				AddClientMessage acm = (AddClientMessage) m;
+				
+				String client = acm.getClient();
+				ConnectionId cid = new ConnectionId(Globals.getClientName(), 
+						client);
+				cons.put(client, cid);
+				doConnect(client, cid);
+				c.moveFromComboToList(client);
+				return;
+			}
+		} catch (RuntimeException e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -215,6 +256,12 @@ public class TalkThread extends StoppableThread {
 			
 			Message mes = in.receive(0);
 			
+			if (mes instanceof ErrorMessage) {
+				ErrorMessage err = (ErrorMessage) mes;
+				JOptionPane.showMessageDialog(c, err.getEType().toString(), "Connection Error", JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+			
 			if (!(mes instanceof ConAckMessage)) {
 				JOptionPane.showMessageDialog(c, "Received wrong message.", "Connection Error", JOptionPane.ERROR_MESSAGE);
 				return;
@@ -223,12 +270,12 @@ public class TalkThread extends StoppableThread {
 			ConAckMessage cam = (ConAckMessage) mes;
 			if (!registerNewPartner(cam.getConnMethod().getCm(), 
 					cam.getDestAddr(), cam.getConnMethod().getPort(), 
-					in, out, cid, dest))
+					in, out, cid, dest2))
 				return; // TCP reverse. No need for Join Talk
 			
-			JoinTalkMessage jtm = new JoinTalkMessage(Globals.getClientName(), dest, cid, ccid);
+			JoinTalkMessage jtm = new JoinTalkMessage(Globals.getClientName(), dest2, cid, ccid);
 			
-			sendToAll(jtm);
+			sendToOne(dest2, jtm);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -243,15 +290,20 @@ public class TalkThread extends StoppableThread {
 		
 		for (String client : outs.keySet()) {
 			m.setTo(client);
-			m.setCId(cons.get(client));
+			m.setCId(cons.get(client));			
 			
-			try {
-				outs.get(client).send(m);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			sendToOne(client, m);
 		}
+	}
+
+	private void sendToOne(String client, Message m) {
+		try {
+			outs.get(client).send(m);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 
 	/**
@@ -288,6 +340,7 @@ public class TalkThread extends StoppableThread {
 		
 		outs.put(name, out);
 		ins.put(name, out.createMatching());
+		cons.put(name, cid);
 		
 		return true;
 	}
@@ -310,5 +363,23 @@ public class TalkThread extends StoppableThread {
 	public void removeClientFromGUI(String client) {
 		c.removeClient(client);
 	}
+
+	public void addclientToSession(String client) {
+		
+		if (cons.containsKey(client)) {
+			JOptionPane.showMessageDialog(c, "The client is already a member of the chat.", 
+					"Client Error", JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+		
+		AddClientMessage acm = new AddClientMessage(Globals.getClientName(), "", null, client);
+		
+		sendToAll(acm);
+		ConnectionId cid = new ConnectionId(Globals.getClientName(), client);
+		cons.put(client, cid);
+		
+		doConnect(client, cid);
+	}
+	
 	
 }
