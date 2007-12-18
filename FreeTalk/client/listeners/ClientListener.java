@@ -10,7 +10,6 @@ import messages.InitCallMessage;
 import messages.JoinTalkMessage;
 import messages.Message;
 import messages.ProbeMessage;
-import client.ClientMain;
 import client.data.ConferenceCallsHash;
 import client.func.SimpleFunctions;
 import client.func.TalkThread;
