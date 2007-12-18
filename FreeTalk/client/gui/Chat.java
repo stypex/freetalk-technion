@@ -1,5 +1,6 @@
 package client.gui;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Toolkit;
@@ -12,11 +13,13 @@ import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextPane;
+import javax.swing.border.BevelBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.BadLocationException;
@@ -49,7 +52,8 @@ public class Chat extends JFrame {
 	private JComboBox addToChat;
 	private DefaultComboBoxModel cbModel;
 	private JScrollPane rsp;
-	
+	private JPanel statusP;
+	private JLabel statusL;
 	/**
 	 * Builds the chat GUI window.
 	 * @param userName - Nickname of the user on this computer.
@@ -66,6 +70,11 @@ public class Chat extends JFrame {
 		this.userName = Globals.getClientName();
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setTitle(destUserName);
+		statusP = new JPanel();
+		statusP.setBorder(new BevelBorder(BevelBorder.LOWERED));
+		statusP.setLayout(new BorderLayout());
+		statusL = new JLabel();
+		statusP.add(statusL, BorderLayout.WEST);
 		
 		//Text areas initializations
 		utp = new JTextPane();
@@ -101,7 +110,7 @@ public class Chat extends JFrame {
 		});
 		
 		
-		send = new JButton("           Send          ");
+		send = new JButton("Send");
 		send.setEnabled(false);
 		
 		//This part doesn't allow sending text that is only whitespaces
@@ -171,19 +180,25 @@ public class Chat extends JFrame {
 	        .addGroup(chatLayout.createSequentialGroup()
 	        	.addGap(10)
 	        	.addComponent(sp2, GroupLayout.DEFAULT_SIZE, 450, GroupLayout.DEFAULT_SIZE)
-	        	.addGap(10))  
+	        	.addGap(10))
+	        .addGroup(chatLayout.createSequentialGroup()
+	        	.addComponent(statusP, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE))
 	    );
 	    chatLayout.setVerticalGroup(
 	    		chatLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
 	        .addGroup(chatLayout.createSequentialGroup()
 	        	.addGap(10)
 		        .addComponent(sp2, GroupLayout.DEFAULT_SIZE, 300, GroupLayout.DEFAULT_SIZE)
-	        	.addGap(10))       
+	        	.addGap(10)
+	        	.addComponent(statusP, 20, 20, 20))
 	    );
 		
 		pack();
 		
-		setMinimumSize(new Dimension(0,120));
+		//set the minimum dimensions of the different components in the window
+		send.setMinimumSize(new Dimension(p.getWidth(), 20));
+		p.setMinimumSize(new Dimension(p.getWidth(), addToChat.getHeight()*2 + send.getHeight()));
+		setMinimumSize(new Dimension( 50 + p.getWidth() + usp.getMinimumSize().width, 80 + addToChat.getHeight()*2 + statusP.getHeight()));
 		
 		//Set window position
 	    Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
@@ -260,7 +275,6 @@ public class Chat extends JFrame {
 				
 				Func.addAlphabeticallyToLM(client,lstModel);
 				
-//				addToChat.setSelectedIndex(0);
 				if (lstModel.getSize() == 2)
 					setTitle("Conference");
 			}
@@ -321,7 +335,8 @@ public class Chat extends JFrame {
 	}
 	
 	/**
-	 * Removes a client from both "chat list" when the client
+	 * Removes a client from "chat list" and puts it back to
+	 * "clients that can be added" ComboBox  when the client
 	 * sent a TERMINATE message.
 	 * @param client - Client to be removed.
 	 * @author Arthur Kiyanovsky
@@ -329,6 +344,10 @@ public class Chat extends JFrame {
 	 */
 	public void removeClientFromSession(String client){
 		moveFromListToCombo(client);
+	}
+	
+	public void setStatusBarText(String s){
+		statusL.setText(" " + s);
 	}
 	
 }
