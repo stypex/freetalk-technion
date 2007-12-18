@@ -14,7 +14,6 @@ import java.awt.event.WindowListener;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.SocketTimeoutException;
-import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.swing.JOptionPane;
@@ -128,12 +127,6 @@ public class TalkThread extends StoppableThread {
 			doConnect(dest, ccid);
 		}
 		
-		SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
-				c.setVisible(true);
-			}
-		});
-        
         receiveMessages();
         
 		cleanUp();
@@ -202,6 +195,13 @@ public class TalkThread extends StoppableThread {
 			}
 			
 			if (m instanceof TextMessage) {
+				if ( !c.isVisible() )
+					SwingUtilities.invokeLater(new Runnable() {
+						public void run() {
+							c.setVisible(true);
+						}
+					});
+				
 				TextMessage tm = (TextMessage) m;
 				c.putTextInChatWindow(tm.getText(), tm.getFrom());
 				return;
