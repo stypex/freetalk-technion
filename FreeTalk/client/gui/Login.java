@@ -15,6 +15,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import client.func.Loginner;
+import client.func.ProbeMonitor;
 
 /**
  * @author Arthur
@@ -141,8 +142,18 @@ public class Login extends JFrame{
 					m.setVisible(true);
 				}
 			}); 
+			
 			dispose(); 
 		}
 	}
 
+	
+	public void setUserName(String name) {
+		t.setText(name);
+	}
+	
+	public void pressOk() {
+		if (b.isEnabled())
+			b.doClick();
+	}
 }

@@ -23,8 +23,11 @@ public class Consts {
 		TCPDirect,
 		UDPDirect,
 		Indirect,
-		TCPReverse;
+		TCPReverse,
+		None;
 	}
+	
+	public static final int PROBE_WAIT = 10000;
 }
 
 

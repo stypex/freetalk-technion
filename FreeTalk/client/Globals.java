@@ -20,7 +20,7 @@ public class Globals {
 
 	static Properties prop = new Properties();
 	
-	public static String ClientName;
+	private static String ClientName;
 	
 	public static void load() {
 		try {

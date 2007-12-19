@@ -13,6 +13,9 @@ import server.data.ClientData;
 import server.data.ClientsHash;
 
 /**
+ * Removes the client, sends CLIENT_EXIT messages.
+ * Should be used after receiving a CLIENT_EXIT message or
+ * if a probe failed
  * @author lenka
  *
  */
@@ -26,8 +29,13 @@ public class ClientRemover {
 		this.cId = cId;
 	}
 
+	/**
+	 * Haldles client exit
+	 */
 	public void execute() {
 		try {
+			// Go over all the other clients and send them 
+			// the CLIENT_EXIT message
 			for (String c : ClientsHash.getInstance().keySet()) {
 				
 				if (c.equals(client))
@@ -43,11 +51,17 @@ public class ClientRemover {
 					if (cd.getTcp80() == null)
 						oi.close();
 					
-					for (HandlerThread ht : cd.getThreads())
-						ht.doStop();
+					
 				}
 			}
 			
+			// Close all the threads that are handling this client
+			ClientData cd = ClientsHash.getInstance().get(client);
+			
+			for (HandlerThread ht : cd.getThreads())
+				ht.doStop();
+			
+			// Remove the client itself
 			ClientsHash.getInstance().remove(client);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

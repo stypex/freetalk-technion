@@ -9,10 +9,9 @@ import interfaces.TCPOutgoingInterface;
 import java.io.IOException;
 
 import messages.ClientCheckMessage;
-import messages.ConAckMessage;
+import messages.ConnectMessage;
 import messages.ConnectionId;
 import messages.ErrorMessage;
-import messages.ConAckMessage.ConnMethod;
 import messages.ErrorMessage.ErrorType;
 import server.data.ClientData;
 import server.data.ClientsHash;
@@ -26,7 +25,7 @@ public class ClientCheckHandler extends HandlerThread {
 	ClientCheckMessage ccm;
 
 	ConnectionId cId;
-	
+
 	/**
 	 * @param client
 	 * @param in
@@ -34,7 +33,7 @@ public class ClientCheckHandler extends HandlerThread {
 	 */
 	public ClientCheckHandler(ClientCheckMessage ccm, IncomingInterface in) {
 		super(ccm.getFrom(), in, new TCPOutgoingInterface(in.getSocket()));
-		
+
 		this.ccm = ccm;
 		this.cId = ccm.getCId();
 	}
@@ -43,31 +42,36 @@ public class ClientCheckHandler extends HandlerThread {
 		super.run();
 
 		try {
-			ClientData cd = ClientsHash.getInstance().get(ccm.getFrom());
+			ClientData cd = ClientsHash.getInstance().get(ccm.getTarget());
 			if (cd == null) {
-				ErrorMessage em = new ErrorMessage("Server", ccm.getFrom(), 
+				ErrorMessage em = new ErrorMessage("Server", ccm.getTarget(), 
 						ccm.getCId(), ErrorType.CLIENT_DOES_NOT_EXIST);
 				out.send(em);
 				return;
 			}
 
-			synchronized (cd) {
-				Prober p = new Prober(cd, ccm.getCId());
-				p.execute();
-				
-				ConnMethod com = ConnectionHandler.calcConnType(ccm.getFrom(), ccm.getTarget());
-				ConAckMessage cam = new ConAckMessage("Server", ccm.getFrom(), 
-						ccm.getCId(), cd.getIp(), com);
-				out.send(cam);
-			}
-			
+			ClientData cdFrom = ClientsHash.getInstance().get(ccm.getFrom());
+
+			Prober p = new Prober(cd, ccm.getCId());
+			p.execute();
+
+			p = new Prober(cdFrom, ccm.getCId());
+			p.execute();
+
+			// Now we just activate the connection handler
+			ConnectMessage cm = 
+				new ConnectMessage(ccm.getFrom(), ccm.getTo(), 
+						ccm.getCId(), ccm.getTarget(), ccm.getCCid());
+
+			ConnectionHandler ch = new ConnectionHandler(cm, in);
+
+			ch.start();
+
 		} catch (IOException e) {
 			if (!isStopped)
 				e.printStackTrace();
 		} finally {
 			unregisterForAllClients();
-			in.close();
-			out.close();
 		}
 	}
 }

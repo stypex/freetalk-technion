@@ -6,6 +6,7 @@ package server.handler;
 import messages.ConnectionId;
 import server.data.ClientData;
 import server.data.ClientsHash;
+import util.Consts;
 
 
 /**
@@ -32,7 +33,7 @@ public class ProbeThread extends HandlerThread {
 			}
 			
 			try {
-				Thread.sleep(60000);
+				Thread.sleep(Consts.PROBE_WAIT);
 			} catch (InterruptedException e) {}
 		}
 	}

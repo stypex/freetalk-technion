@@ -31,7 +31,7 @@ public class MessagesToString {
 	public static void main(String[] args) {
 		System.out.println(new CallMeMessage("1","2",new ConnectionId("1","2")));
 		
-		System.out.println(new ClientCheckMessage("1","2",new ConnectionId("1","2"),"3"));
+		System.out.println(new ClientCheckMessage("1","2",new ConnectionId("1","2"),"3",new ConnectionId("1","2")));
 		
 		System.out.println(new ClientExitMessage("1","2",new ConnectionId("1","2"),"3"));
 		
@@ -50,12 +50,13 @@ public class MessagesToString {
 			e.printStackTrace();
 		}
 		
-		System.out.println(new ConnectMessage("1","2",new ConnectionId("1","2"),"3"));
+		ConnectionId cid = new ConnectionId("1","2");
+		System.out.println(new ConnectMessage("1","2",cid,"3",cid));
 		
 		System.out.println(new ErrorMessage("1","2",new ConnectionId("1","2"),ErrorMessage.ErrorType.CLIENT_NAME_EXISTS));
 
 		try {
-			System.out.println(new InitCallMessage("1","2",new ConnectionId("1","2"),"3",InetAddress.getByName("1.2.3.4"),189));
+			System.out.println(new InitCallMessage("1","2",new ConnectionId("1","2"),"3",InetAddress.getByName("1.2.3.4"),189, new ConnectionId("1","2")));
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

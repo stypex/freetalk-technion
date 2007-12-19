@@ -112,12 +112,20 @@ public class Loginner {
 			
 			// TCP80 Thread handle
 			if (ram.getConnectionMethod() == ConnectionMethod.Indirect) {
+				if (ClientMain.tcp80 != null)
+					ClientMain.tcp80.doStop();
+				
 				ClientMain.tcp80 = new TCPListener80(out.getSocket());
 			}
 			else {
 				out.close();
 				in.close();
 			}
+			
+
+			// Start the probe monitor
+			ProbeMonitor pm = new ProbeMonitor();
+			pm.start();
 			
 			return true;
 			

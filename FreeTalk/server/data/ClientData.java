@@ -16,6 +16,7 @@ import java.util.List;
 import messages.CallMeMessage;
 import messages.ConnectionId;
 import server.handler.HandlerThread;
+import util.Consts;
 import util.Consts.ConnectionMethod;
 import util.Consts.ResponseCode;
 
@@ -26,13 +27,17 @@ public class ClientData {
 	private int port1;
 	private int port2;
 	private ResponseCode port1open; 
-	private ResponseCode port2open; 
+	private ResponseCode port2open;
+	private ResponseCode port80open; 
 
 	private Socket tcp80;	
 	private List<HandlerThread> threads;
 
 	public Socket callMeSocket;
 
+	private long lastProbed;
+	private boolean probeFailed;
+	
 	public ClientData(String name, InetAddress ip, int port1, int port2, ResponseCode port1open, ResponseCode port2open, Socket tcp80) {
 		super();
 		this.name = name;
@@ -41,8 +46,12 @@ public class ClientData {
 		this.port2 = port2;
 		this.port1open = port1open;
 		this.port2open = port2open;
+		this.port80open = tcp80 != null ? 
+				ResponseCode.OK : ResponseCode.BAD;
 		this.tcp80 = tcp80;
 		this.threads = new LinkedList<HandlerThread>();
+		this.lastProbed = 0;
+		this.probeFailed = false;
 	}
 
 
@@ -93,7 +102,6 @@ public class ClientData {
 		}
 	}
 
-
 	public boolean isPort2open() {
 		return port2open != ResponseCode.BAD;
 	}
@@ -104,8 +112,20 @@ public class ClientData {
 			this.port2open = port2open;
 		}
 	}
+	
+
+	public boolean isPort80open() {
+		return port80open != ResponseCode.BAD;
+	}
 
 
+	public void setPort80open(ResponseCode port80open) {
+		synchronized (this) {
+			this.port80open = port80open;
+		}
+	}
+
+	
 	public Socket getTcp80() {
 		return tcp80;
 	}
@@ -114,6 +134,11 @@ public class ClientData {
 	public void setTcp80(Socket tcp80) {
 		synchronized (this) {
 			this.tcp80 = tcp80;
+			
+			if (tcp80 == null)
+				setPort80open(ResponseCode.BAD);
+			else
+				setPort80open(ResponseCode.OK);
 		}
 	}
 
@@ -150,8 +175,10 @@ public class ClientData {
 			return ConnectionMethod.UDPDirect;
 		if (isPort2open())
 			return ConnectionMethod.TCPDirect;
-
-		return ConnectionMethod.Indirect;
+		if (isPort80open())
+			return ConnectionMethod.Indirect;
+		
+		return ConnectionMethod.None;
 	}
 
 	/**
@@ -213,6 +240,10 @@ public class ClientData {
 	public ResponseCode getPort2open() {
 		return port2open;
 	}
+	
+	public ResponseCode getPort80open() {
+		return port80open;
+	}
 
 	public void addThread(HandlerThread t) {
 		synchronized (this) {
@@ -224,5 +255,36 @@ public class ClientData {
 		synchronized (this) {
 			threads.remove(t);
 		}
+	}
+	
+	/**
+	 * Register successful probe
+	 */
+	public void setProbed() {
+		synchronized (this) {
+			probeFailed = false;
+			lastProbed = System.currentTimeMillis();
+		}
+	}
+	
+	/**
+	 * Call when a probe can't reach the client
+	 * @return true if it's time to remove this client
+	 */
+	public boolean setCantProbe() {
+		synchronized (this) {
+			long currTime = System.currentTimeMillis();
+			
+			if (currTime - lastProbed < Consts.PROBE_WAIT)
+				return false;
+			
+			lastProbed = currTime;
+			
+			if (probeFailed == false)
+				probeFailed = true;
+			else
+				return true;
+		}
+		return false;
 	}
 }

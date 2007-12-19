@@ -52,6 +52,8 @@ public class TCPIncomingInterface extends IncomingInterface {
 	@Override
 	public Message receive(int timeout) throws IOException {
 
+		if (socket.isClosed())
+			return null;
 		
 		socket.setSoTimeout(timeout);
 		ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
