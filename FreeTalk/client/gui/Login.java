@@ -15,7 +15,6 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import client.func.Loginner;
-import client.func.ProbeMonitor;
 
 /**
  * @author Arthur

@@ -35,6 +35,8 @@ public class Loginner {
 
 	JFrame login;
 	
+	static private ProbeMonitor pm;
+	
 	public Loginner(JFrame login) {
 		super();
 		this.login = login;
@@ -124,8 +126,10 @@ public class Loginner {
 			
 
 			// Start the probe monitor
-			ProbeMonitor pm = new ProbeMonitor();
-			pm.start();
+			if (pm == null) {
+				pm = new ProbeMonitor();
+				pm.start();
+			}
 			
 			return true;
 			
