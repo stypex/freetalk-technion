@@ -39,7 +39,7 @@ public abstract class ClientListener extends StoppableThread {
 			TalkThread tt = ConferenceCallsHash.getInstance().get(jtm.getCcid());
 			
 			if (tt == null) {
-				tt = new TalkThread(m.getFrom(), m);
+				tt = new TalkThread(m.getFrom(), jtm);
 			}
 			tt.handleMessage(m, in);
 			
@@ -47,9 +47,19 @@ public abstract class ClientListener extends StoppableThread {
 				tt.start();	
 			return;
 		}
-		if (m instanceof InitCallMessage) {					
-			TalkThread tt = new TalkThread(m.getFrom(), m);
-			tt.start();
+		if (m instanceof InitCallMessage) {		
+			InitCallMessage icm = (InitCallMessage)m;
+			
+			TalkThread tt = 
+				ConferenceCallsHash.getInstance().get(icm.getCCid());
+			
+			if (tt == null) {
+				tt = new TalkThread(m.getFrom(), null);
+			}
+			tt.handleMessage(m, in);
+			
+			if (tt.getState().equals(State.NEW))
+				tt.start();
 			return;
 		}
 	}

@@ -62,7 +62,8 @@ public class ConnectionHandler extends HandlerThread {
 
 					synchronized (cd1) {
 						ic = new InitCallMessage("Server", cd.getName(), 
-								cId, cm.getFrom(), cd1.getIp(), cd1.getPort2());
+								cId, cm.getFrom(), cd1.getIp(), cd1.getPort2(),
+								cm.getCCid());
 					}
 
 					out2 = cd.createOutInterface(cId, true);
@@ -73,6 +74,8 @@ public class ConnectionHandler extends HandlerThread {
 				if (!com.getCm().equals(ConnectionMethod.Indirect))
 					return;
 
+				// From this point on we handle the 
+				// indirect connection
 				registerForClient(cd.getName());
 				
 				out2 = cd.createOutInterface(cId, false);
@@ -125,8 +128,11 @@ public class ConnectionHandler extends HandlerThread {
 					return new ConnMethod(ConnectionMethod.TCPDirect, cd2.getPort2());
 				if (cd1.isPort2open())
 					return new ConnMethod(ConnectionMethod.TCPReverse, cd2.getPort2());
-
-				return new ConnMethod(ConnectionMethod.Indirect, 80);
+				if (cd2.isPort1open() || cd2.isPort80open()) // Server can get to cd2
+					return new ConnMethod(ConnectionMethod.Indirect, 80);
+				
+				// No connection possible
+				return new ConnMethod(ConnectionMethod.None, 80);
 			}
 		}
 	}

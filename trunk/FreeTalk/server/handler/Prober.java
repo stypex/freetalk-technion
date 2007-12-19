@@ -39,15 +39,27 @@ public class Prober {
 		synchronized (cd) {
 			boolean isUDP = (checkUDP() != ResponseCode.BAD);
 			boolean isTCP = (checkTCP() != ResponseCode.BAD);
+			
+			boolean isTCP80 = false;
+			
+			// Failed both checks
+			if (!isUDP && !isTCP)
+				// Has a tcp80 connection - check that one
+				if (cd.getTcp80() != null) {
+					isTCP80 = (checkTCP80() != ResponseCode.BAD);
 
-			if (!isUDP && !isTCP && cd.getTcp80() != null) {
-				boolean isTCP80 = (checkTCP80() != ResponseCode.BAD);
-
-				if (!isTCP80) {
-					ClientRemover cr = new ClientRemover(cd.getName(), cId);
-					cr.execute();
+				if (!isTCP80) { // No success			
+					// Check if it's time to do total client deletion
+					if (cd.setCantProbe()) { 
+						ClientRemover cr = 
+							new ClientRemover(cd.getName(), cId);
+						cr.execute();
+					}
+					return;
 				}
 			}
+
+			cd.setProbed(); // Register successful probe
 		}
 	}
 
@@ -60,7 +72,7 @@ public class Prober {
 		synchronized (cd.getTcp80()) {
 			check = checkPort(out, in);
 		}
-		cd.setPort2open(check);
+		cd.setPort80open(check);
 		return check;
 	}
 

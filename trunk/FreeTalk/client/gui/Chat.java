@@ -104,7 +104,8 @@ public class Chat extends JFrame {
 
 			public void actionPerformed(ActionEvent arg0) {
 				String client = (String)addToChat.getSelectedItem();
-				addClientToSession(client);
+				if (!client.equals("Add user to chat"));
+					addClientToSession(client);
 			}
 			
 		});
@@ -275,8 +276,7 @@ public class Chat extends JFrame {
 				
 				Func.addAlphabeticallyToLM(client,lstModel);
 				
-				if (lstModel.getSize() == 2)
-					setTitle("Conference");
+				setTitle();
 			}
 		}
 	}
@@ -295,8 +295,7 @@ public class Chat extends JFrame {
 		
 		Func.addAlphabeticallyToCBM(client,cbModel);
 
-		if (lstModel.getSize() == 1)
-			setTitle((String)lstModel.get(0));
+		setTitle();
 	}
 	
 	/**
@@ -344,10 +343,21 @@ public class Chat extends JFrame {
 	 */
 	public void removeClientFromSession(String client){
 		moveFromListToCombo(client);
+		
+		setTitle();
 	}
 	
 	public void setStatusBarText(String s){
 		statusL.setText(" " + s);
 	}
 	
+	private void setTitle() {
+		
+		if (lstModel.getSize() >= 2)
+			setTitle("Conference");
+		else if (lstModel.getSize() == 1)
+			setTitle(lstModel.get(0).toString());
+		else 
+			setTitle("Nobody");
+	}
 }

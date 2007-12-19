@@ -3,6 +3,7 @@ package client;
 import javax.swing.SwingUtilities;
 
 import client.data.ClientsList;
+import client.func.ProbeMonitor;
 import client.gui.Login;
 import client.gui.Main;
 import client.listeners.TCPListener5000;
@@ -21,6 +22,8 @@ public class ClientMain {
 	
 	private static Main mainWindow;
 	
+	public static long lastProbed;
+	
 	/**
 	 * @param args
 	 */
@@ -35,6 +38,8 @@ public class ClientMain {
 		tcp.start();
 		udp.start();
 		
+		lastProbed = System.currentTimeMillis();
+		
 		//	Start the GUI
 		mainWindow = new Main(ClientsList.getInstance().keySet().toArray(new String[0]));
 		
@@ -43,6 +48,7 @@ public class ClientMain {
 				new Login(mainWindow).setVisible(true);
 			}
 		});  
+		
 	}
 
 	public static Main getMainWindow() {

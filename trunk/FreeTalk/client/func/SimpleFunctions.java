@@ -28,6 +28,7 @@ public class SimpleFunctions {
 				"Server", pm.getCId(), ResponseCode.OK);
 		try {
 			out.send(pam);
+			ClientMain.lastProbed = System.currentTimeMillis();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
