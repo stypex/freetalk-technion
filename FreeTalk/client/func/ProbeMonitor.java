@@ -3,12 +3,10 @@
  */
 package client.func;
 
-import javax.swing.SwingUtilities;
-
+import util.Consts;
 import client.ClientMain;
 import client.Globals;
 import client.gui.Login;
-import util.Consts;
 
 /**
  * This class will check how often the client is probed.
@@ -39,15 +37,15 @@ public class ProbeMonitor extends Thread {
 			if (now - ClientMain.lastProbed > Consts.PROBE_WAIT * 2) {
 				
 				// Do the login again with the same user name
-				SwingUtilities.invokeLater(new Runnable() {
-					public void run() {
+//				SwingUtilities.invokeLater(new Runnable() {
+//					public void run() {
 						Login l =
 							new Login(ClientMain.getMainWindow());
 						l.setVisible(true);
 						l.setUserName(Globals.getClientName());
 						l.pressOk();
-					}
-				});
+//					}
+//				});
 			}
 		}
 	}

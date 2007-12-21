@@ -27,7 +27,9 @@ public class Consts {
 		None;
 	}
 	
-	public static final int PROBE_WAIT = 10000;
+	public static final int PROBE_WAIT = 60000;
+	
+	public static final int SERVER_PORT = 80;
 }
 
 

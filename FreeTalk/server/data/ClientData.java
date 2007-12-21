@@ -190,7 +190,7 @@ public class ClientData {
 	public OutgoingInterface createOutInterface(ConnectionId cId, boolean oneWay) throws IOException {
 
 		if (getConnectionMethod() == ConnectionMethod.UDPDirect)
-			return new UDPOutgoingInterface(ip, 80, port1, cId);
+			return new UDPOutgoingInterface(ip, Consts.SERVER_PORT, port1, cId);
 		if (getConnectionMethod() == ConnectionMethod.TCPDirect)
 			return new TCPOutgoingInterface(ip, port2);
 		if (oneWay)

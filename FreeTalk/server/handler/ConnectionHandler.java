@@ -17,6 +17,7 @@ import messages.ConAckMessage.ConnMethod;
 import messages.ErrorMessage.ErrorType;
 import server.data.ClientData;
 import server.data.ClientsHash;
+import util.Consts;
 import util.Consts.ConnectionMethod;
 
 public class ConnectionHandler extends HandlerThread {
@@ -129,10 +130,10 @@ public class ConnectionHandler extends HandlerThread {
 				if (cd1.isPort2open())
 					return new ConnMethod(ConnectionMethod.TCPReverse, cd2.getPort2());
 				if (cd2.isPort1open() || cd2.isPort80open()) // Server can get to cd2
-					return new ConnMethod(ConnectionMethod.Indirect, 80);
+					return new ConnMethod(ConnectionMethod.Indirect, Consts.SERVER_PORT);
 				
 				// No connection possible
-				return new ConnMethod(ConnectionMethod.None, 80);
+				return new ConnMethod(ConnectionMethod.None, Consts.SERVER_PORT);
 			}
 		}
 	}

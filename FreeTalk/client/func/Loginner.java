@@ -20,6 +20,7 @@ import messages.Message;
 import messages.ProbeMessage;
 import messages.RegAckMessage;
 import messages.RegisterMessage;
+import util.Consts;
 import util.Consts.ConnectionMethod;
 import util.Consts.Protocol;
 import util.Consts.ResponseCode;
@@ -47,7 +48,7 @@ public class Loginner {
 		try {
 			Globals.setClientName(username);
 			
-			TCPOutgoingInterface out = new TCPOutgoingInterface(Globals.getServerIP(), 80);
+			TCPOutgoingInterface out = new TCPOutgoingInterface(Globals.getServerIP(), Consts.SERVER_PORT);
 			TCPIncomingInterface in = new TCPIncomingInterface(out.getSocket());
 
 			ConnectionId cId = new ConnectionId(username, "Server");
