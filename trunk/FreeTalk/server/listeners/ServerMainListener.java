@@ -17,6 +17,7 @@ import server.data.ClientData;
 import server.data.ClientsHash;
 import server.handler.HandlerThread;
 import server.handler.ProbeThread;
+import util.Consts;
 
 
 
@@ -33,7 +34,7 @@ public class ServerMainListener {
 	public ServerMainListener() {
 		super();
 		try {
-			ss = new ServerSocket(80);
+			ss = new ServerSocket(Consts.SERVER_PORT);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

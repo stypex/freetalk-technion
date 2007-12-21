@@ -18,6 +18,7 @@ import messages.Message;
 import messages.ProbeAckMessage;
 import messages.ProbeMessage;
 import server.data.ClientData;
+import util.Consts;
 import util.Consts.ResponseCode;
 
 /**
@@ -99,8 +100,8 @@ public class Prober {
 	}
 
 	private ResponseCode checkUDP() {
-		OutgoingInterface out = new UDPOutgoingInterface(cd.getIp(), 80, cd.getPort1(), cId);
-		IncomingInterface in = new UDPIncomingInterface(cId, cd.getIp(), cd.getPort1(), 80);
+		OutgoingInterface out = new UDPOutgoingInterface(cd.getIp(), Consts.SERVER_PORT, cd.getPort1(), cId);
+		IncomingInterface in = new UDPIncomingInterface(cId, cd.getIp(), cd.getPort1(), Consts.SERVER_PORT);
 		try {
 			ResponseCode check = checkPort(out, in);
 			cd.setPort1open(check);

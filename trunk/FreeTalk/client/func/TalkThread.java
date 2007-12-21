@@ -314,7 +314,7 @@ public class TalkThread extends StoppableThread {
 
 		try {
 
-			TCPOutgoingInterface out = new TCPOutgoingInterface(Globals.getServerIP(), 80);
+			TCPOutgoingInterface out = new TCPOutgoingInterface(Globals.getServerIP(), Consts.SERVER_PORT);
 
 			Message m;
 			if (sendConnect)

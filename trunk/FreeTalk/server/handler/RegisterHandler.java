@@ -44,7 +44,7 @@ public class RegisterHandler extends HandlerThread {
 		try {
 			ClientData cd = ClientsHash.getInstance().get(m.getFrom());
 
-			if (cd != null && cd.getIp() != m.getClientIp()) { // Name in use
+			if (cd != null && !cd.getIp().equals(m.getClientIp())) { // Name in use
 
 				ErrorMessage em = 
 					new ErrorMessage("Server", m.getFrom(), getCId(), ErrorType.CLIENT_NAME_EXISTS);
