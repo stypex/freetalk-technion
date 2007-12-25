@@ -34,11 +34,13 @@ public class ClientData {
 	private List<HandlerThread> threads;
 
 	public Socket callMeSocket;
+	public Object callMeLock = new Object();
 
 	private long lastProbed;
 	private boolean probeFailed;
 	
-	public ClientData(String name, InetAddress ip, int port1, int port2, ResponseCode port1open, ResponseCode port2open, Socket tcp80) {
+	public ClientData(String name, InetAddress ip, int port1, 
+			int port2, ResponseCode port1open, ResponseCode port2open, Socket tcp80) {
 		super();
 		this.name = name;
 		this.ip = ip;
@@ -80,7 +82,7 @@ public class ClientData {
 
 
 	public boolean isPort1open() {
-		return port1open != ResponseCode.BAD;
+		return !port1open.equals(ResponseCode.BAD);
 	}
 
 
@@ -103,7 +105,7 @@ public class ClientData {
 	}
 
 	public boolean isPort2open() {
-		return port2open != ResponseCode.BAD;
+		return !port2open.equals(ResponseCode.BAD);
 	}
 
 
@@ -115,7 +117,7 @@ public class ClientData {
 	
 
 	public boolean isPort80open() {
-		return port80open != ResponseCode.BAD;
+		return !port80open.equals(ResponseCode.BAD);
 	}
 
 
@@ -189,9 +191,9 @@ public class ClientData {
 	 */
 	public OutgoingInterface createOutInterface(ConnectionId cId, boolean oneWay) throws IOException {
 
-		if (getConnectionMethod() == ConnectionMethod.UDPDirect)
+		if (getConnectionMethod().equals(ConnectionMethod.UDPDirect))
 			return new UDPOutgoingInterface(ip, Consts.SERVER_PORT, port1, cId);
-		if (getConnectionMethod() == ConnectionMethod.TCPDirect)
+		if (getConnectionMethod().equals(ConnectionMethod.TCPDirect))
 			return new TCPOutgoingInterface(ip, port2);
 		if (oneWay)
 			return new TCPOutgoingInterface(tcp80);
@@ -209,18 +211,16 @@ public class ClientData {
 				return null;
 
 			CallMeMessage cmm = new CallMeMessage("Server", getName(), cId);
-			callMeSocket = null;
-			new TCPOutgoingInterface(tcp80).send(cmm);
-
-
-			while (true) {
-				synchronized (this) {
-					if (callMeSocket != null)
-						break;
+			
+			synchronized (callMeLock) {
+				callMeSocket = null;
+				new TCPOutgoingInterface(tcp80).send(cmm);
+				
+				if (callMeSocket == null) {
+					callMeLock.wait();
 				}
-				Thread.sleep(100);
 			}
-
+			
 			return new TCPOutgoingInterface(callMeSocket);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

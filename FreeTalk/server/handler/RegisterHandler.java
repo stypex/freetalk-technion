@@ -110,7 +110,9 @@ public class RegisterHandler extends HandlerThread {
 						try {
 							OutgoingInterface oInt = cData.createOutInterface(newId, true);
 							oInt.send(cam);
-							oInt.close();
+							
+							if (oInt.getSocket() != cData.getTcp80())
+								oInt.close();
 						} catch (IOException e) {
 							e.printStackTrace();
 						}

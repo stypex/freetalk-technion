@@ -68,8 +68,9 @@ public class ServerMainListener {
 				if (m instanceof CallMeMessage) {
 					CallMeMessage cmm = (CallMeMessage) m;
 					ClientData cd = ClientsHash.getInstance().get(cmm.getFrom());
-					synchronized (cd) {
+					synchronized (cd.callMeLock) {
 						cd.callMeSocket = s; 
+						cd.callMeLock.notify();
 					}
 					continue;				
 				}

@@ -22,6 +22,13 @@ public class TCPIncomingInterface extends IncomingInterface {
 	public TCPIncomingInterface(Socket socket) {
 		super(socket.getLocalPort(), socket.getPort(), socket.getInetAddress());
 		this.socket = socket;
+		try {
+			if (!socket.isBound())
+				socket.bind(null);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	/* (non-Javadoc)

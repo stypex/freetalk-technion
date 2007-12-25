@@ -20,17 +20,17 @@ import client.func.TalkThread;
  */
 public abstract class ClientListener extends StoppableThread {
 
-	protected void receiveMessage(Message m, IncomingInterface in,
+	protected boolean receiveMessage(Message m, IncomingInterface in,
 			OutgoingInterface out) {
 		
 		if (m instanceof ProbeMessage) {
 			SimpleFunctions.replyProbe(out, (ProbeMessage) m);
-			return;
+			return true;
 		}
 		if (m instanceof ClientsAddedMessage) {
 			ClientsAddedMessage cam = (ClientsAddedMessage) m;
 			SimpleFunctions.addClients(cam.getClients());
-			return;
+			return true;
 		}
 		if (m instanceof JoinTalkMessage) {
 			
@@ -39,13 +39,13 @@ public abstract class ClientListener extends StoppableThread {
 			TalkThread tt = ConferenceCallsHash.getInstance().get(jtm.getCcid());
 			
 			if (tt == null) {
-				tt = new TalkThread(m.getFrom(), jtm);
+				tt = new TalkThread(m.getFrom(), jtm.getCcid());
 			}
 			tt.handleMessage(m, in);
 			
 			if (tt.getState().equals(State.NEW))
 				tt.start();	
-			return;
+			return true;
 		}
 		if (m instanceof InitCallMessage) {		
 			InitCallMessage icm = (InitCallMessage)m;
@@ -54,13 +54,14 @@ public abstract class ClientListener extends StoppableThread {
 				ConferenceCallsHash.getInstance().get(icm.getCCid());
 			
 			if (tt == null) {
-				tt = new TalkThread(m.getFrom(), null);
+				tt = new TalkThread(icm.getDest(), icm.getCCid());
 			}
 			tt.handleMessage(m, in);
 			
 			if (tt.getState().equals(State.NEW))
 				tt.start();
-			return;
+			return true;
 		}
+		return false;
 	}
 }

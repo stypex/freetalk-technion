@@ -93,10 +93,10 @@ public class Loginner {
 			
 			RegAckMessage ram = (RegAckMessage) reply;
 
-			if (ram.getPort1open() == ResponseCode.BAD)
+			if (ram.getPort1open().equals(ResponseCode.BAD))
 				ClientMain.udp.doStop();
 
-			if (ram.getPort2open() == ResponseCode.BAD)
+			if (ram.getPort2open().equals(ResponseCode.BAD))
 				ClientMain.tcp.doStop();	
 
 			// Clients list
@@ -114,11 +114,14 @@ public class Loginner {
 			SimpleFunctions.addClients(cam.getClients());
 			
 			// TCP80 Thread handle
-			if (ram.getConnectionMethod() == ConnectionMethod.Indirect) {
+			if (ram.getConnectionMethod().
+					equals(ConnectionMethod.Indirect)) {
 				if (ClientMain.tcp80 != null)
 					ClientMain.tcp80.doStop();
 				
 				ClientMain.tcp80 = new TCPListener80(out.getSocket());
+				
+				ClientMain.tcp80.start();
 			}
 			else {
 				out.close();

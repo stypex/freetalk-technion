@@ -11,6 +11,8 @@ import java.net.BindException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+import util.Consts;
+
 import messages.Message;
 import client.Globals;
 
@@ -47,6 +49,9 @@ public class TCPListener5000 extends ClientListener {
 	}
 
 	public void run()  {
+		if (!Consts.doTCP5000)
+			return;
+		
 		while (isStopped == false) {
 			try {
 				Socket s = ss.accept();

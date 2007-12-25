@@ -38,8 +38,8 @@ public class Prober {
 	public void execute() {
 
 		synchronized (cd) {
-			boolean isUDP = (checkUDP() != ResponseCode.BAD);
-			boolean isTCP = (checkTCP() != ResponseCode.BAD);
+			boolean isUDP = (!checkUDP().equals(ResponseCode.BAD));
+			boolean isTCP = (!checkTCP().equals(ResponseCode.BAD));
 			
 			boolean isTCP80 = false;
 			
@@ -47,7 +47,7 @@ public class Prober {
 			if (!isUDP && !isTCP)
 				// Has a tcp80 connection - check that one
 				if (cd.getTcp80() != null) {
-					isTCP80 = (checkTCP80() != ResponseCode.BAD);
+					isTCP80 = (!checkTCP80().equals(ResponseCode.BAD));
 
 				if (!isTCP80) { // No success			
 					// Check if it's time to do total client deletion
@@ -138,6 +138,7 @@ public class Prober {
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
+			System.err.println("Exception while handling client " + cd.getName());
 		}
 		return ResponseCode.BAD;
 	}
