@@ -5,11 +5,13 @@ package client.listeners;
 
 import interfaces.IncomingInterface;
 import interfaces.OutgoingInterface;
+import messages.ClientExitMessage;
 import messages.ClientsAddedMessage;
 import messages.InitCallMessage;
 import messages.JoinTalkMessage;
 import messages.Message;
 import messages.ProbeMessage;
+import client.ClientMain;
 import client.data.ConferenceCallsHash;
 import client.func.SimpleFunctions;
 import client.func.TalkThread;
@@ -62,6 +64,12 @@ public abstract class ClientListener extends StoppableThread {
 				tt.start();
 			return true;
 		}
+		if (m instanceof ClientExitMessage) {
+			ClientExitMessage cem = (ClientExitMessage) m;
+			ClientMain.getMainWindow().removeClient(cem.getClient());
+			return true;
+		}
+		
 		return false;
 	}
 }
