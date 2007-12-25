@@ -95,7 +95,7 @@ public class Chat extends JFrame {
 		cbModel = new DefaultComboBoxModel();
 		cbModel.addElement("Add user to chat");
 		for (Object u : ClientsList.getInstance().keySet())
-			if ((String)u != destUserName)
+			if (!u.equals(destUserName))
 				cbModel.addElement((String)u);
 		addToChat = new JComboBox (cbModel);
 		

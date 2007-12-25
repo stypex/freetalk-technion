@@ -30,6 +30,9 @@ public class Consts {
 	public static final int PROBE_WAIT = 60000;
 	
 	public static final int SERVER_PORT = 80;
+	
+	// For debug only
+	public static final boolean doTCP5000 = false;
 }
 
 

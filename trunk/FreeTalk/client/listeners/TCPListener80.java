@@ -3,7 +3,20 @@
  */
 package client.listeners;
 
+import interfaces.IncomingInterface;
+import interfaces.OutgoingInterface;
+import interfaces.TCPIncomingInterface;
+import interfaces.TCPOutgoingInterface;
+
+import java.io.EOFException;
+import java.io.IOException;
 import java.net.Socket;
+
+import util.Consts;
+import client.Globals;
+
+import messages.CallMeMessage;
+import messages.Message;
 
 /**
  * @author lenka
@@ -11,8 +24,59 @@ import java.net.Socket;
  */
 public class TCPListener80 extends ClientListener {
 
+//	Socket socket;
+	TCPIncomingInterface in;
+	
 	public TCPListener80(Socket socket) {
-		// TODO Auto-generated constructor stub
+		this.in = new TCPIncomingInterface(socket);
 	}
 
+	@Override
+	public void run() {
+		super.run();
+		
+		while (isStopped == false) {
+			try {
+				Message m = in.receive(0);
+
+				IncomingInterface newIn = in;
+				OutgoingInterface newOut = in.createMatching();
+				
+				// If we got a Call Me message, we establish
+				// a new connection with the server
+				if (m instanceof CallMeMessage) {
+					CallMeMessage cmm = (CallMeMessage) m;
+					newOut = new TCPOutgoingInterface(Globals.getServerIP(), 
+							Consts.SERVER_PORT);
+					
+					CallMeMessage cmmBack = 
+						new CallMeMessage(Globals.getClientName(), 
+								"Server", cmm.getCId());
+					newOut.send(cmmBack);
+					newIn = newOut.createMatching();
+					m = newIn.receive(0);
+				}
+				
+				if (!receiveMessage(m, newIn, newOut)) {
+					tcp80receiveMessage(m, newIn, newOut);
+				}
+				
+			} catch (EOFException e) {
+				if (!isStopped)
+					System.err.println("The tcp80 socket was closed. Closing the listener.");
+				
+				return;
+			} catch (IOException e) {
+				if (!isStopped)
+					e.printStackTrace();
+			}
+		}
+	}
+
+	private void tcp80receiveMessage(Message m, IncomingInterface newIn, OutgoingInterface newOut) {
+		
+		// Do nothing for now
+	}
+
+	
 }

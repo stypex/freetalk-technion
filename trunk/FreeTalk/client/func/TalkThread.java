@@ -65,10 +65,10 @@ public class TalkThread extends StoppableThread {
 	/**
 	 * @param dest - Name of the client in the destination computer with
 	 * whom the chat is initiated.
-	 * @param m - a JointTalk or InitCall message that caused the
-	 * start of the thread
+	 * @param ccid - a Conference Call id for this thread. If
+	 * there's none, send null
 	 */
-	public TalkThread(final String dest,  JoinTalkMessage m){
+	public TalkThread(final String dest,  ConnectionId ccid){
 
 		this.dest = dest;
 
@@ -80,13 +80,13 @@ public class TalkThread extends StoppableThread {
 
 
 		// Getting the conference call id
-		if (m != null) 
-			ccid = m.getCcid();		
+		if (ccid != null) 
+			this.ccid = ccid;		
 		else
-			ccid = new ConnectionId(Globals.getClientName(), dest);
+			this.ccid = new ConnectionId(Globals.getClientName(), dest);
 
-		ConferenceCallsHash.getInstance().put(ccid, this);
-		cons.put(dest, ccid);
+		ConferenceCallsHash.getInstance().put(this.ccid, this);
+		cons.put(dest, this.ccid);
 
 		c = new Chat(dest, this);
 
@@ -180,9 +180,10 @@ public class TalkThread extends StoppableThread {
 	 * @param client
 	 */
 	private void disconnectClient(String client) {	
+		if (cons.get(client) == null)
+			return;
+		
 		synchronized (cons.get(client)) {
-			if (cons.get(client) == null)
-				return;
 			
 			ins.get(client).close();
 			ins.remove(client);
@@ -229,16 +230,16 @@ public class TalkThread extends StoppableThread {
 					
 					TCPIncomingInterface tIn = 
 						new TCPIncomingInterface(s);
-					cons.put(m.getFrom(), m.getCId());
+					cons.put(icm.getDest(), m.getCId());
 					
-					synchronized (cons.get(m.getFrom())) {
-						ins.put(m.getFrom(), tIn);
-						outs.put(m.getFrom(), tIn.createMatching());
+					synchronized (cons.get(icm.getDest())) {
+						ins.put(icm.getDest(), tIn);
+						outs.put(icm.getDest(), tIn.createMatching());
 					}
 
 					// Update the conference call id
-					if (!isConnected)
-						ccid = icm.getCCid();
+//					if (!isConnected)
+//						ccid = icm.getCCid();
 					
 					// Send JOIN_TALK
 					JoinTalkMessage jtm = 
@@ -246,6 +247,7 @@ public class TalkThread extends StoppableThread {
 								icm.getDest(), icm.getCId(), ccid);
 
 					sendToOne(icm.getDest(), jtm);
+					c.moveFromComboToList(icm.getDest());
 					isConnected = true;
 				} catch (IOException e) {
 					// TODO Auto-generated catch block

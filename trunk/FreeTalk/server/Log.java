@@ -29,7 +29,7 @@ public class Log extends util.Log {
 		
 		try {
 			f.createNewFile();
-			w = new BufferedWriter(new FileWriter(f, true));
+			w = new BufferedWriter(new FileWriter(f, false));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

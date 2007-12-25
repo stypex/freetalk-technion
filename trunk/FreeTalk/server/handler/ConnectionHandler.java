@@ -5,6 +5,7 @@ import interfaces.OutgoingInterface;
 import interfaces.TCPOutgoingInterface;
 
 import java.io.IOException;
+import java.net.SocketTimeoutException;
 
 import messages.ConAckMessage;
 import messages.ConnectMessage;
@@ -48,7 +49,7 @@ public class ConnectionHandler extends HandlerThread {
 
 			OutgoingInterface out2;
 			IncomingInterface in2;
-			
+
 			synchronized (cd) {
 				ConnMethod com = calcConnType(cm.getFrom(), cm.getConnTo());
 
@@ -69,7 +70,9 @@ public class ConnectionHandler extends HandlerThread {
 
 					out2 = cd.createOutInterface(cId, true);
 					out2.send(ic);
-					out2.close();
+					
+					if (out2.getSocket() != cd.getTcp80())
+						out2.close();
 				}
 
 				if (!com.getCm().equals(ConnectionMethod.Indirect))
@@ -78,37 +81,44 @@ public class ConnectionHandler extends HandlerThread {
 				// From this point on we handle the 
 				// indirect connection
 				registerForClient(cd.getName());
-				
+
 				out2 = cd.createOutInterface(cId, false);
 				in2 = out2.createMatching();
 			}
-			
-			Message received;
+
+			Message received = null;
 
 			do {
-				received = in.receive(500);
+				try {
+					received = in.receive(500);
 
-				if (received != null)
 					out2.send(received);
 
-				if (received instanceof TerminationMessage)
-					break;
+					if (received instanceof TerminationMessage)
+						break;
 
-				received = in2.receive(500);
+				} catch (SocketTimeoutException e) {}
 
-				if (received != null)
+				try {
+					received = in2.receive(500);
+
+
 					out.send(received);
-			} while (!(received instanceof TerminationMessage) && !isStopped);
+				} catch (SocketTimeoutException e) {}
 
-			
+			} while ((received == null || 
+					!(received instanceof TerminationMessage))
+					&& !isStopped);
+
+
 			in2.close();
 			out2.close();
-			
+
 
 		} catch (IOException e) {
-			if (!isStopped)
+			if (isStopped)
 				return;
-			
+
 			e.printStackTrace();
 		} finally {
 			unregisterForAllClients();
@@ -131,7 +141,7 @@ public class ConnectionHandler extends HandlerThread {
 					return new ConnMethod(ConnectionMethod.TCPReverse, cd2.getPort2());
 				if (cd2.isPort1open() || cd2.isPort80open()) // Server can get to cd2
 					return new ConnMethod(ConnectionMethod.Indirect, Consts.SERVER_PORT);
-				
+
 				// No connection possible
 				return new ConnMethod(ConnectionMethod.None, Consts.SERVER_PORT);
 			}
