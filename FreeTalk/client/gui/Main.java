@@ -22,6 +22,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import client.func.Exiter;
 import client.func.TalkThread;
 
 /** 
@@ -157,6 +158,20 @@ public class Main extends JFrame {
 		//Set window position
 		Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
 		setLocation( ( d.width - getSize().width ), 0 );
+		
+		//send Exit message to server once the application is closed
+		addWindowListener(new WindowListener(){
+
+			public void windowClosed(WindowEvent arg0) {}
+			public void windowActivated(WindowEvent arg0) {}
+			public void windowClosing(WindowEvent arg0) {
+				Exiter.doExit();
+			}
+			public void windowDeactivated(WindowEvent arg0) {}
+			public void windowDeiconified(WindowEvent arg0) {}
+			public void windowIconified(WindowEvent arg0) {}
+			public void windowOpened(WindowEvent arg0) {}
+		});
 	}
 
 	/**
