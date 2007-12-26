@@ -61,7 +61,9 @@ public class TalkThread extends StoppableThread {
 	Message dirM;
 	Integer dirLock;
 
-
+	//for avoiding the CPU eating loop in receiveMessages() in case the chat is empty
+	private Object emptyChat;
+	
 	/**
 	 * @param dest - Name of the client in the destination computer with
 	 * whom the chat is initiated.
@@ -69,9 +71,11 @@ public class TalkThread extends StoppableThread {
 	 * there's none, send null
 	 */
 	public TalkThread(final String dest,  ConnectionId ccid){
-
+		
+		emptyChat = new Object();
+		
 		this.dest = dest;
-
+		
 		dirLock = new Integer(0);
 
 		ins = new ConcurrentHashMap<String, IncomingInterface>();
@@ -140,6 +144,17 @@ public class TalkThread extends StoppableThread {
 
 		while (!isStopped) {
 
+			if ( cons.size() == 0 ){
+				try {
+					synchronized (emptyChat) {
+						emptyChat.wait();
+					}
+				} catch (InterruptedException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+				
 			for (String client : ins.keySet()) {
 				try {
 					synchronized (cons.get(client)) {
@@ -153,7 +168,10 @@ public class TalkThread extends StoppableThread {
 						new ConnectionId(Globals.getClientName(),
 							client);
 					doConnect(client, cid, false);
+				} catch(NullPointerException e){
+					//Do nothing. Happens when a client exits the system.
 				}
+				
 
 				if (m != null) {
 					handleMessage(m, ins.get(client));
@@ -471,7 +489,11 @@ public class TalkThread extends StoppableThread {
 		sendToAll(acm);
 		ConnectionId cid = new ConnectionId(Globals.getClientName(), client);
 		cons.put(client, cid);
-
+		
+		synchronized (emptyChat) {
+			emptyChat.notify();
+		}
+		
 		doConnect(client, cid, true);
 	}
 

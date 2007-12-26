@@ -12,6 +12,7 @@ import messages.JoinTalkMessage;
 import messages.Message;
 import messages.ProbeMessage;
 import client.ClientMain;
+import client.data.ClientsList;
 import client.data.ConferenceCallsHash;
 import client.func.SimpleFunctions;
 import client.func.TalkThread;
@@ -67,6 +68,7 @@ public abstract class ClientListener extends StoppableThread {
 		if (m instanceof ClientExitMessage) {
 			ClientExitMessage cem = (ClientExitMessage) m;
 			ClientMain.getMainWindow().removeClient(cem.getClient());
+			ClientsList.getInstance().remove(cem.getClient());
 			return true;
 		}
 		
