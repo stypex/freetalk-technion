@@ -131,13 +131,16 @@ public class ConnectionHandler extends HandlerThread {
 		ClientData cd1 = ClientsHash.getInstance().get(from);
 		ClientData cd2 = ClientsHash.getInstance().get(connTo);
 
+		if (cd1 == null || cd2 == null)
+			return new ConnMethod(ConnectionMethod.None, Consts.SERVER_PORT);
+		
 		synchronized (cd1) {
 			synchronized (cd2) {
 				if (cd1.isPort1open() && cd2.isPort1open())
 					return new ConnMethod(ConnectionMethod.UDPDirect, cd2.getPort1());
 				if (cd2.isPort2open())
 					return new ConnMethod(ConnectionMethod.TCPDirect, cd2.getPort2());
-				if (cd1.isPort2open())
+				if (cd1.isPort2open() && !cd2.getConnectionMethod().equals(ConnectionMethod.None))
 					return new ConnMethod(ConnectionMethod.TCPReverse, cd2.getPort2());
 				if (cd2.isPort1open() || cd2.isPort80open()) // Server can get to cd2
 					return new ConnMethod(ConnectionMethod.Indirect, Consts.SERVER_PORT);
