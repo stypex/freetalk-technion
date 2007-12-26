@@ -331,6 +331,12 @@ public class Chat extends JFrame {
 	public void removeClient(String client){
 		cbModel.removeElement(client);
 		lstModel.removeElement(client);
+		setTitle();
+		/* in case the last client in the conference disconnected no need to stay in
+		 * the receiveMessages() while loop that eats up CPU
+		 */ 
+		if ( lstModel.size() == 0 )
+			tt.doStop();
 	}
 	
 	/**
