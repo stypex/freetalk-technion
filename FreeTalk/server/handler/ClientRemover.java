@@ -34,30 +34,34 @@ public class ClientRemover {
 	 */
 	public void execute() {
 		try {
-			// Go over all the other clients and send them 
-			// the CLIENT_EXIT message
-			for (String c : ClientsHash.getInstance().keySet()) {
-				
-				if (c.equals(client))
-					continue;
-				
-				ClientData cd = ClientsHash.getInstance().get(c);
-				
-				synchronized (cd) {
-					OutgoingInterface oi = cd.createOutInterface(cId, true);
-					ClientExitMessage newTm = new ClientExitMessage("Server", cd.getName(), cId, client);
-					oi.send(newTm);
-					
-					if (cd.getTcp80() == null)
-						oi.close();
-					
-					
+			ClientData cd = ClientsHash.getInstance().get(client);
+			if (cd == null)
+				return;
+			
+			synchronized (cd) {
+				// Go over all the other clients and send them 
+				// the CLIENT_EXIT message
+				for (String c : ClientsHash.getInstance().keySet()) {
+
+					if (c.equals(client))
+						continue;
+
+					ClientData cd1 = ClientsHash.getInstance().get(c);
+
+					synchronized (cd1) {
+						OutgoingInterface oi = cd1.createOutInterface(cId, true);
+						ClientExitMessage newTm = new ClientExitMessage("Server", cd.getName(), cId, client);
+						oi.send(newTm);
+
+						if (cd1.getTcp80() == null)
+							oi.close();
+
+
+					}
 				}
 			}
 			
 			// Close all the threads that are handling this client
-			ClientData cd = ClientsHash.getInstance().get(client);
-			
 			for (HandlerThread ht : cd.getThreads())
 				ht.doStop();
 			
