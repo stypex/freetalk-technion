@@ -23,6 +23,8 @@ import client.gui.Main;
  */
 public class SimpleFunctions {
 
+	private static boolean loggedIn = false;
+	
 	public static void replyProbe(OutgoingInterface out, ProbeMessage pm) {
 		ProbeAckMessage pam = new ProbeAckMessage(Globals.getClientName(),
 				"Server", pm.getCId(), ResponseCode.OK);
@@ -43,5 +45,13 @@ public class SimpleFunctions {
 			ClientsList.getInstance().put(c, new ArrayList<TalkThread>());
 			m.addClient(c);
 		}
+		
+		/* shows a newly logged in client but not those that are online when
+		 * current client logs in
+		 */
+		if ( ! loggedIn )
+			loggedIn = true;
+		else
+			m.showClientOnlineMessage((String)(clients.toArray())[0]);
 	}
 }

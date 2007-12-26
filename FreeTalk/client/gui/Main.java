@@ -283,7 +283,7 @@ public class Main extends JFrame {
 		}
 		lstModel.removeElement(client);
 		
-		
+		trayIcon.displayMessage(null, client + " is now offline", TrayIcon.MessageType.NONE);
 	}
 
 	/**
@@ -294,7 +294,7 @@ public class Main extends JFrame {
 	 */
 	public void addClient(String client){
 		Func.addAlphabeticallyToLM(client, lstModel);
-		
+
 		for (TalkThread tt : talkThreads)
 			tt.addClientToGUI(client);
 	}
@@ -315,5 +315,9 @@ public class Main extends JFrame {
 				break;
 			}
 		talkThreads.remove(tempTt);
+	}
+	
+	public void showClientOnlineMessage(String client){
+		trayIcon.displayMessage(null, client + " is now online", TrayIcon.MessageType.NONE);
 	}
 }
