@@ -1,7 +1,10 @@
 package client.gui;
 
+import java.awt.AWTException;
 import java.awt.Dimension;
+import java.awt.SystemTray;
 import java.awt.Toolkit;
+import java.awt.TrayIcon;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
@@ -38,6 +41,9 @@ public class Main extends JFrame {
 	
 	public static Log log;
 	
+	private TrayIcon trayIcon;
+	private SystemTray tray;
+	
 	private ArrayList<TalkThread> talkThreads;
 	private String userName;
 	private JMenuBar mb;
@@ -59,6 +65,9 @@ public class Main extends JFrame {
 		Log.init(log);
 		
 		setIconImage(Toolkit.getDefaultToolkit().getImage("Images\\group-of-users-48x48.png"));
+		trayIcon = new TrayIcon(Toolkit.getDefaultToolkit().getImage("Images\\group-of-users-48x48.png"), "FreeTalk");
+		trayIcon.setImageAutoSize(true);
+		tray = SystemTray.getSystemTray();
 		
 		//Initialize all window components
 		talkThreads = new ArrayList<TalkThread>();
@@ -169,9 +178,28 @@ public class Main extends JFrame {
 			}
 			public void windowDeactivated(WindowEvent arg0) {}
 			public void windowDeiconified(WindowEvent arg0) {}
-			public void windowIconified(WindowEvent arg0) {}
+			public void windowIconified(WindowEvent arg0) {
+				setVisible(false);
+			}
 			public void windowOpened(WindowEvent arg0) {}
 		});
+		
+		//set action for when trayIcon is double clicked
+		trayIcon.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				setVisible(true);
+				setState(JFrame.NORMAL);
+				//toFront();
+			}
+		});
+		 
+        //show Tray Icon
+		try {
+            tray.add(trayIcon);
+        } catch (AWTException e) {
+            System.out.println("TrayIcon could not be added.");
+            return;
+        }
 	}
 
 	/**
@@ -193,8 +221,8 @@ public class Main extends JFrame {
 	 * Dec 8, 2007
 	 */
 	private void exit() { 
-		 dispose();
-		 //TODO other things to be done to exit the program
+		Exiter.doExit();
+		System.exit(0);
 	 }
 	
 	/**

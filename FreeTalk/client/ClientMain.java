@@ -1,6 +1,7 @@
 package client;
 
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 
 import client.data.ClientsList;
 import client.gui.Login;
@@ -27,6 +28,8 @@ public class ClientMain {
 	 * @param args
 	 */
 	public static void main(String[] args) {
+		
+		UIManager.put("swing.boldMetal", Boolean.FALSE);
 		
 		Globals.load();
 		
