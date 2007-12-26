@@ -251,7 +251,7 @@ public class Main extends JFrame {
 	 */
 	public void removeClient(String client){
 		for ( TalkThread tt : talkThreads){
-			tt.removeClientFromGUI(client);
+			tt.removeClient(client);
 		}
 		lstModel.removeElement(client);
 		

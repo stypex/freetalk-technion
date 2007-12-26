@@ -453,8 +453,9 @@ public class TalkThread extends StoppableThread {
 		c.addClient(client);
 	}
 
-	public void removeClientFromGUI(String client) {
+	public void removeClient(String client) {
 		c.removeClient(client);
+		disconnectClient(client);
 	}
 
 	public void addclientToSession(String client) {
