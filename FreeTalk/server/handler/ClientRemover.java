@@ -23,7 +23,7 @@ public class ClientRemover {
 
 	String client;
 	ConnectionId cId;
-	
+
 	public ClientRemover(String client, ConnectionId cId) {
 		this.client = client;
 		this.cId = cId;
@@ -37,7 +37,7 @@ public class ClientRemover {
 			ClientData cd = ClientsHash.getInstance().get(client);
 			if (cd == null)
 				return;
-			
+
 			synchronized (cd) {
 				// Go over all the other clients and send them 
 				// the CLIENT_EXIT message
@@ -50,7 +50,7 @@ public class ClientRemover {
 
 					synchronized (cd1) {
 						OutgoingInterface oi = cd1.createOutInterface(cId, true);
-						ClientExitMessage newTm = new ClientExitMessage("Server", cd.getName(), cId, client);
+						ClientExitMessage newTm = new ClientExitMessage("Server", cd1.getName(), cId, client);
 						oi.send(newTm);
 
 						if (cd1.getTcp80() == null)
@@ -59,14 +59,15 @@ public class ClientRemover {
 
 					}
 				}
+
+
+				// Close all the threads that are handling this client
+				for (HandlerThread ht : cd.getThreads())
+					ht.doStop();
+
+				// Remove the client itself
+				ClientsHash.getInstance().remove(client);
 			}
-			
-			// Close all the threads that are handling this client
-			for (HandlerThread ht : cd.getThreads())
-				ht.doStop();
-			
-			// Remove the client itself
-			ClientsHash.getInstance().remove(client);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
