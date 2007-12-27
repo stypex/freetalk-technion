@@ -202,7 +202,6 @@ public class TalkThread extends StoppableThread {
 			return;
 		
 		synchronized (cons.get(client)) {
-			
 			ins.get(client).close();
 			ins.remove(client);
 			outs.get(client).close();
@@ -528,5 +527,12 @@ public class TalkThread extends StoppableThread {
 		}
 		
 		
+	}
+	
+	public void doStop(){
+		super.doStop();
+		synchronized(emptyChat){
+			emptyChat.notify();
+		}
 	}
 }
