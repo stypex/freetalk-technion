@@ -4,16 +4,14 @@
 package client.listeners;
 
 import interfaces.TCPIncomingInterface;
-import interfaces.TCPOutgoingInterface;
 
 import java.io.IOException;
 import java.net.BindException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-import util.Consts;
-
 import messages.Message;
+import util.Consts;
 import client.Globals;
 
 
@@ -58,9 +56,7 @@ public class TCPListener5000 extends ClientListener {
 				TCPIncomingInterface in = new TCPIncomingInterface(s);
 				Message m = in.receive(0);
 
-				TCPOutgoingInterface out = new TCPOutgoingInterface(in.getSocket());
-
-				receiveMessage(m, in, out);
+				receiveMessage(m, in);
 				
 			} catch (IOException e) {
 				// TODO Auto-generated catch block

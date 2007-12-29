@@ -4,7 +4,6 @@
 package client.listeners;
 
 import interfaces.IncomingInterface;
-import interfaces.OutgoingInterface;
 import messages.ClientExitMessage;
 import messages.ClientsAddedMessage;
 import messages.InitCallMessage;
@@ -23,11 +22,10 @@ import client.func.TalkThread;
  */
 public abstract class ClientListener extends StoppableThread {
 
-	protected boolean receiveMessage(Message m, IncomingInterface in,
-			OutgoingInterface out) {
-		
+	protected boolean receiveMessage(Message m, IncomingInterface in) {
+
 		if (m instanceof ProbeMessage) {
-			SimpleFunctions.replyProbe(out, (ProbeMessage) m);
+			SimpleFunctions.replyProbe(in, (ProbeMessage) m);
 			return true;
 		}
 		if (m instanceof ClientsAddedMessage) {
@@ -36,33 +34,47 @@ public abstract class ClientListener extends StoppableThread {
 			return true;
 		}
 		if (m instanceof JoinTalkMessage) {
-			
 			JoinTalkMessage jtm = (JoinTalkMessage)m;
-			
-			TalkThread tt = ConferenceCallsHash.getInstance().get(jtm.getCcid());
-			
-			if (tt == null) {
-				tt = new TalkThread(m.getFrom(), jtm.getCcid());
+			TalkThread tt;
+
+			// We synchronize it to prevent this: two threads go to hash
+			// both get null and both create TalkThreads
+			synchronized (ConferenceCallsHash.getInstance()) {
+				tt = ConferenceCallsHash.getInstance().get(jtm.getCcid());
+
+				if (tt == null) {
+					tt = new TalkThread(m.getFrom(), jtm.getCcid());
+				}
 			}
-			tt.handleMessage(m, in);
-			
-			if (tt.getState().equals(State.NEW))
-				tt.start();	
+
+			// To prevent trouble
+			synchronized (tt) {
+				tt.handleMessage(m, in);
+				if (tt.getState().equals(State.NEW))
+					tt.start();	
+			}
 			return true;
 		}
 		if (m instanceof InitCallMessage) {		
 			InitCallMessage icm = (InitCallMessage)m;
-			
-			TalkThread tt = 
-				ConferenceCallsHash.getInstance().get(icm.getCCid());
-			
-			if (tt == null) {
-				tt = new TalkThread(icm.getDest(), icm.getCCid());
+			TalkThread tt;
+
+			// We synchronize it to prevent this: two threads go to hash
+			// both get null and both create TalkThreads
+			synchronized (ConferenceCallsHash.getInstance()) {
+				tt = ConferenceCallsHash.getInstance().get(icm.getCCid());
+
+				if (tt == null) {
+					tt = new TalkThread(icm.getDest(), icm.getCCid());
+				}
 			}
-			tt.handleMessage(m, in);
 			
-			if (tt.getState().equals(State.NEW))
-				tt.start();
+			// To prevent trouble
+			synchronized (tt) {
+				tt.handleMessage(m, in);
+				if (tt.getState().equals(State.NEW))
+					tt.start();
+			}
 			return true;
 		}
 		if (m instanceof ClientExitMessage) {
@@ -71,7 +83,7 @@ public abstract class ClientListener extends StoppableThread {
 			ClientsList.getInstance().remove(cem.getClient());
 			return true;
 		}
-		
+
 		return false;
 	}
 }

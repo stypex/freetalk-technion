@@ -198,15 +198,18 @@ public class TalkThread extends StoppableThread {
 	 * @param client
 	 */
 	private void disconnectClient(String client) {	
-		if (cons.get(client) == null)
-			return;
 		
-		synchronized (cons.get(client)) {
-			ins.get(client).close();
-			ins.remove(client);
-			outs.get(client).close();
-			outs.remove(client);
-			cons.remove(client);
+		
+		try {
+			synchronized (cons.get(client)) {
+				ins.get(client).close();
+				ins.remove(client);
+				outs.get(client).close();
+				outs.remove(client);
+				cons.remove(client);
+			}
+		} catch (NullPointerException e) {
+			// Do nothing
 		}
 	}
 	
