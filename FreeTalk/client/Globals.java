@@ -80,4 +80,8 @@ public class Globals {
 	public static void setTCPPort(int port) {
 		prop.setProperty("TCPPort", String.valueOf(port));		
 	}
+
+	public static void setUDPPort(int port) {
+		prop.setProperty("UDPPort", String.valueOf(port));		
+	}
 }

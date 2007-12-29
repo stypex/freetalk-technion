@@ -113,32 +113,29 @@ public class Prober {
 	}
 
 	private ResponseCode checkPort(OutgoingInterface out, IncomingInterface in){
+		ProbeMessage pm = new ProbeMessage("Server", cd.getName(), cId);
+
+		Message m = null;
 		try {
-			ProbeMessage pm = new ProbeMessage("Server", cd.getName(), cId);
 			out.send(pm);
-			Message m = null;
-			try {
-				m = in.receive(2000);
-			} catch (SocketTimeoutException e) {
-				return ResponseCode.BAD;
-			} catch (IOException e) {
-				return ResponseCode.BAD;
-			}
 
-			if (m instanceof ProbeAckMessage) {
-				ProbeAckMessage pam = (ProbeAckMessage) m;
-
-				if (pam.getCId().equals(cId) &&
-						pam.getFrom().equals(cd.getName()) &&
-						pam.getRCode().equals(ResponseCode.OK)) {
-
-					return pam.getRCode();
-				}
-
-			}
+			m = in.receive(6000);
+		} catch (SocketTimeoutException e) {
+			return ResponseCode.BAD;
 		} catch (IOException e) {
-			e.printStackTrace();
-			System.err.println("Exception while handling client " + cd.getName());
+			return ResponseCode.BAD;
+		}
+
+		if (m instanceof ProbeAckMessage) {
+			ProbeAckMessage pam = (ProbeAckMessage) m;
+
+			if (pam.getCId().equals(cId) &&
+					pam.getFrom().equals(cd.getName()) &&
+					pam.getRCode().equals(ResponseCode.OK)) {
+
+				return pam.getRCode();
+			}
+
 		}
 		return ResponseCode.BAD;
 	}

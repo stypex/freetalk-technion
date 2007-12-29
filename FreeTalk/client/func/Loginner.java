@@ -79,7 +79,7 @@ public class Loginner {
 				return false;
 			} else if (reply instanceof ProbeMessage) {
 				ProbeMessage pm = (ProbeMessage)reply;
-				SimpleFunctions.replyProbe(out, pm);
+				SimpleFunctions.replyProbe(in, pm);
 				
 				reply = in.receive(0);
 			}

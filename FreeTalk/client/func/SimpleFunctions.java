@@ -3,7 +3,7 @@
  */
 package client.func;
 
-import interfaces.OutgoingInterface;
+import interfaces.IncomingInterface;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -23,13 +23,15 @@ import client.gui.Main;
  */
 public class SimpleFunctions {
 
+
 	private static boolean loggedIn = false;
 	
-	public static void replyProbe(OutgoingInterface out, ProbeMessage pm) {
+public static void replyProbe(IncomingInterface in, ProbeMessage pm) {
+
 		ProbeAckMessage pam = new ProbeAckMessage(Globals.getClientName(),
 				"Server", pm.getCId(), ResponseCode.OK);
 		try {
-			out.send(pam);
+			in.createMatching().send(pam);
 			ClientMain.lastProbed = System.currentTimeMillis();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

@@ -33,6 +33,8 @@ public class Consts {
 	
 	// For debug only
 	public static final boolean doTCP5000 = true;
+
+	public static final boolean doUDP5000 = true;
 }
 
 

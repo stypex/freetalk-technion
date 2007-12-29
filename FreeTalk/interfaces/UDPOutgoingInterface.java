@@ -3,12 +3,20 @@
  */
 package interfaces;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.net.SocketException;
+import java.net.SocketTimeoutException;
 
 import messages.ConnectionId;
 import messages.Message;
+import messages.UDPAckMessage;
+import util.Log;
 
 /**
  * @author lenka
@@ -23,10 +31,18 @@ public class UDPOutgoingInterface extends OutgoingInterface {
 	
 	ConnectionId cId;
 	
+	DatagramSocket socket;
+	
 	public UDPOutgoingInterface(InetAddress ip, int localPort, int remotePort, ConnectionId cId) {
 		super(localPort, remotePort, ip);
 		this.cId = cId;
 		
+		try {
+			socket = new DatagramSocket();
+		} catch (SocketException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		// With a special connection id
 		ackInt = new UDPIncomingInterface(cId.getAck(), ip, remotePort, localPort);
@@ -39,7 +55,7 @@ public class UDPOutgoingInterface extends OutgoingInterface {
 	public void close() {
 		ackInt.close();
 
-		// Do more
+		socket.close();
 	}
 
 	/* (non-Javadoc)
@@ -47,28 +63,75 @@ public class UDPOutgoingInterface extends OutgoingInterface {
 	 */
 	@Override
 	public void send(Message message) throws IOException {
-		// TODO Auto-generated method stub
 
-		// To get the UDP backoff ack, use the ackInt data member (ackInt.receive(...))
+		Message ack;
+		
+		// UDP exponential backoff (1 sec - 2 sec - 4 sec - 8 sec - 16 sec)
+		for (int msecs = 1000; msecs <= 16000; msecs*=2) {
+			
+			sendMessage(message);
+
+			try {
+				do {
+					ack = ackInt.receive(msecs); // Get ack
+				} while (ack.getUdpSn() > message.getUdpSn()); // The ack must belong to this message
+			} catch (SocketTimeoutException e) { 
+				message.incUdpSn(); // No ack. Try again
+				continue;
+			}
+			return; // All fine
+		}
+
+		// Can't connect
+		throw new IOException("Failed connecting to target");
 	}
 
 	@Override
 	public Socket getSocket() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
-	/**
-	 * This one will be called by other threads, to send a UDP
-	 * exponential backoff ack to a message this interface sent.
-	 * @param ack
-	 */
-	public void acceptAck(Message ack) {
-		ackInt.accept(ack);
-	}
 
 	@Override
 	public IncomingInterface createMatching() {
 		return new UDPIncomingInterface(cId, remoteIp, remotePort, localPort);
+	}
+
+	public void sendUDPAck(Message m) {
+		ConnectionId cid = m.getCId().getAck();
+		
+		Message ack = new UDPAckMessage(m.getTo(), 
+				m.getFrom(), cid, m.getUdpSn());
+		
+		try {
+			sendMessage(ack);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * Sends one message to the target. No exponential backoff
+	 * @param m
+	 * @throws IOException
+	 */
+	private void sendMessage(Message m) throws IOException {
+		
+		// So they'll know how to answer
+		m.setLocalPort(localPort);
+		
+		//	Serialize...
+		ByteArrayOutputStream b_out = new ByteArrayOutputStream();
+		ObjectOutputStream o_out = new ObjectOutputStream(b_out);
+		o_out.writeObject(m);
+		byte[] b = b_out.toByteArray();
+
+		// Send message
+		DatagramPacket dp = new DatagramPacket(b, b.length, remoteIp, remotePort); 
+		socket.send(dp);
+		
+		Log.getInstance().addDatedText("Sending Message to UDP port: " + remotePort, true);
+		Log.getInstance().addMessage(m);
 	}
 }

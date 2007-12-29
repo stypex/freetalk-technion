@@ -6,9 +6,13 @@ package interfaces;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 
 import messages.ConnectionId;
 import messages.Message;
+import util.Log;
 import util.ThreadsHash;
 
 /**
@@ -20,11 +24,15 @@ public class UDPIncomingInterface extends IncomingInterface {
 
 	ConnectionId cId;
 	
+	LinkedBlockingQueue<Message> q;
+	
 	public UDPIncomingInterface(ConnectionId cId, InetAddress ip, int remotePort, int localPort) {
 		super(localPort, remotePort, ip);
 		
 		this.cId = cId;
-		// TODO the rest of the constructor
+		
+		q = new LinkedBlockingQueue<Message>();
+		
 		ThreadsHash.getInstance().register(cId, this);
 	}
 
@@ -33,9 +41,10 @@ public class UDPIncomingInterface extends IncomingInterface {
 	 */
 	@Override
 	public void close() {
-		// TODO the rest of the method
 
-		ThreadsHash.getInstance().remove(cId);
+		ThreadsHash h = ThreadsHash.getInstance();
+		if (h.containsKey(cId) && ThreadsHash.getInstance().get(cId).equals(this))
+			ThreadsHash.getInstance().remove(cId);
 	}
 
 	/* (non-Javadoc)
@@ -43,7 +52,6 @@ public class UDPIncomingInterface extends IncomingInterface {
 	 */
 	@Override
 	public Socket getSocket() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -52,8 +60,29 @@ public class UDPIncomingInterface extends IncomingInterface {
 	 */
 	@Override
 	public Message receive(int timeout) throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+		
+		Message m = null;
+		try {
+			if (timeout == 0) {
+				m = q.take();
+			}
+			else {
+				m = q.poll(timeout, TimeUnit.MILLISECONDS);
+			}
+				
+			
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		if (m == null)
+			throw new SocketTimeoutException();
+		
+//		Log.getInstance().addDatedText("Receiving Message on UDP port: " + localPort, true);
+//		Log.getInstance().addMessage(m);
+		
+		return m;
 	}
 
 	
@@ -63,7 +92,7 @@ public class UDPIncomingInterface extends IncomingInterface {
 	 * @param origM
 	 */
 	public void accept(Message m) {
-		//		 TODO Auto-generated method stub
+		q.add(m);
 	}
 
 	@Override

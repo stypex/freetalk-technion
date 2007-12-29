@@ -57,7 +57,7 @@ public class TCPListener80 extends ClientListener {
 					m = newIn.receive(0);
 				}
 				
-				if (!receiveMessage(m, newIn, newOut)) {
+				if (!receiveMessage(m, newIn)) {
 					tcp80receiveMessage(m, newIn, newOut);
 				}
 				
