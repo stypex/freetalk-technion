@@ -147,7 +147,8 @@ public class TalkThread extends StoppableThread {
 			if ( cons.size() == 0 ){
 				try {
 					synchronized (emptyChat) {
-						emptyChat.wait();
+						if (!isStopped)
+							emptyChat.wait();
 					}
 				} catch (InterruptedException e1) {
 					// TODO Auto-generated catch block

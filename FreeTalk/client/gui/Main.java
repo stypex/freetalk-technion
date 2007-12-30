@@ -174,6 +174,7 @@ public class Main extends JFrame {
 			public void windowClosed(WindowEvent arg0) {}
 			public void windowActivated(WindowEvent arg0) {}
 			public void windowClosing(WindowEvent arg0) {
+				tray.remove(trayIcon);
 				Exiter.doExit();
 			}
 			public void windowDeactivated(WindowEvent arg0) {}
@@ -221,6 +222,7 @@ public class Main extends JFrame {
 	 * Dec 8, 2007
 	 */
 	private void exit() { 
+		tray.remove(trayIcon);
 		Exiter.doExit();
 		System.exit(0);
 	 }
