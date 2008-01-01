@@ -37,7 +37,7 @@ public abstract class Message implements Serializable {
 		String name = Globals.getClientName() != null ? 
 				Globals.getClientName() : "Server";
 				
-		id = name + ":" + serial++;
+		id = name + ":" + util.Func.getDateTime() + ":" + serial++;
 		
 	}
 
