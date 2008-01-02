@@ -7,8 +7,6 @@ import interfaces.UDPIncomingInterface;
 
 import java.util.concurrent.ConcurrentHashMap;
 
-import client.func.Exiter;
-
 import messages.ConnectionId;
 import messages.Message;
 

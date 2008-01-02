@@ -270,15 +270,15 @@ public class Chat extends JFrame {
 	 * Nov 30, 2007
 	 */
 	public void moveFromComboToList(String client){
-		synchronized (cbModel){
-			synchronized (lstModel) {
+//		synchronized (cbModel){
+//			synchronized (lstModel) {
 				cbModel.removeElement(client);
 				
 				Func.addAlphabeticallyToLM(client,lstModel);
 				
 				setTitle();
-			}
-		}
+//			}
+//		}
 	}
 
 	

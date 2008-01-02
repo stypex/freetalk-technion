@@ -38,29 +38,30 @@ public class ClientRemover {
 			if (cd == null)
 				return;
 
-			synchronized (cd) {
-				// Go over all the other clients and send them 
-				// the CLIENT_EXIT message
-				for (String c : ClientsHash.getInstance().keySet()) {
 
-					if (c.equals(client))
-						continue;
+			// Go over all the other clients and send them 
+			// the CLIENT_EXIT message
+			for (String c : ClientsHash.getInstance().keySet()) {
 
-					ClientData cd1 = ClientsHash.getInstance().get(c);
+				if (c.equals(client))
+					continue;
 
-					synchronized (cd1) {
-						OutgoingInterface oi = cd1.createOutInterface(cId, true);
-						ClientExitMessage newTm = new ClientExitMessage("Server", cd1.getName(), cId, client);
-						oi.send(newTm);
+				ClientData cd1 = ClientsHash.getInstance().get(c);
 
-						if (cd1.getTcp80() == null)
-							oi.close();
+				synchronized (cd1) {
+					OutgoingInterface oi = cd1.createOutInterface(cId, true);
+					ClientExitMessage newTm = new ClientExitMessage("Server", cd1.getName(), cId, client);
+					oi.send(newTm);
+
+					if (cd1.getTcp80() == null)
+						oi.close();
 
 
-					}
 				}
+			}
 
-
+			
+			synchronized (cd) {
 				// Close all the threads that are handling this client
 				for (HandlerThread ht : cd.getThreads())
 					ht.doStop();

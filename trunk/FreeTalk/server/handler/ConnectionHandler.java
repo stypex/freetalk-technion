@@ -50,9 +50,10 @@ public class ConnectionHandler extends HandlerThread {
 			OutgoingInterface out2;
 			IncomingInterface in2;
 
+			
+			ConnMethod com = calcConnType(cm.getFrom(), cm.getConnTo());
+			
 			synchronized (cd) {
-				ConnMethod com = calcConnType(cm.getFrom(), cm.getConnTo());
-
 				ConAckMessage cam = new ConAckMessage("Server", cm.getFrom(), 
 						cm.getCId(), cd.getIp(), com);
 				out.send(cam);
@@ -62,15 +63,15 @@ public class ConnectionHandler extends HandlerThread {
 					ClientData cd1 = ClientsHash.getInstance().get(cm.getFrom());
 					InitCallMessage ic;
 
-					synchronized (cd1) {
-						ic = new InitCallMessage("Server", cd.getName(), 
-								cId, cm.getFrom(), cd1.getIp(), cd1.getPort2(),
-								cm.getCCid());
-					}
+
+					ic = new InitCallMessage("Server", cd.getName(), 
+							cId, cm.getFrom(), cd1.getIp(), cd1.getPort2(),
+							cm.getCCid());
+
 
 					out2 = cd.createOutInterface(cId, true);
 					out2.send(ic);
-					
+
 					if (out2.getSocket() != cd.getTcp80())
 						out2.close();
 				}
@@ -133,21 +134,28 @@ public class ConnectionHandler extends HandlerThread {
 
 		if (cd1 == null || cd2 == null)
 			return new ConnMethod(ConnectionMethod.None, Consts.SERVER_PORT);
-		
-		synchronized (cd1) {
-			synchronized (cd2) {
-				if (cd1.isPort1open() && cd2.isPort1open())
-					return new ConnMethod(ConnectionMethod.UDPDirect, cd2.getPort1());
-				if (cd2.isPort2open())
-					return new ConnMethod(ConnectionMethod.TCPDirect, cd2.getPort2());
-				if (cd1.isPort2open() && !cd2.getConnectionMethod().equals(ConnectionMethod.None))
-					return new ConnMethod(ConnectionMethod.TCPReverse, cd2.getPort2());
-				if (cd2.isPort1open() || cd2.isPort80open()) // Server can get to cd2
-					return new ConnMethod(ConnectionMethod.Indirect, Consts.SERVER_PORT);
 
-				// No connection possible
-				return new ConnMethod(ConnectionMethod.None, Consts.SERVER_PORT);
-			}
+		boolean cd1Port1Open = false;
+		boolean cd1Port2Open = false;
+
+		synchronized (cd1) {
+			cd1Port1Open = cd1.isPort1open();
+			cd1Port2Open = cd1.isPort2open();
 		}
+
+		synchronized (cd2) {
+			if (cd1Port1Open && cd2.isPort1open())
+				return new ConnMethod(ConnectionMethod.UDPDirect, cd2.getPort1());
+			if (cd2.isPort2open())
+				return new ConnMethod(ConnectionMethod.TCPDirect, cd2.getPort2());
+			if (cd1Port2Open && !cd2.getConnectionMethod().equals(ConnectionMethod.None))
+				return new ConnMethod(ConnectionMethod.TCPReverse, cd2.getPort2());
+			if (cd2.isPort1open() || cd2.isPort80open()) // Server can get to cd2
+				return new ConnMethod(ConnectionMethod.Indirect, Consts.SERVER_PORT);
+		}
+		// No connection possible
+		return new ConnMethod(ConnectionMethod.None, Consts.SERVER_PORT);
 	}
+
+
 }
