@@ -179,6 +179,7 @@ public class TalkThread extends StoppableThread {
 					m = null;
 				}
 			}
+			yield();
 		}
 	}
 
