@@ -12,7 +12,6 @@ import java.util.concurrent.TimeUnit;
 
 import messages.ConnectionId;
 import messages.Message;
-import util.Log;
 import util.ThreadsHash;
 
 /**

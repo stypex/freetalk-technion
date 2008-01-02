@@ -41,13 +41,15 @@ public class RegisterHandler extends HandlerThread {
 	public void run() {
 		super.run();
 
+		String client = m.getFrom();
+		
 		try {
-			ClientData cd = ClientsHash.getInstance().get(m.getFrom());
+			ClientData cd = ClientsHash.getInstance().get(client);
 
 			if (cd != null && !cd.getIp().equals(m.getClientIp())) { // Name in use
 
 				ErrorMessage em = 
-					new ErrorMessage("Server", m.getFrom(), getCId(), ErrorType.CLIENT_NAME_EXISTS);
+					new ErrorMessage("Server", client, getCId(), ErrorType.CLIENT_NAME_EXISTS);
 
 				out.send(em);
 				return;
@@ -55,10 +57,10 @@ public class RegisterHandler extends HandlerThread {
 
 			if (cd == null) {	// New client
 
-				cd = new ClientData(m.getFrom(), m.getClientIp(), m.getPort1(), m.getPort2(),
+				cd = new ClientData(client, m.getClientIp(), m.getPort1(), m.getPort2(),
 						ResponseCode.BAD, ResponseCode.BAD, in.getSocket());
 
-				ClientsHash.getInstance().put(m.getFrom(), cd);
+				ClientsHash.getInstance().put(client, cd);
 			}
 
 			synchronized (cd) {
@@ -90,35 +92,36 @@ public class RegisterHandler extends HandlerThread {
 					in.close();
 					out.close();				
 				}
+			}
+			
+			// Clients list for others
+			HashSet<String> set = new HashSet<String>();
+			set.add(client);
 
-				// Clients list for others
-				HashSet<String> set = new HashSet<String>();
-				set.add(cd.getName());
+			for (String c : ClientsHash.getInstance().keySet()) {
 
-				for (String c : ClientsHash.getInstance().keySet()) {
+				if (c.equals(client))
+					continue;
 
-					if (c.equals(cd.getName()))
-						continue;
+				ClientData cData = ClientsHash.getInstance().get(c);
 
-					ClientData cData = ClientsHash.getInstance().get(c);
+				synchronized (cData) {
 
-					synchronized (cData) {
+					ConnectionId newId = new ConnectionId("Server", cData.getName());
+					ClientsAddedMessage cam = new ClientsAddedMessage("Server", cData.getName(),
+							newId, set);
+					try {
+						OutgoingInterface oInt = cData.createOutInterface(newId, true);
+						oInt.send(cam);
 
-						ConnectionId newId = new ConnectionId("Server", cData.getName());
-						cam = new ClientsAddedMessage("Server", cData.getName(),
-								newId, set);
-						try {
-							OutgoingInterface oInt = cData.createOutInterface(newId, true);
-							oInt.send(cam);
-							
-							if (oInt.getSocket() != cData.getTcp80())
-								oInt.close();
-						} catch (IOException e) {
-							e.printStackTrace();
-						}
+						if (oInt.getSocket() != cData.getTcp80())
+							oInt.close();
+					} catch (IOException e) {
+						e.printStackTrace();
 					}
 				}
 			}
+
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {

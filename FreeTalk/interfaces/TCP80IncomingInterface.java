@@ -2,9 +2,8 @@ package interfaces;
 
 import java.io.IOException;
 
-import util.Consts;
-
 import messages.ConnectionId;
+import util.Consts;
 import client.Globals;
 
 /**
