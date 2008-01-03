@@ -6,7 +6,9 @@ package interfaces;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.net.SocketAddress;
 
 import messages.Message;
 import util.Log;
@@ -22,7 +24,9 @@ public class TCPOutgoingInterface extends OutgoingInterface {
 	public TCPOutgoingInterface(InetAddress ip, int remotePort) throws IOException {
 		super(0, remotePort, ip);
 
-		socket = new Socket(ip, remotePort);
+		socket = new Socket();
+		SocketAddress sa = new InetSocketAddress(ip, remotePort);
+		socket.connect(sa, 1000);
 		setLocalPort(socket.getLocalPort());
 	}
 
