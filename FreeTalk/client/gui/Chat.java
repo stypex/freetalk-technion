@@ -104,7 +104,7 @@ public class Chat extends JFrame {
 
 			public void actionPerformed(ActionEvent arg0) {
 				String client = (String)addToChat.getSelectedItem();
-				if (!client.equals("Add user to chat"));
+				if (!client.equals("Add user to chat"))
 					addClientToSession(client);
 			}
 			
