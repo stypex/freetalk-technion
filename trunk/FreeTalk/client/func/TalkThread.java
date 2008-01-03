@@ -178,8 +178,10 @@ public class TalkThread extends StoppableThread {
 					handleMessage(m, ins.get(client));
 					m = null;
 				}
+				yield();
 			}
-			yield();
+			
+			
 		}
 	}
 
@@ -232,12 +234,13 @@ public class TalkThread extends StoppableThread {
 					outs.put(m.getFrom(), in.createMatching());	
 				}
 				
+				isConnected = true;
+				
 				synchronized (dirLock) {
 					dirM = m;
 					dirLock.notify();
 				}
-				c.moveFromComboToList(m.getFrom());
-				isConnected = true;
+				c.moveFromComboToList(m.getFrom());			
 				return;
 			}
 
@@ -379,6 +382,7 @@ public class TalkThread extends StoppableThread {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			JOptionPane.showMessageDialog(c, "Failed connecting to target.", "Connection Error", JOptionPane.ERROR_MESSAGE);
 			return false;
 		}
 	}
@@ -456,7 +460,7 @@ public class TalkThread extends StoppableThread {
 			ins.put(name, out.createMatching());			
 		}
 
-		c.setStatusBarText("Connection established with client" + name);
+		c.setStatusBarText("Connection established with client " + name);
 		return true;
 	}
 

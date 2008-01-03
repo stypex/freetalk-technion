@@ -12,7 +12,10 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.net.Socket;
 
+import javax.swing.JOptionPane;
+
 import util.Consts;
+import client.ClientMain;
 import client.Globals;
 
 import messages.CallMeMessage;
@@ -67,8 +70,10 @@ public class TCPListener80 extends ClientListener {
 				
 				return;
 			} catch (IOException e) {
-				if (!isStopped)
-					e.printStackTrace();
+				if (!isStopped) {
+					e.printStackTrace();			
+				}
+				return;
 			}
 		}
 	}
