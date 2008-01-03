@@ -67,7 +67,7 @@ public class UDPOutgoingInterface extends OutgoingInterface {
 		Message ack;
 		
 		// UDP exponential backoff (1 sec - 2 sec - 4 sec - 8 sec - 16 sec)
-		for (int msecs = 1000; msecs <= 16000; msecs*=2) {
+		for (int msecs = 1000; msecs <= 4000; msecs*=2) {
 			
 			sendMessage(message);
 
