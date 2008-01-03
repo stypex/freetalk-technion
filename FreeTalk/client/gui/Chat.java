@@ -276,6 +276,8 @@ public class Chat extends JFrame {
 				
 				Func.addAlphabeticallyToLM(client,lstModel);
 				
+				addToChat.setSelectedIndex(0);
+				
 				setTitle();
 //			}
 //		}
