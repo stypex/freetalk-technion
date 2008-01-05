@@ -18,7 +18,7 @@ public abstract class Message implements Serializable {
 	ConnectionId cId;
 	int udpSn;
 	int localPort;
-	String id;
+	Id id;
 	
 	static int serial = 0;
 	
@@ -37,7 +37,7 @@ public abstract class Message implements Serializable {
 		String name = Globals.getClientName() != null ? 
 				Globals.getClientName() : "Server";
 				
-		id = name + ":" + util.Func.getDateTime() + ":" + serial++;
+		id = new Id(name, util.Func.getDateTime() + ":" + serial++);
 		
 	}
 
@@ -91,8 +91,33 @@ public abstract class Message implements Serializable {
 		this.localPort = localPort;
 	}
 
-	public String getId() {
+	public Id getId() {
 		return id;
 	}
 
+	public static class Id implements Serializable{
+
+		private static final long serialVersionUID = 94629156586731718L;
+		
+		String clientName;
+		String id;
+		
+		public Id(String c, String i){
+			clientName = c;
+			id = i;
+		}
+		
+		public String toString(){
+			return clientName + ":" + id;
+		}
+
+		public String getClientName() {
+			return clientName;
+		}
+
+		public String getId() {
+			return id;
+		}
+	}
+	
 }

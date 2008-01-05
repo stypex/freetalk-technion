@@ -11,9 +11,11 @@ import java.io.ObjectInputStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.SocketException;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
+import messages.ClientExitMessage;
 import messages.Message;
 import messages.UDPAckMessage;
 import util.Consts;
@@ -34,11 +36,11 @@ public class UDPListener80 extends Thread {
 	
 	// In case we receive several identical messages with diff.
 	// serial number, we want to discard duplicates
-	Set<String> receivedMessages;
+	public HashMap<String,HashSet<String>> receivedMessages;
 
 	public UDPListener80() {
 		super();
-		receivedMessages = new HashSet<String>();
+		receivedMessages = new HashMap<String,HashSet<String>>();
 		
 		try {
 			ds = new DatagramSocket(Consts.SERVER_PORT);
@@ -66,11 +68,17 @@ public class UDPListener80 extends Thread {
 				
 				Message m = (Message)o;
 				
-				// We will discard duplicate messages
-				if (receivedMessages.contains(m.getId()))
-					continue;
-				else
-					receivedMessages.add(m.getId());
+				//We will discard duplicate messages
+				synchronized(receivedMessages){
+					if(receivedMessages.containsKey(m.getId().getClientName())){
+						if (receivedMessages.get(m.getId().getClientName()).contains(m.getId().getId()))
+							continue;
+					}
+					else
+						receivedMessages.put(m.getId().getClientName(), new HashSet<String>());
+					
+					receivedMessages.get(m.getId().getClientName()).add(m.getId().getId());
+				}
 				
 				Log.getInstance().addDatedText("Receiving Message in listener on UDP port: " + Consts.SERVER_PORT, true);
 				Log.getInstance().addMessage(m);
