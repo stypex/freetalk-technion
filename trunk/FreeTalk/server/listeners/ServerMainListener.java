@@ -28,7 +28,7 @@ import util.Consts;
 public class ServerMainListener {
 
 	ServerSocket ss;
-	
+	public static UDPListener80 udp;
 	
 	
 	public ServerMainListener() {
@@ -44,7 +44,7 @@ public class ServerMainListener {
 	public static void main(String[] args) {
 		
 		ServerMainListener tcp = new ServerMainListener();
-		UDPListener80 udp = new UDPListener80();
+		udp = new UDPListener80();
 		ProbeThread pt = new ProbeThread();
 		
 

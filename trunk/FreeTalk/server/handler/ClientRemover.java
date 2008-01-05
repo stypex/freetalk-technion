@@ -11,6 +11,7 @@ import messages.ClientExitMessage;
 import messages.ConnectionId;
 import server.data.ClientData;
 import server.data.ClientsHash;
+import server.listeners.ServerMainListener;
 
 /**
  * Removes the client, sends CLIENT_EXIT messages.
@@ -34,6 +35,10 @@ public class ClientRemover {
 	 */
 	public void execute() {
 		try {
+			synchronized(ServerMainListener.udp.receivedMessages){
+				ServerMainListener.udp.receivedMessages.remove(client);
+			}
+			
 			ClientData cd = ClientsHash.getInstance().get(client);
 			if (cd == null)
 				return;
