@@ -131,6 +131,23 @@ public class Chat extends JFrame {
 			}
 		});
 
+		//This part doesn't allow sending text that is only whitespaces
+		//by disabling the "Send" button.[Arthur's code]
+		utp.getDocument().addDocumentListener(new DocumentListener() {
+
+			   public void changedUpdate(DocumentEvent arg0) {
+			    usp.getVerticalScrollBar().setValue(usp.getVerticalScrollBar().getMaximum());
+			   }
+
+			   public void insertUpdate(DocumentEvent arg0) {
+			    usp.getVerticalScrollBar().setValue(usp.getVerticalScrollBar().getMaximum());
+			   }
+
+			   public void removeUpdate(DocumentEvent arg0) {
+			    usp.getVerticalScrollBar().setValue(usp.getVerticalScrollBar().getMaximum());
+			   }
+			  });
+
 		//Attaches between pressing the "Send" button and the message being sent
 		//as well as shown in the chat text area
 		send.addActionListener(new java.awt.event.ActionListener() {
@@ -257,6 +274,7 @@ public class Chat extends JFrame {
 			d.insertString(d.getLength(), from + " <" + util.Func.getDateTime() + ">\n", s);
 			StyleConstants.setBold(s, false);
 			d.insertString(d.getLength(), text + "\n\n", s);
+			utp.setCaretPosition(utp.getDocument().getLength());	// Ilya - my 1st line in this proj :) 
 		} catch (BadLocationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
