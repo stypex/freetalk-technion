@@ -6,6 +6,7 @@ import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentListener;
 import java.awt.event.ComponentEvent;
 
@@ -118,17 +119,23 @@ public class Chat extends JFrame {
 
 		// This part allows to scroll down scrollBar in case
 		// Chat window or utp part of it was resized
-		usp.addComponentListener(new ComponentListener() {
-			public void componentResized(ComponentEvent ce){
-				if (utp.getDocument().getLength()>0)
-			        utp.setCaretPosition(utp.getDocument().getLength()-1);
-				utp.setCaretPosition(utp.getDocument().getLength());
-			}
-			public void componentHidden(ComponentEvent ce){}
-			public void componentMoved(ComponentEvent ce){}
-			public void componentShown(ComponentEvent ce){}			
-		});
-		
+//		usp.addComponentListener(new ComponentListener() {
+//			public void componentResized(ComponentEvent ce){
+//				if (utp.getDocument().getLength()>0)
+//			        utp.setCaretPosition(utp.getDocument().getLength()-1);
+//				utp.setCaretPosition(utp.getDocument().getLength());
+//			}
+//			public void componentHidden(ComponentEvent ce){}
+//			public void componentMoved(ComponentEvent ce){}
+//			public void componentShown(ComponentEvent ce){}			
+//		});
+		usp.addComponentListener(new ComponentAdapter() {
+			   public void componentResized(ComponentEvent ce){
+			    if (utp.getDocument().getLength()>0)
+			           utp.setCaretPosition(utp.getDocument().getLength()-1);
+			    utp.setCaretPosition(utp.getDocument().getLength());
+			   }
+			  });		
 		
 		//This part doesn't allow sending text that is only whitespaces
 		//by disabling the "Send" button.
