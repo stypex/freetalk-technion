@@ -105,7 +105,12 @@ public class TalkThread extends StoppableThread {
 						new TerminationMessage(Globals.getClientName(),
 								client, cons.get(client));
 					synchronized (cons.get(client)) {
-						sendToOne(client, tm);
+						try {
+							sendToOne(client, tm);
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
 						disconnectClient(client);
 					}
 					
@@ -390,8 +395,9 @@ public class TalkThread extends StoppableThread {
 	/**
 	 * Send the message to all cleints in the conference call
 	 * @param m
+	 * @throws IOException 
 	 */
-	private void sendToAll(Message m) {
+	private void sendToAll(Message m) throws IOException {
 
 		for (String client : outs.keySet()) {
 			m.setTo(client);
@@ -401,7 +407,7 @@ public class TalkThread extends StoppableThread {
 		}
 	}
 
-	private void sendToOne(String client, Message m) {
+	private void sendToOne(String client, Message m) throws IOException {
 		try {
 			synchronized (cons.get(client)) {
 				outs.get(client).send(m);			
@@ -409,6 +415,8 @@ public class TalkThread extends StoppableThread {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			JOptionPane.showMessageDialog(c, "Failed sending message.", "Connection Error", JOptionPane.ERROR_MESSAGE);
+			throw e;
 		}
 
 	}
@@ -472,7 +480,12 @@ public class TalkThread extends StoppableThread {
 	 */
 	public void send(String msg){	
 		TextMessage tm = new TextMessage(Globals.getClientName(), "", null, msg);
-		sendToAll(tm);
+		try {
+			sendToAll(tm);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	public void addClientToGUI(String client) {
@@ -494,7 +507,12 @@ public class TalkThread extends StoppableThread {
 
 		AddClientMessage acm = new AddClientMessage(Globals.getClientName(), "", null, client);
 
-		sendToAll(acm);
+		try {
+			sendToAll(acm);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		ConnectionId cid = new ConnectionId(Globals.getClientName(), client);
 		cons.put(client, cid);
 		
