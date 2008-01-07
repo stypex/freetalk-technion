@@ -6,6 +6,8 @@ import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentListener;
+import java.awt.event.ComponentEvent;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
@@ -114,6 +116,20 @@ public class Chat extends JFrame {
 		send = new JButton("Send");
 		send.setEnabled(false);
 
+		// This part allows to scroll down scrollBar in case
+		// Chat window or utp part of it was resized
+		usp.addComponentListener(new ComponentListener() {
+			public void componentResized(ComponentEvent ce){
+				if (utp.getDocument().getLength()>0)
+			        utp.setCaretPosition(utp.getDocument().getLength()-1);
+				utp.setCaretPosition(utp.getDocument().getLength());
+			}
+			public void componentHidden(ComponentEvent ce){}
+			public void componentMoved(ComponentEvent ce){}
+			public void componentShown(ComponentEvent ce){}			
+		});
+		
+		
 		//This part doesn't allow sending text that is only whitespaces
 		//by disabling the "Send" button.
 		ltp.getDocument().addDocumentListener(new DocumentListener() {
@@ -258,7 +274,7 @@ public class Chat extends JFrame {
 			d.insertString(d.getLength(), from + " <" + util.Func.getDateTime() + ">\n", s);
 			StyleConstants.setBold(s, false);
 			d.insertString(d.getLength(), text + "\n\n", s);
-			// lowers scrollBar to its lowest position
+			// lowers scrollBar to its lowest position upon new message in utp
 			utp.setCaretPosition(utp.getDocument().getLength());	// Ilya - my 1st line in this proj :) 
 		} catch (BadLocationException e) {
 			// TODO Auto-generated catch block
