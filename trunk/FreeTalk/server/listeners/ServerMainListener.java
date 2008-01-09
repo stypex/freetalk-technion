@@ -51,7 +51,9 @@ public class ServerMainListener {
 		Log log = new Log();
 		Log.init(log);
 		
-		Log.getInstance().addDatedText("Starting server.", true);
+		synchronized (Log.getInstance()) {
+			Log.getInstance().addDatedText("Starting server.", true);
+		}
 		
 		udp.start();
 		pt.start();

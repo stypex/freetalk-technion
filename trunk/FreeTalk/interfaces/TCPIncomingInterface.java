@@ -66,12 +66,15 @@ public class TCPIncomingInterface extends IncomingInterface {
 		
 		try {
 			Object o = in.readObject();
-			Log.getInstance().addDatedText("Receiving Message on TCP port: " + socket.getLocalPort(), true);
 			
-			if (o instanceof Message) {
-				Message m = (Message) o;
-				Log.getInstance().addMessage(m);
-				return m;
+			synchronized (Log.getInstance()) {
+				Log.getInstance().addDatedText("Receiving Message on TCP port: " + socket.getLocalPort(), true);
+				
+				if (o instanceof Message) {
+					Message m = (Message) o;
+					Log.getInstance().addMessage(m);
+					return m;
+				}
 			}
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();

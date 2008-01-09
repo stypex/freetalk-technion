@@ -93,8 +93,11 @@ public class UDPListener extends ClientListener {
 				
 				receivedMessages.get(m.getUdpData().getId().getClientName()).add(m.getUdpData().getId().getId());
 				
-				Log.getInstance().addDatedText("Receiving Message in listener on UDP port: " + Globals.getUDPPort(), true);
-				Log.getInstance().addMessage(m);
+				synchronized (Log.getInstance()) {
+					Log.getInstance().addDatedText("Receiving Message in listener on UDP port: " + Globals.getUDPPort(), true);
+					Log.getInstance().addMessage(m);
+				}
+				
 				
 				// Send through the incoming interface
 				boolean passed = ThreadsHash.getInstance().passMessage(m);

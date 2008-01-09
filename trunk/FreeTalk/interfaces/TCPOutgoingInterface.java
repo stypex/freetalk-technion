@@ -60,8 +60,10 @@ public class TCPOutgoingInterface extends OutgoingInterface {
 		ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
 		out.writeObject(message);
 		out.flush();
-		Log.getInstance().addDatedText("Sending Message to TCP port: " + socket.getPort(), true);
-		Log.getInstance().addMessage(message);
+		synchronized (Log.getInstance()) {
+			Log.getInstance().addDatedText("Sending Message to TCP port: " + socket.getPort(), true);
+			Log.getInstance().addMessage(message);
+		}
 	}
 
 	@Override
