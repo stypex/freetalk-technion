@@ -13,9 +13,7 @@ import java.net.DatagramSocket;
 import java.net.SocketException;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Set;
 
-import messages.ClientExitMessage;
 import messages.Message;
 import messages.UDPAckMessage;
 import util.Consts;
