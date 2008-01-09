@@ -15,7 +15,6 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Set;
 
 import messages.ClientExitMessage;
 import messages.Message;
