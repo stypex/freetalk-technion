@@ -62,6 +62,8 @@ public class RegisterHandler extends HandlerThread {
 
 				ClientsHash.getInstance().put(client, cd);
 			}
+			else
+				cd.setTcp80(in.getSocket());
 
 			synchronized (cd) {
 				ClientsHash.getInstance().registerThread(cd.getName(), this);

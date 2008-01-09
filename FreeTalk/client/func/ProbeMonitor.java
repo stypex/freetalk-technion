@@ -7,8 +7,6 @@ import javax.swing.SwingUtilities;
 
 import util.Consts;
 import client.ClientMain;
-import client.Globals;
-import client.gui.Login;
 import client.gui.Relogin;
 
 /**
@@ -30,7 +28,7 @@ public class ProbeMonitor extends Thread {
 		
 		while (true) {
 			try {
-				Thread.sleep(Consts.PROBE_WAIT * 2);
+				Thread.sleep(Consts.PROBE_WAIT / 2);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
