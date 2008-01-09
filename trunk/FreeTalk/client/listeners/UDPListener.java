@@ -84,14 +84,14 @@ public class UDPListener extends ClientListener {
 				final Message m = (Message)o;
 				
 				// We will discard duplicate messages
-				if(receivedMessages.containsKey(m.getId().getClientName())){
-					if (receivedMessages.get(m.getId().getClientName()).contains(m.getId().getId()))
+				if(receivedMessages.containsKey(m.getUdpData().getId().getClientName())){
+					if (receivedMessages.get(m.getUdpData().getId().getClientName()).contains(m.getUdpData().getId().getId()))
 						continue;
 				}
 				else
-					receivedMessages.put(m.getId().getClientName(), new HashSet<String>());
+					receivedMessages.put(m.getUdpData().getId().getClientName(), new HashSet<String>());
 				
-				receivedMessages.get(m.getId().getClientName()).add(m.getId().getId());
+				receivedMessages.get(m.getUdpData().getId().getClientName()).add(m.getUdpData().getId().getId());
 				
 				Log.getInstance().addDatedText("Receiving Message in listener on UDP port: " + Globals.getUDPPort(), true);
 				Log.getInstance().addMessage(m);
@@ -105,7 +105,7 @@ public class UDPListener extends ClientListener {
 				}
 				
 				final UDPIncomingInterface in = new UDPIncomingInterface(m.getCId(), 
-						dp.getAddress(), m.getLocalPort(), Globals.getUDPPort());
+						dp.getAddress(), m.getUdpData().getLocalPort(), Globals.getUDPPort());
 				
 				// Send UDP ack
 				OutgoingInterface out = in.createMatching();

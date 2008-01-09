@@ -70,14 +70,14 @@ public class UDPListener80 extends Thread {
 				
 				//We will discard duplicate messages
 				synchronized(receivedMessages){
-					if(receivedMessages.containsKey(m.getId().getClientName())){
-						if (receivedMessages.get(m.getId().getClientName()).contains(m.getId().getId()))
+					if(receivedMessages.containsKey(m.getUdpData().getId().getClientName())){
+						if (receivedMessages.get(m.getUdpData().getId().getClientName()).contains(m.getUdpData().getId().getId()))
 							continue;
 					}
 					else
-						receivedMessages.put(m.getId().getClientName(), new HashSet<String>());
+						receivedMessages.put(m.getUdpData().getId().getClientName(), new HashSet<String>());
 					
-					receivedMessages.get(m.getId().getClientName()).add(m.getId().getId());
+					receivedMessages.get(m.getUdpData().getId().getClientName()).add(m.getUdpData().getId().getId());
 				}
 				
 				Log.getInstance().addDatedText("Receiving Message in listener on UDP port: " + Consts.SERVER_PORT, true);
@@ -94,7 +94,7 @@ public class UDPListener80 extends Thread {
 				
 				// Send UDP ack
 				UDPOutgoingInterface out = new UDPOutgoingInterface(dp.getAddress(), 
-						Consts.SERVER_PORT, m.getLocalPort(), m.getCId());
+						Consts.SERVER_PORT, m.getUdpData().getLocalPort(), m.getCId());
 			
 				out.sendUDPAck(m);	
 				out.close();

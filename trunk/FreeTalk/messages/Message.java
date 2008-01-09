@@ -16,9 +16,8 @@ public abstract class Message implements Serializable {
 	String from;
 	String to;
 	ConnectionId cId;
-	int udpSn;
-	int localPort;
-	Id id;
+	UdpData udpData;
+	
 	
 	static int serial = 0;
 	
@@ -27,19 +26,25 @@ public abstract class Message implements Serializable {
 		this.from = from;
 		this.to = to;
 		this.cId = cId;
-		udpSn = 0;
-		localPort = 0;
-		setId();
+		udpData = null;
 	}
 	
-	private void setId() {
+	public UdpData getUdpData() {
+		return udpData;
+	}
+	
+	public void addUdpData(){
+		udpData = new UdpData();
+	}
+	
+	/*private void setId() {
 		
 		String name = Globals.getClientName() != null ? 
 				Globals.getClientName() : "Server";
 				
 		id = new Id(name, util.Func.getDateTime() + ":" + serial++);
 		
-	}
+	}*/
 
 	public String getFrom() {
 		return from;
@@ -58,13 +63,16 @@ public abstract class Message implements Serializable {
 		String sep = System.getProperty("line.separator");
 		//next 2 rows get the Class name without the package name before it
 		String p = this.getClass().getPackage().getName();
-		return this.getClass().getName().substring(p.length()+1) + sep +
-			   Func.toStringRow("From", from) +
-		       Func.toStringRow("To", to) +
-		       Func.toStringRow("Connection ID", cId) +
-		       Func.toStringRow("UDP SN", udpSn) +
-		       Func.toStringRow("Id", id) +
-		       Func.toStringRow("Local port", localPort);
+		String ret = this.getClass().getName().substring(p.length()+1) + sep +
+		   					Func.toStringRow("From", from) +
+		   					Func.toStringRow("To", to) +
+		   					Func.toStringRow("Connection ID", cId); 
+		if ( udpData != null ){ 
+			ret += Func.toStringRow("UDP SN", udpData.getUdpSn()) +
+		       	   Func.toStringRow("Id", udpData.getId()) +
+		       	   Func.toStringRow("Local port", udpData.getLocalPort());
+		}
+		return ret;
 	}
 
 	public void setTo(String to) {
@@ -75,7 +83,7 @@ public abstract class Message implements Serializable {
 		cId = id;
 	}
 
-	public int getUdpSn() {
+	/*public int getUdpSn() {
 		return udpSn;
 	}
 
@@ -93,7 +101,7 @@ public abstract class Message implements Serializable {
 
 	public Id getId() {
 		return id;
-	}
+	}*/
 
 	public static class Id implements Serializable{
 
@@ -120,4 +128,51 @@ public abstract class Message implements Serializable {
 		}
 	}
 	
+	public static class UdpData implements Serializable {
+
+		private static final long serialVersionUID = -4749526196526347862L;
+		
+		private int udpSn;
+		private int localPort;
+		private Id id;
+		
+		public UdpData(){
+			udpSn = 0;
+			localPort = 0;
+			String name = Globals.getClientName() != null ? 
+					Globals.getClientName() : "Server";
+					
+			id = new Id(name, util.Func.getDateTime() + ":" + serial++);
+		}
+		
+		public UdpData(int udpSn1, int localPort1, String clientName, String id1){
+			udpSn = udpSn1;
+			localPort = localPort1;
+			id = new Id(clientName, id1);
+		}
+
+		public int getUdpSn() {
+			return udpSn;
+		}
+
+		public int getLocalPort() {
+			return localPort;
+		}
+
+		public Id getId() {
+			return id;
+		}
+		
+		public void incUdpSn() {
+			this.udpSn++;
+		}
+
+		public void setLocalPort(int localPort) {
+			this.localPort = localPort;
+		}
+
+		public void setUdpSn(int udpSn) {
+			this.udpSn = udpSn;
+		}
+	}
 }

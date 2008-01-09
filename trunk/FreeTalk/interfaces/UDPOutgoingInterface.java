@@ -66,6 +66,8 @@ public class UDPOutgoingInterface extends OutgoingInterface {
 
 		Message ack;
 		
+		message.addUdpData();
+		
 		// UDP exponential backoff (1 sec - 2 sec - 4 sec - 8 sec - 16 sec)
 		for (int msecs = 1000; msecs <= 4000; msecs*=2) {
 			
@@ -74,9 +76,9 @@ public class UDPOutgoingInterface extends OutgoingInterface {
 			try {
 				do {
 					ack = ackInt.receive(msecs); // Get ack
-				} while (ack.getUdpSn() > message.getUdpSn()); // The ack must belong to this message
+				} while (ack.getUdpData().getUdpSn() > message.getUdpData().getUdpSn()); // The ack must belong to this message
 			} catch (SocketTimeoutException e) { 
-				message.incUdpSn(); // No ack. Try again
+				message.getUdpData().incUdpSn(); // No ack. Try again
 				continue;
 			}
 			return; // All fine
@@ -101,7 +103,7 @@ public class UDPOutgoingInterface extends OutgoingInterface {
 		ConnectionId cid = m.getCId().getAck();
 		
 		Message ack = new UDPAckMessage(m.getTo(), 
-				m.getFrom(), cid, m.getUdpSn());
+				m.getFrom(), cid, m.getUdpData().getUdpSn());
 		
 		try {
 			sendMessage(ack);
@@ -119,7 +121,7 @@ public class UDPOutgoingInterface extends OutgoingInterface {
 	private void sendMessage(Message m) throws IOException {
 		
 		// So they'll know how to answer
-		m.setLocalPort(localPort);
+		m.getUdpData().setLocalPort(localPort);
 		
 		//	Serialize...
 		ByteArrayOutputStream b_out = new ByteArrayOutputStream();
