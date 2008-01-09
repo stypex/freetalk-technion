@@ -80,8 +80,10 @@ public class UDPListener80 extends Thread {
 					receivedMessages.get(m.getUdpData().getId().getClientName()).add(m.getUdpData().getId().getId());
 				}
 				
-				Log.getInstance().addDatedText("Receiving Message in listener on UDP port: " + Consts.SERVER_PORT, true);
-				Log.getInstance().addMessage(m);
+				synchronized (Log.getInstance()) {
+					Log.getInstance().addDatedText("Receiving Message in listener on UDP port: " + Consts.SERVER_PORT, true);
+					Log.getInstance().addMessage(m);
+				}
 				
 				// Send through the incoming interface
 				if (!ThreadsHash.getInstance().passMessage(m)) {

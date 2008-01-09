@@ -133,7 +133,9 @@ public class UDPOutgoingInterface extends OutgoingInterface {
 		DatagramPacket dp = new DatagramPacket(b, b.length, remoteIp, remotePort); 
 		socket.send(dp);
 		
-		Log.getInstance().addDatedText("Sending Message to UDP port: " + remotePort, true);
-		Log.getInstance().addMessage(m);
+		synchronized (Log.getInstance()) {
+			Log.getInstance().addDatedText("Sending Message to UDP port: " + remotePort, true);
+			Log.getInstance().addMessage(m);
+		}
 	}
 }
