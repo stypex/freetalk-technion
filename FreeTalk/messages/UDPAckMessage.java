@@ -20,11 +20,12 @@ public class UDPAckMessage extends Message {
 	 */
 	public UDPAckMessage(String from, String to, ConnectionId cId, int udpSn) {
 		super(from, to, cId);
+		udpData = new UdpData();
 		setUdpSn(udpSn);
 	}
 
 
 	public void setUdpSn(int udpSn) {
-		this.udpSn = udpSn;
+		udpData.setUdpSn(udpSn);
 	}
 }
