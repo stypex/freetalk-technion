@@ -203,9 +203,13 @@ public class Main extends JFrame {
         }
 	}
 
+	public String getUserName() {
+		return userName;
+	}
+	
 	/**
 	 * Sets the userName of the user on this computer.
-	 * Shoud be called before showing the window.
+	 * Should be called before showing the window.
 	 * @param userName - user name of teh user on this computer.
 	 * @author Arthur Kiyanovsky
 	 * Dec 8, 2007
