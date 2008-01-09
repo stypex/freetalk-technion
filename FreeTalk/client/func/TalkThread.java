@@ -35,6 +35,7 @@ import util.Consts;
 import util.Consts.ConnectionMethod;
 import client.ClientMain;
 import client.Globals;
+import client.data.ClientsList;
 import client.data.ConferenceCallsHash;
 import client.gui.Chat;
 import client.listeners.StoppableThread;
@@ -345,7 +346,9 @@ public class TalkThread extends StoppableThread {
 			boolean sendConnect) {
 
 		try {
-
+			if (!ClientsList.getInstance().containsKey(dest2))
+				return false;
+			
 			TCPOutgoingInterface out = new TCPOutgoingInterface(Globals.getServerIP(), Consts.SERVER_PORT);
 
 			Message m;

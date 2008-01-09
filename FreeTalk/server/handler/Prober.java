@@ -44,9 +44,9 @@ public class Prober {
 			boolean isTCP80 = false;
 			
 			// Failed both checks
-			if (!isUDP && !isTCP)
+			if (!isUDP && !isTCP) {
 				// Has a tcp80 connection - check that one
-				if (cd.getTcp80() != null) {
+				if (cd.getTcp80() != null) 
 					isTCP80 = (!checkTCP80().equals(ResponseCode.BAD));
 
 				if (!isTCP80) { // No success			
