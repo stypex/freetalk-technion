@@ -69,7 +69,6 @@ public class TCPListener80 extends ClientListener {
 			} catch (IOException e) {
 				if (!isStopped) {
 					ClientMain.setServerOut();
-					e.printStackTrace();			
 				}
 				return;
 			}

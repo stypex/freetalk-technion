@@ -50,9 +50,9 @@ public class ConnectionHandler extends HandlerThread {
 			OutgoingInterface out2;
 			IncomingInterface in2;
 
-			
+
 			ConnMethod com = calcConnType(cm.getFrom(), cm.getConnTo());
-			
+
 			synchronized (cd) {
 				ConAckMessage cam = new ConAckMessage("Server", cm.getFrom(), 
 						cm.getCId(), cd.getIp(), com);
@@ -89,28 +89,32 @@ public class ConnectionHandler extends HandlerThread {
 
 			Message received = null;
 
-			do {
-				try {
-					received = in.receive(500);
+			try {
+				do {
+					try {
+						received = in.receive(500);
 
-					out2.send(received);
+						out2.send(received);
 
-					if (received instanceof TerminationMessage)
-						break;
+						if (received instanceof TerminationMessage)
+							break;
 
-				} catch (SocketTimeoutException e) {}
+					} catch (SocketTimeoutException e) {}
 
-				try {
-					received = in2.receive(500);
+					try {
+						received = in2.receive(500);
 
 
-					out.send(received);
-				} catch (SocketTimeoutException e) {}
+						out.send(received);
+					} catch (SocketTimeoutException e) {}
 
-			} while ((received == null || 
-					!(received instanceof TerminationMessage))
-					&& !isStopped);
+				} while ((received == null || 
+						!(received instanceof TerminationMessage))
+						&& !isStopped);
 
+			} catch (IOException e) {
+				// Do nothing
+			}
 
 			in2.close();
 			out2.close();
