@@ -444,7 +444,7 @@ public class TalkThread extends StoppableThread {
 		} catch (IOException e) {
 			throw new NoConnectionException(client);
 		} catch (NullPointerException e) {
-			e.printStackTrace();
+			throw new NoConnectionException(client);
 		}
 
 	}
@@ -506,19 +506,27 @@ public class TalkThread extends StoppableThread {
 	 * @author Arthur Kiyanovsky
 	 * Dec 8, 2007
 	 */
-	public void send(String msg){	
+	public boolean send(String msg){	
 		TextMessage tm = new TextMessage(Globals.getClientName(), "", null, msg);
 		try {
 			sendToAll(tm);
+			return true;
 		} catch (NoConnectionException e) {	
 			reconnect(e.getClient());
+			
+			if (!cons.contains(e.getClient())) {
+				JOptionPane.showMessageDialog(c, "Error sending message.", "Connection Error", JOptionPane.ERROR_MESSAGE);
+				return false;
+			}
+				
 			try {
 				sendToOne(e.getClient(), tm);
+				return true;
 			} catch (NoConnectionException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+				JOptionPane.showMessageDialog(c, "Error sending message.", "Connection Error", JOptionPane.ERROR_MESSAGE);
 			}
 		}
+		return false;
 	}
 
 	public void addClientToGUI(String client) {
