@@ -7,7 +7,7 @@ package messages;
  * @author lenka
  *
  */
-public class ClientExitMessage extends Message {
+public class ClientExitMessage extends Message implements IndependantMessage {
 
 	
 	private static final long serialVersionUID = -3834728946589296791L;
