@@ -433,9 +433,6 @@ public class TalkThread extends StoppableThread {
 				outs.get(client).send(m);			
 			}
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			JOptionPane.showMessageDialog(c, "Failed sending message.", "Connection Error", JOptionPane.ERROR_MESSAGE);
 			throw new NoConnectionException(client);
 		} catch (NullPointerException e) {
 			e.printStackTrace();
@@ -504,8 +501,7 @@ public class TalkThread extends StoppableThread {
 		TextMessage tm = new TextMessage(Globals.getClientName(), "", null, msg);
 		try {
 			sendToAll(tm);
-		} catch (NoConnectionException e) {			
-			e.printStackTrace();
+		} catch (NoConnectionException e) {	
 			reconnect(e.getClient());
 			try {
 				sendToOne(e.getClient(), tm);
