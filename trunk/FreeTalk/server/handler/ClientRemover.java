@@ -53,6 +53,9 @@ public class ClientRemover {
 
 				ClientData cd1 = ClientsHash.getInstance().get(c);
 
+				if (cd1 == null)
+					continue;
+				
 				synchronized (cd1) {
 					OutgoingInterface oi = cd1.createOutInterface(cId, true);
 					ClientExitMessage newTm = new ClientExitMessage("Server", cd1.getName(), cId, client);

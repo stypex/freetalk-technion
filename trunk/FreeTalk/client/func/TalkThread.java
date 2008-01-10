@@ -414,8 +414,7 @@ public class TalkThread extends StoppableThread {
 			isConnected = true;
 			return true;
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			disconnectClient(dest2);
 			JOptionPane.showMessageDialog(c, "Failed connecting to target.", "Connection Error", JOptionPane.ERROR_MESSAGE);
 			return false;
 		}
