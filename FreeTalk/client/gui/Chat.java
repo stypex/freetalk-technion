@@ -406,4 +406,9 @@ public class Chat extends JFrame {
 				setTitle("Nobody");
 		}
 	}
+	
+	public void setServerOut() {
+		send.setEnabled(false);
+		ltp.setEditable(false);
+	}
 }

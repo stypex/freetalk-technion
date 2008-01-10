@@ -8,6 +8,7 @@ import messages.ClientExitMessage;
 import messages.ConnectionId;
 import messages.Message;
 import util.Consts;
+import client.ClientMain;
 import client.Globals;
 
 public class Exiter {
@@ -19,7 +20,7 @@ public class Exiter {
 			Message m = new ClientExitMessage(Globals.getClientName(), "Server", cid, Globals.getClientName());
 			out.send(m);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			ClientMain.setServerOut();
 			e.printStackTrace();
 		}
 	}

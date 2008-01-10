@@ -15,6 +15,7 @@ import java.net.Socket;
 import messages.CallMeMessage;
 import messages.Message;
 import util.Consts;
+import client.ClientMain;
 import client.Globals;
 
 /**
@@ -67,6 +68,7 @@ public class TCPListener80 extends ClientListener {
 				return;
 			} catch (IOException e) {
 				if (!isStopped) {
+					ClientMain.setServerOut();
 					e.printStackTrace();			
 				}
 				return;

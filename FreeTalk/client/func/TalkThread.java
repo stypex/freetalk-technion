@@ -360,11 +360,15 @@ public class TalkThread extends StoppableThread {
 	private boolean doConnect(String dest2, ConnectionId cid, 
 			boolean sendConnect) {
 
+		Message mes = null;
+		TCPOutgoingInterface out = null;
+		TCPIncomingInterface in = null;
+		
 		try {
 			if (!ClientsList.getInstance().containsKey(dest2))
 				return false;
 			
-			TCPOutgoingInterface out = new TCPOutgoingInterface(Globals.getServerIP(), Consts.SERVER_PORT);
+			out = new TCPOutgoingInterface(Globals.getServerIP(), Consts.SERVER_PORT);
 
 			Message m;
 			if (sendConnect)
@@ -376,10 +380,15 @@ public class TalkThread extends StoppableThread {
 			
 			out.send(m);
 
-			TCPIncomingInterface in = new TCPIncomingInterface(out.getSocket());
+			in = new TCPIncomingInterface(out.getSocket());
 
-			Message mes = in.receive(0);
-
+			mes = in.receive(0);
+		} catch (IOException e) {
+			ClientMain.setServerOut();
+			return false;
+		}
+		
+		try {
 			if (mes instanceof ErrorMessage) {
 				if (sendConnect) {
 					ErrorMessage err = (ErrorMessage) mes;
@@ -413,7 +422,7 @@ public class TalkThread extends StoppableThread {
 	}
 
 	/**
-	 * Send the message to all cleints in the conference call
+	 * Send the message to all clients in the conference call
 	 * @param m
 	 * @throws IOException 
 	 */
@@ -602,5 +611,9 @@ public class TalkThread extends StoppableThread {
 		}
 		
 		
+	}
+
+	public void setServerOut() {
+		c.setServerOut();
 	}
 }
