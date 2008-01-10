@@ -139,6 +139,7 @@ public class Loginner {
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
+			ClientMain.setServerOut();
 			e.printStackTrace();
 		}
 		JOptionPane.showMessageDialog(login, "Error connecting to server", "Registration Error", JOptionPane.ERROR_MESSAGE);
