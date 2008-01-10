@@ -143,7 +143,6 @@ public class Loginner {
 			e.printStackTrace();
 		} catch (IOException e) {
 			ClientMain.setServerOut();
-			e.printStackTrace();
 		}
 		JOptionPane.showMessageDialog(login, "Error connecting to server", "Registration Error", JOptionPane.ERROR_MESSAGE);
 		return false;
