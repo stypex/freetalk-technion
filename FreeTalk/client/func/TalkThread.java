@@ -616,4 +616,8 @@ public class TalkThread extends StoppableThread {
 	public void setServerOut() {
 		c.setServerOut();
 	}
+
+	public void setServerOk() {
+		c.setServerOk();
+	}
 }

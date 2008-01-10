@@ -19,13 +19,13 @@ public class ProbeMonitor extends Thread {
 
 	public ProbeMonitor() {
 		super();
-		
+
 	}
 
 	@Override
 	public void run() {
 		super.run();
-		
+
 		while (true) {
 			try {
 				Thread.sleep(Consts.PROBE_WAIT / 2);
@@ -33,32 +33,33 @@ public class ProbeMonitor extends Thread {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+
 			
 			long now = System.currentTimeMillis();
 			if (now - ClientMain.lastProbed > Consts.PROBE_WAIT * 2) {
-				
+
 				// Do the login again with the same user name
 //				SwingUtilities.invokeLater(new Runnable() {
-//					public void run() {
-						final Relogin r = new Relogin(ClientMain.getMainWindow());
-						SwingUtilities.invokeLater(new Runnable() {
-							public void run() {
-								r.setVisible(true);
-							}
-						});  
-						r.login();
-						
-						
-						/*Login l =
+//				public void run() {
+				final Relogin r = new Relogin(ClientMain.getMainWindow());
+				SwingUtilities.invokeLater(new Runnable() {
+					public void run() {
+						r.setVisible(true);
+					}
+				});  
+				r.login();
+
+
+				/*Login l =
 							new Login(ClientMain.getMainWindow());
 						l.setVisible(true);
 						l.setUserName(Globals.getClientName());
 						l.pressOk();*/
-//					}
+//				}
 //				});
 			}
 		}
 	}
-	
-	
+
+
 }

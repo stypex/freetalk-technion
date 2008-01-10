@@ -77,4 +77,20 @@ public class ClientMain {
 		}
 
 	}
+	
+	public static void setServerOk() {
+
+		synchronized (serverAlive) {
+			if (!serverAlive) {
+				ClientMain.serverAlive = true;
+
+				for (TalkThread tt : ConferenceCallsHash.getInstance().values()) {
+					tt.setServerOk();
+				}
+
+				getMainWindow().setUserName(Globals.getClientName());
+			}
+		}
+
+	}
 }

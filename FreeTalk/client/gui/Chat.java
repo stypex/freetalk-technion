@@ -411,4 +411,9 @@ public class Chat extends JFrame {
 		send.setEnabled(false);
 		ltp.setEditable(false);
 	}
+
+	public void setServerOk() {	
+		ltp.setEditable(true);
+		checkTextEntered();
+	}
 }

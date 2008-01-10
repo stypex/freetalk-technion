@@ -134,6 +134,8 @@ public class Loginner {
 				pm.start();
 			}
 			
+			ClientMain.setServerOk();
+			
 			return true;
 			
 		} catch (UnknownHostException e) {
