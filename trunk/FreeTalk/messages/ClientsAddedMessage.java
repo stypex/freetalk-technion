@@ -11,7 +11,7 @@ import java.util.Set;
  * @author lenka
  *
  */
-public class ClientsAddedMessage extends Message {
+public class ClientsAddedMessage extends Message implements IndependantMessage {
 
 	
 	private static final long serialVersionUID = 7178517212623327148L;

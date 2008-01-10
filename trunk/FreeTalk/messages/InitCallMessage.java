@@ -9,7 +9,7 @@ import java.net.InetAddress;
  * @author lenka
  *
  */
-public class InitCallMessage extends Message {
+public class InitCallMessage extends Message implements IndependantMessage {
 
 	
 	private static final long serialVersionUID = 5101088486523014098L;

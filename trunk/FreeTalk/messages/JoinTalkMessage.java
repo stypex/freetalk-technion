@@ -7,7 +7,7 @@ package messages;
  * @author lenka
  *
  */
-public class JoinTalkMessage extends Message {
+public class JoinTalkMessage extends Message implements IndependantMessage {
 
 	
 	private static final long serialVersionUID = 2345725010429846150L;

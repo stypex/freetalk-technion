@@ -7,7 +7,7 @@ package messages;
  * @author lenka
  *
  */
-public class ProbeMessage extends Message {
+public class ProbeMessage extends Message implements IndependantMessage {
 
 	private static final long serialVersionUID = -746642510904499733L;
 

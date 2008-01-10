@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 import messages.ClientExitMessage;
+import messages.IndependantMessage;
 import messages.Message;
 import messages.UDPAckMessage;
 import util.Consts;
@@ -82,6 +83,9 @@ public class UDPListener extends ClientListener {
 				
 				final Message m = (Message)o;
 				
+				if (!m.getFrom().equals(Globals.getClientName()))
+					continue;
+				
 				// We will discard duplicate messages
 				if(receivedMessages.containsKey(m.getUdpData().getId().getClientName())){
 					if (receivedMessages.get(m.getUdpData().getId().getClientName()).contains(m.getUdpData().getId().getId()))
@@ -105,6 +109,10 @@ public class UDPListener extends ClientListener {
 				if (m instanceof UDPAckMessage) {
 					continue;				
 				}
+				
+				if (!passed &&
+					!(m instanceof IndependantMessage))
+					continue;
 				
 				final UDPIncomingInterface in = new UDPIncomingInterface(m.getCId(), 
 						dp.getAddress(), m.getUdpData().getLocalPort(), Globals.getUDPPort());

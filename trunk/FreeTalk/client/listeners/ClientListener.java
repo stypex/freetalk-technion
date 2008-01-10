@@ -6,11 +6,13 @@ package client.listeners;
 import interfaces.IncomingInterface;
 import messages.ClientExitMessage;
 import messages.ClientsAddedMessage;
+import messages.IndependantMessage;
 import messages.InitCallMessage;
 import messages.JoinTalkMessage;
 import messages.Message;
 import messages.ProbeMessage;
 import client.ClientMain;
+import client.Globals;
 import client.data.ClientsList;
 import client.data.ConferenceCallsHash;
 import client.func.SimpleFunctions;
@@ -24,6 +26,12 @@ public abstract class ClientListener extends StoppableThread {
 
 	protected boolean receiveMessage(Message m, IncomingInterface in) {
 
+		if (!(m instanceof IndependantMessage))
+			return false;
+		
+		if (!m.getTo().equals(Globals.getClientName()))
+			return false;
+		
 		if (m instanceof ProbeMessage) {
 			SimpleFunctions.replyProbe(in, (ProbeMessage) m);
 			return true;
