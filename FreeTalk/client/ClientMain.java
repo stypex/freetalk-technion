@@ -41,11 +41,6 @@ public class ClientMain {
 		tcp = new TCPListener5000();
 		udp = new UDPListener();
 
-		tcp.start();
-		udp.start();
-
-		lastProbed = System.currentTimeMillis();
-
 		//	Start the GUI
 		mainWindow = new Main(ClientsList.getInstance().keySet().toArray(new String[0]));
 
@@ -55,6 +50,17 @@ public class ClientMain {
 			}
 		});  
 
+	}
+
+	public static void startListeners() {
+
+		if (tcp.getState().equals(Thread.State.NEW) &&
+			udp.getState().equals(Thread.State.NEW)) {
+			tcp.start();
+			udp.start();
+
+			lastProbed = System.currentTimeMillis();
+		}
 	}
 
 	public static Main getMainWindow() {
@@ -77,7 +83,7 @@ public class ClientMain {
 		}
 
 	}
-	
+
 	public static void setServerOk() {
 
 		synchronized (serverAlive) {

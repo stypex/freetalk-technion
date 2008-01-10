@@ -25,8 +25,11 @@ public class SimpleFunctions {
 
 
 	public static boolean loggedIn = false;
-	
-public static void replyProbe(IncomingInterface in, ProbeMessage pm) {
+
+	public static void replyProbe(IncomingInterface in, ProbeMessage pm) {
+
+		if (!pm.getTo().equals(Globals.getClientName()))
+			return;
 
 		ProbeAckMessage pam = new ProbeAckMessage(Globals.getClientName(),
 				"Server", pm.getCId(), ResponseCode.OK);
@@ -40,14 +43,14 @@ public static void replyProbe(IncomingInterface in, ProbeMessage pm) {
 	}
 
 	public static void addClients(Set<String> clients) {
-		
+
 		Main m = ClientMain.getMainWindow();
-		
+
 		for (String c : clients) {
 			ClientsList.getInstance().put(c, new ArrayList<TalkThread>());
 			m.addClient(c);
 		}
-		
+
 		/* shows a newly logged in client but not those that are online when
 		 * current client logs in
 		 */
