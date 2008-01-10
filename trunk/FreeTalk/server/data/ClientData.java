@@ -38,7 +38,9 @@ public class ClientData {
 
 	private long lastProbed;
 	private boolean probeFailed;
-	
+
+	private boolean connected = false;
+
 	public ClientData(String name, InetAddress ip, int port1, 
 			int port2, ResponseCode port1open, ResponseCode port2open, Socket tcp80) {
 		super();
@@ -114,7 +116,7 @@ public class ClientData {
 			this.port2open = port2open;
 		}
 	}
-	
+
 
 	public boolean isPort80open() {
 		return !port80open.equals(ResponseCode.BAD);
@@ -127,7 +129,7 @@ public class ClientData {
 		}
 	}
 
-	
+
 	public Socket getTcp80() {
 		return tcp80;
 	}
@@ -136,7 +138,7 @@ public class ClientData {
 	public void setTcp80(Socket tcp80) {
 		synchronized (this) {
 			this.tcp80 = tcp80;
-			
+
 			if (tcp80 == null)
 				setPort80open(ResponseCode.BAD);
 			else
@@ -179,7 +181,7 @@ public class ClientData {
 			return ConnectionMethod.TCPDirect;
 		if (isPort80open())
 			return ConnectionMethod.Indirect;
-		
+
 		return ConnectionMethod.None;
 	}
 
@@ -211,16 +213,16 @@ public class ClientData {
 				return null;
 
 			CallMeMessage cmm = new CallMeMessage("Server", getName(), cId);
-			
+
 			synchronized (callMeLock) {
 				callMeSocket = null;
 				new TCPOutgoingInterface(tcp80).send(cmm);
-				
+
 				if (callMeSocket == null) {
 					callMeLock.wait();
 				}
 			}
-			
+
 			return new TCPOutgoingInterface(callMeSocket);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -240,7 +242,7 @@ public class ClientData {
 	public ResponseCode getPort2open() {
 		return port2open;
 	}
-	
+
 	public ResponseCode getPort80open() {
 		return port80open;
 	}
@@ -256,7 +258,7 @@ public class ClientData {
 			threads.remove(t);
 		}
 	}
-	
+
 	/**
 	 * Register successful probe
 	 */
@@ -266,7 +268,7 @@ public class ClientData {
 			lastProbed = System.currentTimeMillis();
 		}
 	}
-	
+
 	/**
 	 * Call when a probe can't reach the client
 	 * @return true if it's time to remove this client
@@ -274,17 +276,27 @@ public class ClientData {
 	public boolean setCantProbe() {
 		synchronized (this) {
 			long currTime = System.currentTimeMillis();
-			
+
 			if (currTime - lastProbed < Consts.PROBE_WAIT)
 				return false;
-			
+
 			lastProbed = currTime;
-			
+
 			if (probeFailed == false)
 				probeFailed = true;
 			else
 				return true;
 		}
 		return false;
+	}
+
+
+	public boolean isConnected() {
+		return connected;
+	}
+
+
+	public void setConnected(boolean connected) {
+		this.connected = connected;
 	}
 }

@@ -42,7 +42,7 @@ public class RegisterHandler extends HandlerThread {
 		super.run();
 
 		String client = m.getFrom();
-		
+
 		try {
 			ClientData cd = ClientsHash.getInstance().get(client);
 
@@ -55,15 +55,13 @@ public class RegisterHandler extends HandlerThread {
 				return;
 			}
 
-			if (cd == null) {	// New client
 
-				cd = new ClientData(client, m.getClientIp(), m.getPort1(), m.getPort2(),
-						ResponseCode.BAD, ResponseCode.BAD, in.getSocket());
 
-				ClientsHash.getInstance().put(client, cd);
-			}
-			else
-				cd.setTcp80(in.getSocket());
+			cd = new ClientData(client, m.getClientIp(), m.getPort1(), m.getPort2(),
+					ResponseCode.BAD, ResponseCode.BAD, in.getSocket());
+
+			ClientsHash.getInstance().put(client, cd);
+
 
 			synchronized (cd) {
 				ClientsHash.getInstance().registerThread(cd.getName(), this);
@@ -84,6 +82,11 @@ public class RegisterHandler extends HandlerThread {
 				allClients.addAll(ClientsHash.getInstance().keySet());
 				allClients.remove(cd.getName());
 
+				for (String c : allClients) {
+					if (!ClientsHash.getInstance().get(c).isConnected())
+						allClients.remove(c);
+				}
+
 				ClientsAddedMessage cam = new ClientsAddedMessage("Server",
 						cd.getName(), getCId(),
 						allClients);
@@ -94,8 +97,10 @@ public class RegisterHandler extends HandlerThread {
 					in.close();
 					out.close();				
 				}
+
+				cd.setConnected(true);
 			}
-			
+
 			// Clients list for others
 			HashSet<String> set = new HashSet<String>();
 			set.add(client);
@@ -108,6 +113,9 @@ public class RegisterHandler extends HandlerThread {
 				ClientData cData = ClientsHash.getInstance().get(c);
 
 				synchronized (cData) {
+
+					if (!cData.isConnected())
+						continue;
 
 					ConnectionId newId = new ConnectionId("Server", cData.getName());
 					ClientsAddedMessage cam = new ClientsAddedMessage("Server", cData.getName(),

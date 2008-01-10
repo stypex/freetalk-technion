@@ -21,7 +21,6 @@ public class Exiter {
 			out.send(m);
 		} catch (IOException e) {
 			ClientMain.setServerOut();
-			e.printStackTrace();
 		}
 	}
 }
