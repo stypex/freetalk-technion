@@ -24,7 +24,7 @@ import client.gui.Main;
 public class SimpleFunctions {
 
 
-	private static boolean loggedIn = false;
+	public static boolean loggedIn = false;
 	
 public static void replyProbe(IncomingInterface in, ProbeMessage pm) {
 

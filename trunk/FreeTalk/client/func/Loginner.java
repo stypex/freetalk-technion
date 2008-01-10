@@ -46,6 +46,7 @@ public class Loginner {
 
 		try {
 			Globals.setClientName(username);
+			SimpleFunctions.loggedIn = false;
 			
 			TCPOutgoingInterface out = new TCPOutgoingInterface(Globals.getServerIP(), Consts.SERVER_PORT);
 			TCPIncomingInterface in = new TCPIncomingInterface(out.getSocket());
