@@ -182,10 +182,7 @@ public class TalkThread extends StoppableThread {
 				} catch (SocketTimeoutException e) {
 					// Do nothing. This is ok.
 				} catch (IOException e) {
-					ConnectionId cid = 
-						new ConnectionId(Globals.getClientName(),
-							client);
-					doConnect(client, cid, false);
+					reconnect(client);
 				} catch(NullPointerException e){
 					//Do nothing. Happens when a client exits the system.
 				}
@@ -200,6 +197,13 @@ public class TalkThread extends StoppableThread {
 			
 			
 		}
+	}
+
+	private void reconnect(String client) {
+		ConnectionId cid = 
+			new ConnectionId(Globals.getClientName(),
+				client);
+		doConnect(client, cid, false);
 	}
 
 	/**
@@ -413,7 +417,7 @@ public class TalkThread extends StoppableThread {
 	 * @param m
 	 * @throws IOException 
 	 */
-	private void sendToAll(Message m) throws IOException {
+	private void sendToAll(Message m) throws NoConnectionException {
 
 		for (String client : outs.keySet()) {
 			m.setTo(client);
@@ -423,7 +427,7 @@ public class TalkThread extends StoppableThread {
 		}
 	}
 
-	private void sendToOne(String client, Message m) throws IOException {
+	private void sendToOne(String client, Message m) throws NoConnectionException {
 		try {
 			synchronized (cons.get(client)) {
 				outs.get(client).send(m);			
@@ -432,7 +436,9 @@ public class TalkThread extends StoppableThread {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			JOptionPane.showMessageDialog(c, "Failed sending message.", "Connection Error", JOptionPane.ERROR_MESSAGE);
-			throw e;
+			throw new NoConnectionException(client);
+		} catch (NullPointerException e) {
+			e.printStackTrace();
 		}
 
 	}
@@ -498,9 +504,15 @@ public class TalkThread extends StoppableThread {
 		TextMessage tm = new TextMessage(Globals.getClientName(), "", null, msg);
 		try {
 			sendToAll(tm);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
+		} catch (NoConnectionException e) {			
 			e.printStackTrace();
+			reconnect(e.getClient());
+			try {
+				sendToOne(e.getClient(), tm);
+			} catch (NoConnectionException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 		}
 	}
 
@@ -577,5 +589,22 @@ public class TalkThread extends StoppableThread {
 		synchronized(emptyChat){
 			emptyChat.notify();
 		}
+	}
+	
+	private static class NoConnectionException extends IOException {
+		
+		private static final long serialVersionUID = 2972775692949539479L;
+		String client;
+
+		public NoConnectionException(String client) {
+			super();
+			this.client = client;
+		}
+
+		public String getClient() {
+			return client;
+		}
+		
+		
 	}
 }
