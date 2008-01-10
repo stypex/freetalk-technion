@@ -64,6 +64,8 @@ public class TalkThread extends StoppableThread {
 
 	//for avoiding the CPU eating loop in receiveMessages() in case the chat is empty
 	private Object emptyChat;
+
+	private boolean show;
 	
 	/**
 	 * @param dest - Name of the client in the destination computer with
@@ -71,11 +73,12 @@ public class TalkThread extends StoppableThread {
 	 * @param ccid - a Conference Call id for this thread. If
 	 * there's none, send null
 	 */
-	public TalkThread(final String dest,  ConnectionId ccid){
+	public TalkThread(final String dest,  ConnectionId ccid, boolean show){
 		
 		emptyChat = new Object();
 		
 		this.dest = dest;
+		this.show = show;
 		
 		dirLock = new Integer(0);
 
@@ -136,6 +139,14 @@ public class TalkThread extends StoppableThread {
 			doConnect(dest, ccid, true);
 		}
 
+		if (show) {
+			SwingUtilities.invokeLater(new Runnable() {
+				public void run() {
+					c.setVisible(true);
+				}
+			});
+		}
+		
 		receiveMessages();
 
 		cleanUp();
@@ -366,8 +377,10 @@ public class TalkThread extends StoppableThread {
 			Message mes = in.receive(0);
 
 			if (mes instanceof ErrorMessage) {
-				ErrorMessage err = (ErrorMessage) mes;
-				JOptionPane.showMessageDialog(c, err.getEType().toString(), "Connection Error", JOptionPane.ERROR_MESSAGE);
+				if (sendConnect) {
+					ErrorMessage err = (ErrorMessage) mes;
+					JOptionPane.showMessageDialog(c, err.getEType().toString(), "Connection Error", JOptionPane.ERROR_MESSAGE);
+				}
 				return false;
 			}
 

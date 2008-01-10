@@ -238,13 +238,7 @@ public class Main extends JFrame {
 	 * Dec 8, 2007
 	 */
 	public void chat(String dest) { 
-		final TalkThread tt = new TalkThread(dest, null);
-		
-		SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
-				tt.c.setVisible(true);
-			}
-		});
+		final TalkThread tt = new TalkThread(dest, null, true);
 		
 		tt.start();
 	 }
