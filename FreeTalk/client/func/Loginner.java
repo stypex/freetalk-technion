@@ -23,7 +23,6 @@ import messages.RegisterMessage;
 import util.Consts;
 import util.Consts.ConnectionMethod;
 import util.Consts.Protocol;
-import util.Consts.ResponseCode;
 import client.ClientMain;
 import client.Globals;
 import client.listeners.TCPListener80;
@@ -92,12 +91,12 @@ public class Loginner {
 			}
 			
 			RegAckMessage ram = (RegAckMessage) reply;
-
-			if (ram.getPort1open().equals(ResponseCode.BAD))
-				ClientMain.udp.doStop();
-
-			if (ram.getPort2open().equals(ResponseCode.BAD))
-				ClientMain.tcp.doStop();	
+//
+//			if (ram.getPort1open().equals(ResponseCode.BAD))
+//				ClientMain.udp.doStop();
+//
+//			if (ram.getPort2open().equals(ResponseCode.BAD))
+//				ClientMain.tcp.doStop();	
 
 			// Clients list
 			reply = in.receive(0);
