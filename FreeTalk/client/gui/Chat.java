@@ -119,23 +119,23 @@ public class Chat extends JFrame {
 		// This part allows to scroll down scrollBar in case
 		// Chat window or utp part of it was resized
 //		usp.addComponentListener(new ComponentListener() {
-//			public void componentResized(ComponentEvent ce){
-//				if (utp.getDocument().getLength()>0)
-//			        utp.setCaretPosition(utp.getDocument().getLength()-1);
-//				utp.setCaretPosition(utp.getDocument().getLength());
-//			}
-//			public void componentHidden(ComponentEvent ce){}
-//			public void componentMoved(ComponentEvent ce){}
-//			public void componentShown(ComponentEvent ce){}			
+//		public void componentResized(ComponentEvent ce){
+//		if (utp.getDocument().getLength()>0)
+//		utp.setCaretPosition(utp.getDocument().getLength()-1);
+//		utp.setCaretPosition(utp.getDocument().getLength());
+//		}
+//		public void componentHidden(ComponentEvent ce){}
+//		public void componentMoved(ComponentEvent ce){}
+//		public void componentShown(ComponentEvent ce){}			
 //		});
 		usp.addComponentListener(new ComponentAdapter() {
-			   public void componentResized(ComponentEvent ce){
-			    if (utp.getDocument().getLength()>0)
-			           utp.setCaretPosition(utp.getDocument().getLength()-1);
-			    utp.setCaretPosition(utp.getDocument().getLength());
-			   }
-			  });		
-		
+			public void componentResized(ComponentEvent ce){
+				if (utp.getDocument().getLength()>0)
+					utp.setCaretPosition(utp.getDocument().getLength()-1);
+				utp.setCaretPosition(utp.getDocument().getLength());
+			}
+		});		
+
 		//This part doesn't allow sending text that is only whitespaces
 		//by disabling the "Send" button.
 		ltp.getDocument().addDocumentListener(new DocumentListener() {
@@ -277,11 +277,13 @@ public class Chat extends JFrame {
 		StyleConstants.setBold(s, true);
 
 		try {
-			d.insertString(d.getLength(), from + " <" + util.Func.getDateTime() + ">\n", s);
-			StyleConstants.setBold(s, false);
-			d.insertString(d.getLength(), text + "\n\n", s);
-			// lowers scrollBar to its lowest position upon new message in utp
-			utp.setCaretPosition(utp.getDocument().getLength());	// Ilya - my 1st line in this proj :) 
+			synchronized (d) {
+				d.insertString(d.getLength(), from + " <" + util.Func.getDateTime() + ">\n", s);
+				StyleConstants.setBold(s, false);
+				d.insertString(d.getLength(), text + "\n\n", s);
+				// lowers scrollBar to its lowest position upon new message in utp
+				utp.setCaretPosition(utp.getDocument().getLength());	// Ilya - my 1st line in this proj :)
+			}
 		} catch (BadLocationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
