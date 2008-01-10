@@ -158,8 +158,8 @@ public class Chat extends JFrame {
 		//as well as shown in the chat text area
 		send.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				send();
-				moveTextToChatWindow();
+				if (send())
+					moveTextToChatWindow();
 			}
 		});
 
@@ -249,8 +249,8 @@ public class Chat extends JFrame {
 	 * @author Arthur Kiyanovsky
 	 * Dec 8, 2007
 	 */
-	private void send(){
-		tt.send(ltp.getText());
+	private boolean send(){
+		return tt.send(ltp.getText());
 	}
 
 	/**
