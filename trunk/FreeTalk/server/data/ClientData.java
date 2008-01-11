@@ -197,7 +197,7 @@ public class ClientData {
 			return new UDPOutgoingInterface(ip, Consts.SERVER_PORT, port1, cId);
 		if (getConnectionMethod().equals(ConnectionMethod.TCPDirect))
 			return new TCPOutgoingInterface(ip, port2);
-		if (oneWay)
+		if (oneWay && tcp80 != null)
 			return new TCPOutgoingInterface(tcp80);
 
 		return getTCP80interface(cId);
