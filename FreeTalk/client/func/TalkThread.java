@@ -227,11 +227,11 @@ public class TalkThread extends StoppableThread {
 		
 		try {
 			synchronized (cons.get(client)) {
+				cons.remove(client);
 				ins.get(client).close();
 				ins.remove(client);
 				outs.get(client).close();
 				outs.remove(client);
-				cons.remove(client);
 			}
 		} catch (NullPointerException e) {
 			// Do nothing
