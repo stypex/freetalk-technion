@@ -319,8 +319,7 @@ public class TalkThread extends StoppableThread {
 				for (String client : cons.keySet()) {
 
 					if (cons.get(client).equals(m.getCId())) {
-						disconnectClient(client);
-						c.removeClientFromSession(client);
+						removeClientFromSession(client);
 					}
 				}
 				return;
@@ -365,8 +364,10 @@ public class TalkThread extends StoppableThread {
 		TCPIncomingInterface in = null;
 		
 		try {
-			if (!ClientsList.getInstance().containsKey(dest2))
+			if (!ClientsList.getInstance().containsKey(dest2)) {
+				removeClientFromSession(dest2);
 				return false;
+			}
 			
 			out = new TCPOutgoingInterface(Globals.getServerIP(), Consts.SERVER_PORT);
 
@@ -384,6 +385,7 @@ public class TalkThread extends StoppableThread {
 
 			mes = in.receive(0);
 		} catch (IOException e) {
+			removeClientFromSession(dest2);
 			ClientMain.setServerOut();
 			return false;
 		}
@@ -394,11 +396,13 @@ public class TalkThread extends StoppableThread {
 					ErrorMessage err = (ErrorMessage) mes;
 					JOptionPane.showMessageDialog(c, err.getEType().toString(), "Connection Error", JOptionPane.ERROR_MESSAGE);
 				}
+				removeClientFromSession(dest2);
 				return false;
 			}
 
 			if (!(mes instanceof ConAckMessage)) {
 				JOptionPane.showMessageDialog(c, "Received wrong message.", "Connection Error", JOptionPane.ERROR_MESSAGE);
+				removeClientFromSession(dest2);
 				return false;
 			}			
 
@@ -414,7 +418,7 @@ public class TalkThread extends StoppableThread {
 			isConnected = true;
 			return true;
 		} catch (IOException e) {
-			disconnectClient(dest2);
+			removeClientFromSession(dest2);
 			JOptionPane.showMessageDialog(c, "Failed connecting to target.", "Connection Error", JOptionPane.ERROR_MESSAGE);
 			return false;
 		}
@@ -479,8 +483,7 @@ public class TalkThread extends StoppableThread {
 				return false;
 			}
 		} else if (cm.equals(ConnectionMethod.None)) {
-			disconnectClient(name);
-			c.removeClientFromSession(name);
+			removeClientFromSession(name);
 			c.setStatusBarText("Client " + name + " is temporarily unavailable");
 			
 			NagThread nt = new NagThread(this, name);
@@ -497,6 +500,11 @@ public class TalkThread extends StoppableThread {
 
 		c.setStatusBarText("Connection established with client " + name);
 		return true;
+	}
+
+	private void removeClientFromSession(String name) {
+		disconnectClient(name);
+		c.removeClientFromSession(name);
 	}
 
 	/**

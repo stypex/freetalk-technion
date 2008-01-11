@@ -350,8 +350,8 @@ public class Chat extends JFrame {
 	 * Dec 8, 2007
 	 */
 	private void addClientToSession(String client){
-		tt.addclientToSession(client);
 		moveFromComboToList(client);
+		tt.addclientToSession(client);
 	}
 
 	/**
