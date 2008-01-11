@@ -44,7 +44,7 @@ public class ClientCheckHandler extends HandlerThread {
 		try {
 			ClientData cd = ClientsHash.getInstance().get(ccm.getTarget());
 			if (cd == null) {
-				ErrorMessage em = new ErrorMessage("Server", ccm.getTarget(), 
+				ErrorMessage em = new ErrorMessage("Server", ccm.getFrom(), 
 						ccm.getCId(), ErrorType.CLIENT_DOES_NOT_EXIST);
 				out.send(em);
 				return;
