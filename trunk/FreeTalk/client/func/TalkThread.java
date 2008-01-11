@@ -66,7 +66,7 @@ public class TalkThread extends StoppableThread {
 	private Object emptyChat;
 
 	private boolean show;
-	
+
 	/**
 	 * @param dest - Name of the client in the destination computer with
 	 * whom the chat is initiated.
@@ -74,12 +74,12 @@ public class TalkThread extends StoppableThread {
 	 * there's none, send null
 	 */
 	public TalkThread(final String dest,  ConnectionId ccid, boolean show){
-		
+
 		emptyChat = new Object();
-		
+
 		this.dest = dest;
 		this.show = show;
-		
+
 		dirLock = new Integer(0);
 
 		ins = new ConcurrentHashMap<String, IncomingInterface>();
@@ -117,7 +117,7 @@ public class TalkThread extends StoppableThread {
 						}
 						disconnectClient(client);
 					}
-					
+
 				}
 				doStop();
 			}
@@ -146,7 +146,7 @@ public class TalkThread extends StoppableThread {
 				}
 			});
 		}
-		
+
 		receiveMessages();
 
 		cleanUp();
@@ -172,7 +172,7 @@ public class TalkThread extends StoppableThread {
 					e1.printStackTrace();
 				}
 			}
-				
+
 			for (String client : ins.keySet()) {
 				try {
 					synchronized (cons.get(client)) {
@@ -186,7 +186,7 @@ public class TalkThread extends StoppableThread {
 				} catch(NullPointerException e){
 					//Do nothing. Happens when a client exits the system.
 				}
-				
+
 
 				if (m != null) {
 					handleMessage(m, ins.get(client));
@@ -194,15 +194,15 @@ public class TalkThread extends StoppableThread {
 				}
 				yield();
 			}
-			
-			
+
+
 		}
 	}
 
 	private void reconnect(String client) {
 		ConnectionId cid = 
 			new ConnectionId(Globals.getClientName(),
-				client);
+					client);
 		doConnect(client, cid, false);
 	}
 
@@ -223,8 +223,8 @@ public class TalkThread extends StoppableThread {
 	 * @param client
 	 */
 	private void disconnectClient(String client) {	
-		
-		
+
+
 		try {
 			synchronized (cons.get(client)) {
 				cons.remove(client);
@@ -237,7 +237,7 @@ public class TalkThread extends StoppableThread {
 			// Do nothing
 		}
 	}
-	
+
 	/**
 	 * Handles the following messages: TextMessage, JoinTalk, Terminate,
 	 * AddClient, ClientExit, InitCall
@@ -249,14 +249,14 @@ public class TalkThread extends StoppableThread {
 		try {
 			if (m instanceof JoinTalkMessage) {	
 				cons.put(m.getFrom(), m.getCId());
-				
+
 				synchronized (cons.get(m.getFrom())) {
 					ins.put(m.getFrom(), in);
 					outs.put(m.getFrom(), in.createMatching());	
 				}
-				
+
 				isConnected = true;
-				
+
 				synchronized (dirLock) {
 					dirM = m;
 					dirLock.notify();
@@ -273,11 +273,11 @@ public class TalkThread extends StoppableThread {
 					InitCallMessage icm = (InitCallMessage)m;					
 					Socket s = new Socket(icm.getDestIp(), 
 							icm.getDestPort());
-					
+
 					TCPIncomingInterface tIn = 
 						new TCPIncomingInterface(s);
 					cons.put(icm.getDest(), m.getCId());
-					
+
 					synchronized (cons.get(icm.getDest())) {
 						ins.put(icm.getDest(), tIn);
 						outs.put(icm.getDest(), tIn.createMatching());
@@ -285,8 +285,8 @@ public class TalkThread extends StoppableThread {
 
 					// Update the conference call id
 //					if (!isConnected)
-//						ccid = icm.getCCid();
-					
+//					ccid = icm.getCCid();
+
 					// Send JOIN_TALK
 					JoinTalkMessage jtm = 
 						new JoinTalkMessage(Globals.getClientName(), 
@@ -301,7 +301,7 @@ public class TalkThread extends StoppableThread {
 				}
 				return;
 			}
-			
+
 			if (m instanceof TextMessage) {
 				if ( !c.isVisible() )
 					SwingUtilities.invokeLater(new Runnable() {
@@ -362,23 +362,23 @@ public class TalkThread extends StoppableThread {
 		Message mes = null;
 		TCPOutgoingInterface out = null;
 		TCPIncomingInterface in = null;
-		
+
 		try {
 			if (!ClientsList.getInstance().containsKey(dest2)) {
 				removeClientFromSession(dest2);
 				return false;
 			}
-			
+
 			out = new TCPOutgoingInterface(Globals.getServerIP(), Consts.SERVER_PORT);
 
 			Message m;
 			if (sendConnect)
 				m = new ConnectMessage(Globals.getClientName(), 
-					"Server", cid, dest2, ccid);
+						"Server", cid, dest2, ccid);
 			else
 				m = new ClientCheckMessage(Globals.getClientName(),
-					"Server", cid, dest2, ccid);
-			
+						"Server", cid, dest2, ccid);
+
 			out.send(m);
 
 			in = new TCPIncomingInterface(out.getSocket());
@@ -389,7 +389,7 @@ public class TalkThread extends StoppableThread {
 			ClientMain.setServerOut();
 			return false;
 		}
-		
+
 		try {
 			if (mes instanceof ErrorMessage) {
 				if (sendConnect) {
@@ -429,14 +429,34 @@ public class TalkThread extends StoppableThread {
 	 * @param m
 	 * @throws IOException 
 	 */
-	private void sendToAll(Message m) throws NoConnectionException {
+	private boolean sendToAll(Message m) {
 
+		boolean success = true;
+		
 		for (String client : outs.keySet()) {
 			m.setTo(client);
 			m.setCId(cons.get(client));			
 
-			sendToOne(client, m);
+			try {
+				sendToOne(client, m);
+			} catch (NoConnectionException e) {	
+				reconnect(e.getClient());
+
+				if (!cons.containsKey(e.getClient())) {
+					JOptionPane.showMessageDialog(c, "Error sending message.", "Connection Error", JOptionPane.ERROR_MESSAGE);
+					success = false;
+				}
+
+				try {
+					sendToOne(e.getClient(), m);
+				} catch (NoConnectionException e1) {
+					JOptionPane.showMessageDialog(c, "Error sending message.", "Connection Error", JOptionPane.ERROR_MESSAGE);
+					success = false;
+				}
+			}
+
 		}
+		return success;
 	}
 
 	private void sendToOne(String client, Message m) throws NoConnectionException {
@@ -485,14 +505,14 @@ public class TalkThread extends StoppableThread {
 		} else if (cm.equals(ConnectionMethod.None)) {
 			removeClientFromSession(name);
 			c.setStatusBarText("Client " + name + " is temporarily unavailable");
-			
+
 			NagThread nt = new NagThread(this, name);
 			nt.start();
 			return false;
 		}
 
 		cons.put(name, cid);
-		
+
 		synchronized (cons.get(name)) {
 			outs.put(name, out);
 			ins.put(name, out.createMatching());			
@@ -515,25 +535,9 @@ public class TalkThread extends StoppableThread {
 	 */
 	public boolean send(String msg){	
 		TextMessage tm = new TextMessage(Globals.getClientName(), "", null, msg);
-		try {
-			sendToAll(tm);
-			return true;
-		} catch (NoConnectionException e) {	
-			reconnect(e.getClient());
-			
-			if (!cons.containsKey(e.getClient())) {
-				JOptionPane.showMessageDialog(c, "Error sending message.", "Connection Error", JOptionPane.ERROR_MESSAGE);
-				return false;
-			}
-				
-			try {
-				sendToOne(e.getClient(), tm);
-				return true;
-			} catch (NoConnectionException e1) {
-				JOptionPane.showMessageDialog(c, "Error sending message.", "Connection Error", JOptionPane.ERROR_MESSAGE);
-			}
-		}
-		return false;
+		
+		return sendToAll(tm);
+		
 	}
 
 	public void addClientToGUI(String client) {
@@ -555,19 +559,16 @@ public class TalkThread extends StoppableThread {
 
 		AddClientMessage acm = new AddClientMessage(Globals.getClientName(), "", null, client);
 
-		try {
-			sendToAll(acm);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		
+		sendToAll(acm);
+		
 		ConnectionId cid = new ConnectionId(Globals.getClientName(), client);
 		cons.put(client, cid);
-		
+
 		synchronized (emptyChat) {
 			emptyChat.notify();
 		}
-		
+
 		doConnect(client, cid, true);
 	}
 
@@ -576,7 +577,7 @@ public class TalkThread extends StoppableThread {
 
 		String client;
 		TalkThread tt;
-		
+
 		public NagThread(TalkThread tt, String client) {
 			super();
 			this.client = client;
@@ -586,33 +587,33 @@ public class TalkThread extends StoppableThread {
 		@Override
 		public void run() {
 			super.run();
-			
+
 			try {
 				Thread.sleep(Consts.PROBE_WAIT);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
+
 			if (!tt.isStopped) {
 				ConnectionId cid = new ConnectionId(Globals.getClientName(),
 						client);
 				tt.doConnect(client, cid, false);
 			}
 		}
-		
-		
+
+
 	}
-	
+
 	public void doStop(){
 		super.doStop();
 		synchronized(emptyChat){
 			emptyChat.notify();
 		}
 	}
-	
+
 	private static class NoConnectionException extends IOException {
-		
+
 		private static final long serialVersionUID = 2972775692949539479L;
 		String client;
 
@@ -624,8 +625,8 @@ public class TalkThread extends StoppableThread {
 		public String getClient() {
 			return client;
 		}
-		
-		
+
+
 	}
 
 	public void setServerOut() {
