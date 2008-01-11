@@ -513,7 +513,7 @@ public class TalkThread extends StoppableThread {
 		} catch (NoConnectionException e) {	
 			reconnect(e.getClient());
 			
-			if (!cons.contains(e.getClient())) {
+			if (!cons.containsKey(e.getClient())) {
 				JOptionPane.showMessageDialog(c, "Error sending message.", "Connection Error", JOptionPane.ERROR_MESSAGE);
 				return false;
 			}
