@@ -56,7 +56,8 @@ public class TCPOutgoingInterface extends OutgoingInterface {
 	 */
 	@Override
 	public void send(Message message) throws IOException {
-
+		message.removeUdpData();
+		
 		ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
 		out.writeObject(message);
 		out.flush();

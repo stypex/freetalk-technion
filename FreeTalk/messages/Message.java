@@ -37,6 +37,10 @@ public abstract class Message implements Serializable {
 		udpData = new UdpData();
 	}
 	
+	public void removeUdpData(){
+		udpData = null;
+	}
+	
 	/*private void setId() {
 		
 		String name = Globals.getClientName() != null ? 
