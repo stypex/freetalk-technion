@@ -83,7 +83,7 @@ public class UDPListener extends ClientListener {
 				
 				final Message m = (Message)o;
 				
-				if (!m.getFrom().equals(Globals.getClientName()))
+				if (!m.getTo().equals(Globals.getClientName()))
 					continue;
 				
 				// We will discard duplicate messages
