@@ -122,6 +122,10 @@ public class RegisterHandler extends HandlerThread {
 							newId, set);
 					try {
 						OutgoingInterface oInt = cData.createOutInterface(newId, true);
+						
+						if (oInt == null)
+							continue;
+						
 						oInt.send(cam);
 
 						if (oInt.getSocket() != cData.getTcp80())

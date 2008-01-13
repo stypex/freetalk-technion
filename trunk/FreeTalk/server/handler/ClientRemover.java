@@ -58,6 +58,10 @@ public class ClientRemover {
 				
 				synchronized (cd1) {
 					OutgoingInterface oi = cd1.createOutInterface(cId, true);
+					
+					if (oi == null)
+						continue;
+					
 					ClientExitMessage newTm = new ClientExitMessage("Server", cd1.getName(), cId, client);
 					oi.send(newTm);
 
