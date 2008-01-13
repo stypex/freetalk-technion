@@ -26,6 +26,8 @@ public class ClientCheckHandler extends HandlerThread {
 
 	ConnectionId cId;
 	long start;
+	
+	static Object lock = new Object();
 
 	/**
 	 * @param client
@@ -56,22 +58,20 @@ public class ClientCheckHandler extends HandlerThread {
 
 			Prober p;
 
-			System.out.println("CCM timestamp: " + start);
-			
-			if (cd != null) { 
-				if (cd.getLastProbed() < start) {
-					p = new Prober(cd, ccm.getCId());
-					p.execute();
+			synchronized (lock) {
+				if (cd != null) {
+					if (cd.getProbed() < start) {
+						p = new Prober(cd, ccm.getCId());
+						p.execute();
+					}
+				}
+				if (cdFrom != null) {
+					if (cdFrom.getProbed() < start) {
+						p = new Prober(cdFrom, ccm.getCId());
+						p.execute();
+					}
 				}
 			}
-
-			if (cdFrom != null) { 
-				if (cdFrom.getLastProbed() < start) {
-					p = new Prober(cdFrom, ccm.getCId());
-					p.execute();
-				}
-			}
-
 			// Now we just activate the connection handler
 			ConnectMessage cm = 
 				new ConnectMessage(ccm.getFrom(), ccm.getTo(), 

@@ -26,13 +26,6 @@ public class ClientTerminationHandler extends HandlerThread {
 	
 	public void run() {
 		super.run();
-
-		try {
-			sleep(1000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 		
 		ClientRemover cr = new ClientRemover(tm.getFrom(), cId);
 		cr.execute();
