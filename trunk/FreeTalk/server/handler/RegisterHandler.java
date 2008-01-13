@@ -9,6 +9,7 @@ import interfaces.TCPOutgoingInterface;
 
 import java.io.IOException;
 import java.util.HashSet;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 import messages.ClientsAddedMessage;
 import messages.ConnectionId;
@@ -78,7 +79,7 @@ public class RegisterHandler extends HandlerThread {
 
 
 				// Clients list for client
-				HashSet<String> allClients = new HashSet<String>();
+				ConcurrentSkipListSet<String> allClients = new ConcurrentSkipListSet<String>();
 				allClients.addAll(ClientsHash.getInstance().keySet());
 				allClients.remove(cd.getName());
 

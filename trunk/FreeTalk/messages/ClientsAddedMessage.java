@@ -3,7 +3,6 @@
  */
 package messages;
 
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -15,9 +14,9 @@ public class ClientsAddedMessage extends Message implements IndependantMessage {
 
 	
 	private static final long serialVersionUID = 7178517212623327148L;
-	HashSet<String> clients;
+	Set<String> clients;
 	
-	public ClientsAddedMessage(String from, String to, ConnectionId id, HashSet<String> clients) {
+	public ClientsAddedMessage(String from, String to, ConnectionId id, Set<String> clients) {
 		super(from, to, id);
 		this.clients = clients;
 	}
