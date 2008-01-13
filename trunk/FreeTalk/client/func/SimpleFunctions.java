@@ -56,7 +56,7 @@ public class SimpleFunctions {
 		 */
 		if ( ! loggedIn )
 			loggedIn = true;
-		else
+		else if (clients.size() > 0)
 			m.showClientOnlineMessage((String)(clients.toArray())[0]);
 	}
 }
