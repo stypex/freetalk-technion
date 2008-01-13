@@ -53,15 +53,19 @@ public class ClientCheckHandler extends HandlerThread {
 			ClientData cdFrom = ClientsHash.getInstance().get(ccm.getFrom());
 
 			Prober p;
-			
+
 			if (cd != null) { 
-				p = new Prober(cd, ccm.getCId());
-				p.execute();
+				if (cd.getLastProbed() < ccm.getTimestamp()) {
+					p = new Prober(cd, ccm.getCId());
+					p.execute();
+				}
 			}
 
 			if (cdFrom != null) { 
-				p = new Prober(cdFrom, ccm.getCId());
-				p.execute();
+				if (cdFrom.getLastProbed() < ccm.getTimestamp()) {
+					p = new Prober(cdFrom, ccm.getCId());
+					p.execute();
+				}
 			}
 
 			// Now we just activate the connection handler
