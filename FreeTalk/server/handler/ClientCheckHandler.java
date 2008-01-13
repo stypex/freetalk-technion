@@ -25,6 +25,7 @@ public class ClientCheckHandler extends HandlerThread {
 	ClientCheckMessage ccm;
 
 	ConnectionId cId;
+	long start;
 
 	/**
 	 * @param client
@@ -36,6 +37,7 @@ public class ClientCheckHandler extends HandlerThread {
 
 		this.ccm = ccm;
 		this.cId = ccm.getCId();
+		start = System.currentTimeMillis();
 	}
 
 	public void run() {
@@ -54,15 +56,17 @@ public class ClientCheckHandler extends HandlerThread {
 
 			Prober p;
 
+			System.out.println("CCM timestamp: " + start);
+			
 			if (cd != null) { 
-				if (cd.getLastProbed() < ccm.getTimestamp()) {
+				if (cd.getLastProbed() < start) {
 					p = new Prober(cd, ccm.getCId());
 					p.execute();
 				}
 			}
 
 			if (cdFrom != null) { 
-				if (cdFrom.getLastProbed() < ccm.getTimestamp()) {
+				if (cdFrom.getLastProbed() < start) {
 					p = new Prober(cdFrom, ccm.getCId());
 					p.execute();
 				}
