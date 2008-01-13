@@ -38,6 +38,8 @@ public class ClientData {
 
 	private long lastProbed;
 	private boolean probeFailed;
+	
+	private long probed;
 
 	private boolean connected = false;
 
@@ -266,7 +268,7 @@ public class ClientData {
 		synchronized (this) {
 			probeFailed = false;
 			lastProbed = System.currentTimeMillis();
-			System.out.println("Probed " + getName() + " at " + lastProbed);
+			probed = lastProbed;
 		}
 	}
 
@@ -277,7 +279,8 @@ public class ClientData {
 	public boolean setCantProbe() {
 		synchronized (this) {
 			long currTime = System.currentTimeMillis();
-
+			probed = currTime;
+			
 			if (currTime - lastProbed < Consts.PROBE_WAIT)
 				return false;
 
@@ -304,5 +307,15 @@ public class ClientData {
 
 	public long getLastProbed() {
 		return lastProbed;
+	}
+
+
+	public long getProbed() {
+		return probed;
+	}
+
+
+	public void setProbed(long probed) {
+		this.probed = probed;
 	}
 }
