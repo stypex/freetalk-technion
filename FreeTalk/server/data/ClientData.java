@@ -299,4 +299,9 @@ public class ClientData {
 	public void setConnected(boolean connected) {
 		this.connected = connected;
 	}
+
+
+	public long getLastProbed() {
+		return lastProbed;
+	}
 }

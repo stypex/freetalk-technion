@@ -14,6 +14,8 @@ public class ClientCheckMessage extends Message {
 	
 	String target;
 	ConnectionId cCid;
+	long timestamp;
+	
 	/**
 	 * @param from
 	 * @param to
@@ -25,6 +27,8 @@ public class ClientCheckMessage extends Message {
 
 		this.target = target;
 		this.cCid = cCid;
+		
+		timestamp = System.currentTimeMillis();
 	}
 	public String getTarget() {
 		return target;
@@ -38,5 +42,8 @@ public class ClientCheckMessage extends Message {
 	
 	public ConnectionId getCCid() {
 		return cCid;
+	}
+	public long getTimestamp() {
+		return timestamp;
 	}
 }
