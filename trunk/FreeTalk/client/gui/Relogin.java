@@ -7,17 +7,17 @@ import javax.swing.GroupLayout;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 
+import client.Globals;
 import client.func.Loginner;
 
 public class Relogin extends JFrame {
 	
 	private static final long serialVersionUID = -7081090189215762449L;
-	private Main main; 
+	
 	private JLabel l;
 	
 	
-	public Relogin(Main m){
-		main = m;
+	public Relogin(){
 		
 		setIconImage(Toolkit.getDefaultToolkit().getImage("Images\\disconnect-256x256.png"));
 		
@@ -59,9 +59,13 @@ public class Relogin extends JFrame {
 	 */
 	public void login() {
 		Loginner loginner = new Loginner(this);
-		loginner.doLogin(main.getUserName());
+		loginner.doLogin(Globals.getClientName());
 		dispose(); 
 	}
 
-	
+	public void setTitle(String title, String label) {
+		setTitle(title);
+		l.setText(label);
+		
+	}
 }
