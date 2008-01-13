@@ -41,7 +41,7 @@ public class ProbeMonitor extends Thread {
 				// Do the login again with the same user name
 //				SwingUtilities.invokeLater(new Runnable() {
 //				public void run() {
-				final Relogin r = new Relogin(ClientMain.getMainWindow());
+				final Relogin r = new Relogin();
 				SwingUtilities.invokeLater(new Runnable() {
 					public void run() {
 						r.setVisible(true);
