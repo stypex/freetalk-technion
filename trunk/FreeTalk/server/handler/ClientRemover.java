@@ -34,20 +34,20 @@ public class ClientRemover {
 	 * Haldles client exit
 	 */
 	public void execute() {
-		try {
-			synchronized(ServerMainListener.udp.receivedMessages){
-				ServerMainListener.udp.receivedMessages.remove(client);
-			}
-			
-			ClientData cd = ClientsHash.getInstance().get(client);
-			if (cd == null)
-				return;
+		synchronized(ServerMainListener.udp.receivedMessages){
+			ServerMainListener.udp.receivedMessages.remove(client);
+		}
+		
+		ClientData cd = ClientsHash.getInstance().get(client);
+		if (cd == null)
+			return;
 
 
-			// Go over all the other clients and send them 
-			// the CLIENT_EXIT message
-			for (String c : ClientsHash.getInstance().keySet()) {
+		// Go over all the other clients and send them 
+		// the CLIENT_EXIT message
+		for (String c : ClientsHash.getInstance().keySet()) {
 
+			try {
 				if (c.equals(client))
 					continue;
 
@@ -70,20 +70,20 @@ public class ClientRemover {
 
 
 				}
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
+		}
 
-			
-			synchronized (cd) {
-				// Close all the threads that are handling this client
-				for (HandlerThread ht : cd.getThreads())
-					ht.doStop();
+		
+		synchronized (cd) {
+			// Close all the threads that are handling this client
+			for (HandlerThread ht : cd.getThreads())
+				ht.doStop();
 
-				// Remove the client itself
-				ClientsHash.getInstance().remove(client);
-			}
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			// Remove the client itself
+			ClientsHash.getInstance().remove(client);
 		}
 	}
 

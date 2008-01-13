@@ -266,6 +266,7 @@ public class ClientData {
 		synchronized (this) {
 			probeFailed = false;
 			lastProbed = System.currentTimeMillis();
+			System.out.println("Probed " + getName() + " at " + lastProbed);
 		}
 	}
 
