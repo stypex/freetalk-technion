@@ -30,9 +30,9 @@ public class Prober {
 	ClientData cd;
 	ConnectionId cId;
 
-	public Prober(ClientData cd, ConnectionId cId) {
+	public Prober(ClientData cd) {
 		this.cd = cd;
-		this.cId = cId;
+		this.cId = new ConnectionId("Server", cd.getName());
 	}
 
 	public void execute() {
@@ -53,7 +53,7 @@ public class Prober {
 					// Check if it's time to do total client deletion
 					if (cd.setCantProbe()) { 
 						ClientRemover cr = 
-							new ClientRemover(cd.getName(), cId);
+							new ClientRemover(cd.getName());
 						cr.execute();
 					}
 					return;

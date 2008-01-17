@@ -59,15 +59,16 @@ public class ClientCheckHandler extends HandlerThread {
 			Prober p;
 
 			synchronized (lock) {
-				if (cd != null) {
-					if (cd.getProbed() < start) {
-						p = new Prober(cd, ccm.getCId());
+				if (cdFrom != null) {
+					if (cdFrom.getProbed() < start) {
+						p = new Prober(cdFrom);
 						p.execute();
 					}
 				}
-				if (cdFrom != null) {
-					if (cdFrom.getProbed() < start) {
-						p = new Prober(cdFrom, ccm.getCId());
+				
+				if (cd != null) {
+					if (cd.getProbed() < start) {
+						p = new Prober(cd);
 						p.execute();
 					}
 				}

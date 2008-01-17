@@ -5,7 +5,6 @@ package server.handler;
 
 import java.util.ArrayList;
 
-import messages.ConnectionId;
 import server.data.ClientData;
 import server.data.ClientsHash;
 import util.Consts;
@@ -25,7 +24,6 @@ public class ProbeThread extends HandlerThread {
 	public void run() {
 
 		Prober p;
-		ConnectionId cId;
 
 		while (true) {
 			
@@ -37,8 +35,7 @@ public class ProbeThread extends HandlerThread {
 			// For each client create a thread which will probe the
 			// client
 			for (ClientData cd : ClientsHash.getInstance().values()) {
-				cId = new ConnectionId("Server", cd.getName());
-				p = new Prober(cd, cId);
+				p = new Prober(cd);
 				
 				ProbeWrapper pw = new ProbeWrapper(p);
 				wrappers.add(pw);
