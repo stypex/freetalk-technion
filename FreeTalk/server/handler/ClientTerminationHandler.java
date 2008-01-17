@@ -27,7 +27,7 @@ public class ClientTerminationHandler extends HandlerThread {
 	public void run() {
 		super.run();
 		
-		ClientRemover cr = new ClientRemover(tm.getFrom(), cId);
+		ClientRemover cr = new ClientRemover(tm.getFrom());
 		cr.execute();
 		
 		unregisterForAllClients();

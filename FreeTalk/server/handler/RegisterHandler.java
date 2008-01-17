@@ -68,7 +68,7 @@ public class RegisterHandler extends HandlerThread {
 				ClientsHash.getInstance().registerThread(cd.getName(), this);
 
 				// Probe
-				Prober pr = new Prober(cd, getCId());
+				Prober pr = new Prober(cd);
 				pr.execute();
 
 				// REG_ACK

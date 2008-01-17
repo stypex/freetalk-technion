@@ -504,8 +504,8 @@ public class TalkThread extends StoppableThread {
 			removeClientFromSession(name);
 			c.setStatusBarText("Client " + name + " is temporarily unavailable");
 
-			NagThread nt = new NagThread(this, name);
-			nt.start();
+//			NagThread nt = new NagThread(this, name);
+//			nt.start();
 			return false;
 		}
 
@@ -571,37 +571,37 @@ public class TalkThread extends StoppableThread {
 	}
 
 
-	public static class NagThread extends Thread {
-
-		String client;
-		TalkThread tt;
-
-		public NagThread(TalkThread tt, String client) {
-			super();
-			this.client = client;
-			this.tt = tt;
-		}
-
-		@Override
-		public void run() {
-			super.run();
-
-			try {
-				Thread.sleep(Consts.PROBE_WAIT);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-
-			if (!tt.isStopped) {
-				ConnectionId cid = new ConnectionId(Globals.getClientName(),
-						client);
-				tt.doConnect(client, cid, false);
-			}
-		}
-
-
-	}
+//	public static class NagThread extends Thread {
+//
+//		String client;
+//		TalkThread tt;
+//
+//		public NagThread(TalkThread tt, String client) {
+//			super();
+//			this.client = client;
+//			this.tt = tt;
+//		}
+//
+//		@Override
+//		public void run() {
+//			super.run();
+//
+//			try {
+//				Thread.sleep(Consts.PROBE_WAIT);
+//			} catch (InterruptedException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//
+//			if (!tt.isStopped) {
+//				ConnectionId cid = new ConnectionId(Globals.getClientName(),
+//						client);
+//				tt.doConnect(client, cid, false);
+//			}
+//		}
+//
+//
+//	}
 
 	public void doStop(){
 		super.doStop();

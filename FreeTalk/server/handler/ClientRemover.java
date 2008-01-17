@@ -25,9 +25,9 @@ public class ClientRemover {
 	String client;
 	ConnectionId cId;
 
-	public ClientRemover(String client, ConnectionId cId) {
+	public ClientRemover(String client) {
 		this.client = client;
-		this.cId = cId;
+		this.cId = new ConnectionId("Server", client);
 	}
 
 	/**
