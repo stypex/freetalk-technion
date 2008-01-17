@@ -261,6 +261,11 @@ public class TalkThread extends StoppableThread {
 					dirM = m;
 					dirLock.notify();
 				}
+				
+				synchronized (emptyChat) {
+					emptyChat.notify();
+				}
+				
 				c.moveFromComboToList(m.getFrom());			
 				return;
 			}
@@ -295,6 +300,9 @@ public class TalkThread extends StoppableThread {
 					sendToOne(icm.getDest(), jtm);
 					c.moveFromComboToList(icm.getDest());
 					isConnected = true;
+					synchronized (emptyChat) {
+						emptyChat.notify();
+					}
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -516,6 +524,10 @@ public class TalkThread extends StoppableThread {
 			ins.put(name, out.createMatching());			
 		}
 
+		synchronized (emptyChat) {
+			emptyChat.notify();
+		}
+		
 		c.setStatusBarText("Connection established with client " + name);
 		return true;
 	}
