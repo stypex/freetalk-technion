@@ -28,4 +28,12 @@ public class UDPAckMessage extends Message {
 	public void setUdpSn(int udpSn) {
 		udpData.setUdpSn(udpSn);
 	}
+	
+	@Override
+	public UDPAckMessage clone() {
+		UDPAckMessage m = new UDPAckMessage(from, to, cId, getUdpData().getUdpSn());
+		m.setUdpData(getUdpData());
+		
+		return m;
+	}
 }

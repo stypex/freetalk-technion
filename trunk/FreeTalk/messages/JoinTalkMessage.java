@@ -27,4 +27,12 @@ public class JoinTalkMessage extends Message implements IndependantMessage {
 		return super.toString() + 
 			   Func.toStringRow("Conference call id", ccid);
 	}
+	
+	@Override
+	public JoinTalkMessage clone() {
+		JoinTalkMessage m = new JoinTalkMessage(from, to, cId, ccid);
+		m.setUdpData(getUdpData());
+		
+		return m;
+	}
 }

@@ -19,4 +19,12 @@ public class TerminationMessage extends Message {
 	public String toString(){
 		return super.toString();
 	}
+	
+	@Override
+	public TerminationMessage clone() {
+		TerminationMessage m = new TerminationMessage(from, to, cId);
+		m.setUdpData(getUdpData());
+		
+		return m;
+	}
 }

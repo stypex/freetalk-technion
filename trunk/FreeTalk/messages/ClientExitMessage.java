@@ -26,4 +26,12 @@ public class ClientExitMessage extends Message implements IndependantMessage {
 		return super.toString() + Func.toStringRow("Client", client);
 	}
 
+	
+	@Override
+	public ClientExitMessage clone() {
+		ClientExitMessage m = new ClientExitMessage(from, to, cId, client);
+		m.setUdpData(getUdpData());
+		
+		return m;
+	}
 }

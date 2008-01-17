@@ -18,4 +18,12 @@ public class ProbeMessage extends Message implements IndependantMessage {
 	public String toString(){
 		return super.toString();
 	}
+	
+	@Override
+	public ProbeMessage clone() {
+		ProbeMessage m = new ProbeMessage(from, to, cId);
+		m.setUdpData(getUdpData());
+		
+		return m;
+	}
 }

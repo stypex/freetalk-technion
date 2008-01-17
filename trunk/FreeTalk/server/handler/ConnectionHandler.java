@@ -94,7 +94,7 @@ public class ConnectionHandler extends HandlerThread {
 					try {
 						received = in.receive(500);
 
-						out2.send(received);
+						out2.send(received.clone());
 
 						if (received instanceof TerminationMessage)
 							break;
@@ -105,7 +105,7 @@ public class ConnectionHandler extends HandlerThread {
 						received = in2.receive(500);
 
 
-						out.send(received);
+						out.send(received.clone());
 					} catch (SocketTimeoutException e) {}
 
 				} while ((received == null || 

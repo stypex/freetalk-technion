@@ -39,4 +39,12 @@ public class ClientCheckMessage extends Message {
 	public ConnectionId getCCid() {
 		return cCid;
 	}
+	
+	@Override
+	public ClientCheckMessage clone() {
+		ClientCheckMessage m = new ClientCheckMessage(from, to, cId, target, cCid);
+		m.setUdpData(getUdpData());
+		
+		return m;
+	}
 }

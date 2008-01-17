@@ -25,4 +25,11 @@ public class CallMeMessage extends Message {
 		return super.toString();
 	}
 	
+	@Override
+	public CallMeMessage clone() {
+		CallMeMessage m = new CallMeMessage(from, to, cId);
+		m.setUdpData(getUdpData());
+		
+		return m;
+	}
 }

@@ -28,4 +28,14 @@ public class AddClientMessage extends Message {
 	public String getClient() {
 		return client;
 	}
+	
+
+	@Override
+	public AddClientMessage clone() {
+		AddClientMessage m = new AddClientMessage(from, to, cId, client);
+		m.setUdpData(getUdpData());
+		
+		return m;
+	}
+	
 }

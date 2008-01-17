@@ -29,5 +29,11 @@ public class TextMessage extends Message {
 		   Func.toStringRow("Text", text);
 	}
 	
-	
+	@Override
+	public TextMessage clone() {
+		TextMessage m = new TextMessage(from, to, cId, text);
+		m.setUdpData(getUdpData());
+		
+		return m;
+	}
 }

@@ -30,4 +30,12 @@ public class ProbeAckMessage extends Message {
 		return super.toString() + 
 			   Func.toStringRow("Response code", rCode);
 	}
+	
+	@Override
+	public ProbeAckMessage clone() {
+		ProbeAckMessage m = new ProbeAckMessage(from, to, cId, rCode);
+		m.setUdpData(getUdpData());
+		
+		return m;
+	}
 }

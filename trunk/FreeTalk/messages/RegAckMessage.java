@@ -44,4 +44,11 @@ public class RegAckMessage extends Message {
 			   Func.toStringRow("Conn. method", connectionMethod);
 	}
 
+	@Override
+	public RegAckMessage clone() {
+		RegAckMessage m = new RegAckMessage(from, to, cId, port1open, port2open, connectionMethod);
+		m.setUdpData(getUdpData());
+		
+		return m;
+	}
 }
