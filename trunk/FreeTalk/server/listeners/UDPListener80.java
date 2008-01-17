@@ -86,6 +86,7 @@ public class UDPListener80 extends Thread {
 				// Send through the incoming interface
 				if (!ThreadsHash.getInstance().passMessage(m)) {
 					System.err.println("UDPListener80: Can't find the right interface");
+					continue;	// No acks for unreceived messages
 				}
 				
 				// Nothing more to do with UDPAcks
