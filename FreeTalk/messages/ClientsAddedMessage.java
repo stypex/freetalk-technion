@@ -36,4 +36,12 @@ public class ClientsAddedMessage extends Message implements IndependantMessage {
 		
 		return s;
 	}
+	
+	@Override
+	public ClientsAddedMessage clone() {
+		ClientsAddedMessage m = new ClientsAddedMessage(from, to, cId, clients);
+		m.setUdpData(getUdpData());
+		
+		return m;
+	}
 }

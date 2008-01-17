@@ -34,4 +34,12 @@ public class ConnectMessage extends Message {
 	public ConnectionId getCCid() {
 		return cCid;
 	}
+	
+	@Override
+	public ConnectMessage clone() {
+		ConnectMessage m = new ConnectMessage(from, to, cId, connTo, cCid);
+		m.setUdpData(getUdpData());
+		
+		return m;
+	}
 }

@@ -47,4 +47,12 @@ public class ErrorMessage extends Message {
 		return super.toString() + 
 			   Func.toStringRow("Error type", eType);
 	}
+	
+	@Override
+	public ErrorMessage clone() {
+		ErrorMessage m = new ErrorMessage(from, to, cId, eType);
+		m.setUdpData(getUdpData());
+		
+		return m;
+	}
 }

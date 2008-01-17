@@ -11,7 +11,7 @@ import client.Globals;
  * @author lenka
  *
  */
-public abstract class Message implements Serializable {
+public abstract class Message implements Serializable, Cloneable {
 
 	String from;
 	String to;
@@ -36,6 +36,8 @@ public abstract class Message implements Serializable {
 	public void addUdpData(){
 		udpData = new UdpData();
 	}
+	
+	
 	
 	public void removeUdpData(){
 		udpData = null;
@@ -87,6 +89,8 @@ public abstract class Message implements Serializable {
 		cId = id;
 	}
 
+	
+	
 	/*public int getUdpSn() {
 		return udpSn;
 	}
@@ -106,6 +110,11 @@ public abstract class Message implements Serializable {
 	public Id getId() {
 		return id;
 	}*/
+
+	@Override
+	public abstract Message clone();
+
+
 
 	public static class Id implements Serializable{
 
@@ -178,5 +187,9 @@ public abstract class Message implements Serializable {
 		public void setUdpSn(int udpSn) {
 			this.udpSn = udpSn;
 		}
+	}
+
+	public void setUdpData(UdpData udpData) {
+		this.udpData = udpData;
 	}
 }

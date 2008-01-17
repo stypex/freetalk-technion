@@ -57,4 +57,12 @@ public class InitCallMessage extends Message implements IndependantMessage {
 	public ConnectionId getCCid() {
 		return cCid;
 	}
+	
+	@Override
+	public InitCallMessage clone() {
+		InitCallMessage m = new InitCallMessage(from, to, cId, dest, destIp, destPort, cCid);
+		m.setUdpData(getUdpData());
+		
+		return m;
+	}
 }

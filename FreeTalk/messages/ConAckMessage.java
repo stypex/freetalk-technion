@@ -61,4 +61,12 @@ public class ConAckMessage extends Message {
 	public InetAddress getDestAddr() {
 		return destAddr;
 	}
+	
+	@Override
+	public ConAckMessage clone() {
+		ConAckMessage m = new ConAckMessage(from, to, cId, destAddr, connMethod);
+		m.setUdpData(getUdpData());
+		
+		return m;
+	}
 }

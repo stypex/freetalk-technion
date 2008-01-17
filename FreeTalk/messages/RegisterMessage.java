@@ -58,4 +58,12 @@ public class RegisterMessage extends Message {
 			   Func.toStringRow("Port2 num", port2) +
 			   Func.toStringRow("Conn. type2", connType2);
 	}
+	
+	@Override
+	public RegisterMessage clone() {
+		RegisterMessage m = new RegisterMessage(from, to, cId, clientIp, port1, port2, connType1, connType2);
+		m.setUdpData(getUdpData());
+		
+		return m;
+	}
 }
