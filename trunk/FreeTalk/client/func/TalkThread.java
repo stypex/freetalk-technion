@@ -431,8 +431,6 @@ public class TalkThread extends StoppableThread {
 	 */
 	private boolean sendToAll(Message m) {
 
-		boolean success = true;
-		
 		for (String client : outs.keySet()) {
 			m.setTo(client);
 			m.setCId(cons.get(client));			
@@ -444,19 +442,19 @@ public class TalkThread extends StoppableThread {
 
 				if (!cons.containsKey(e.getClient())) {
 					JOptionPane.showMessageDialog(c, "Error sending message.", "Connection Error", JOptionPane.ERROR_MESSAGE);
-					success = false;
+					return false;
 				}
 
 				try {
 					sendToOne(e.getClient(), m);
 				} catch (NoConnectionException e1) {
 					JOptionPane.showMessageDialog(c, "Error sending message.", "Connection Error", JOptionPane.ERROR_MESSAGE);
-					success = false;
+					return false;
 				}
 			}
 
 		}
-		return success;
+		return true;
 	}
 
 	private void sendToOne(String client, Message m) throws NoConnectionException {
